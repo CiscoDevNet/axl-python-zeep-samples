@@ -26,3 +26,5 @@ The concepts and techniques shown can be extended to enable automated management
   ```
   
 * Edit axlZeep.py to specify your CUCM location and AXL user credentials
+
+[![published](https://static.production.devnetcloud.com/codeexchange/assets/images/devnet-published.svg)](https://developer.cisco.com/codeexchange/github/repo/CiscoDevNet/axl-python-zeep-sample)
