@@ -35,10 +35,56 @@ The concepts and techniques shown can be extended to enable automated management
 
     1. Copy the three WSDL files to the root directory of this project: `AXLAPI.wsdl`, `AXLEnums.xsd`, `AXLSoap.xsd`
 
+## Hints
+
+* You can get a 'dump' of the AXL WSDL to see how Zeep interprets it by copying the AXL WSDL files to the project root (see above) and running (Mac/Linux):
+
+    ```
+    python3 -mzeep AXLAPI.wsdl > wsdl.txt
+    ```
+
+    This can help with identifying the proper object structure to send to Zeep
+
+* Elements which contain a list, such as:
+
+    ```xml
+    <members>
+        <member>
+            <subElement1/>
+            <subElement2/>
+        </member>
+        <member>
+            <subElement1/>
+            <subElement2/>
+        </member>        
+    </members>
+    ```
+
+    are represented a little differently than expected by Zeep.  Note that `<members>` becomes an array, not `<members>`:
+
+    ```json
+    { 
+        members: {
+            member: [
+                {
+                    "subElement1": None,
+                    "subElement2": None
+                },
+                                {
+                    "subElement1": None,
+                    "subElement2": None
+                }
+            ]
+        }
+    }
+    ```
+
 ## Available samples
 
-* `axlZeep.py` - Demonstrates adding a user, line, and phone (`<addLine>, <addPhone>, <addUser>, <updatePhone>, <getUser>)`
+* `axlZeep.py` - Demonstrates adding a user, line, and phone (`<addLine>`, `<addPhone>`, `<addUser>`, `<updatePhone>`, `<getUser>`)`
 
 * `axl_updateDevicePool` - Demonstrates updating an existing Device Pool to modify the Local Route Group settings (`<updateDevicePool>`)
+
+* `axl_add_partition_css.py` - Adds two partitions, then adds a CSS containing the two new partitions (`<addRoutePartition>`, `<addCss>`)
 
 [![published](https://static.production.devnetcloud.com/codeexchange/assets/images/devnet-published.svg)](https://developer.cisco.com/codeexchange/github/repo/CiscoDevNet/axl-python-zeep-sample)
