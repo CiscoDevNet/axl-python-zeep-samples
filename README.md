@@ -60,7 +60,7 @@ The concepts and techniques shown can be extended to enable automated management
     </members>
     ```
 
-    are represented a little differently than expected by Zeep.  Note that `<members>` becomes an array, not `<members>`:
+    are represented a little differently than expected by Zeep.  Note that `<member>` becomes an array, not `<members>`:
 
     ```json
     { 
