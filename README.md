@@ -87,4 +87,6 @@ The concepts and techniques shown can be extended to enable automated management
 
 * `axl_add_partition_css.py` - Adds two partitions, then adds a CSS containing the two new partitions (`<addRoutePartition>`, `<addCss>`)
 
+* `axl_FAC.py` - Adds a new FAC, updates it, then deletes it (`<addFacInfo>`, `<updateFacInfo>`, `<removeFacInfo>`)
+
 [![published](https://static.production.devnetcloud.com/codeexchange/assets/images/devnet-published.svg)](https://developer.cisco.com/codeexchange/github/repo/CiscoDevNet/axl-python-zeep-sample)
