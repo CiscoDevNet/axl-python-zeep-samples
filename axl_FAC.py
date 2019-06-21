@@ -109,11 +109,10 @@ transport = Transport( session = session, timeout = 10 )
 # strict=False is not always necessary, but it allows zeep to parse imperfect XML
 settings = Settings( strict = False, xml_huge_tree = True )
 
-if DEBUG:
-    client = Client( WSDL_FILE, settings = settings, transport = transport,
-        plugins = [MyLoggingPlugin() ] )
-else:
-      client = Client( WSDL_FILE, settings = settings, transport = transport )  
+plugin = [ MyLoggingPlugin() ] if DEBUG else [ ]
+
+client = Client( WSDL_FILE, settings = settings, transport = transport,
+        plugins = plugin ) 
 
 service = client.create_service( "{http://www.cisco.com/AXLAPIService/}AXLAPIBinding",
                                 'https://{cucm}:8443/axl/'.format( cucm = creds.CUCM_ADDRESS ))
@@ -140,7 +139,7 @@ try:
     resp = service.updateFacInfo( name = 'testFAC',
         newName = 'newTestFAC',
         code = '5678',
-        authorizationLevel = '0' )
+        authorizationLevel = '1' )
 except Fault as err:
     print('Zeep error: updateFacInfo: {err}'.format( err = err))
 else:
