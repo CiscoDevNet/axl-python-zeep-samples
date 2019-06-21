@@ -89,4 +89,6 @@ The concepts and techniques shown can be extended to enable automated management
 
 * `axl_FAC.py` - Adds a new FAC, updates it, then deletes it (`<addFacInfo>`, `<updateFacInfo>`, `<removeFacInfo>`)
 
+* `axl_add_sip_trunk.py` - Adds a new SIP trunk with destination address, then deletes it (`<addSipTrunk`, `<removeSipTrunk>`)
+
 [![published](https://static.production.devnetcloud.com/codeexchange/assets/images/devnet-published.svg)](https://developer.cisco.com/codeexchange/github/repo/CiscoDevNet/axl-python-zeep-sample)
