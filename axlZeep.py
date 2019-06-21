@@ -51,12 +51,12 @@ from zeep.exceptions import Fault
 
 WSDL_URL = 'AXLAPI.wsdl'
 
-# These are sample values for DevNet sandbox
-# replace them with values for your own CUCM, if needed
+# Configure CUCM location and AXL credentials in creds.py
+import creds
 
-CUCM_URL = 'https://10.10.20.1:8443/axl/'
-USERNAME = 'administrator'
-PASSWD = 'ciscopsdt'
+CUCM_URL = 'https://' + creds.CUCM_ADDRESS + ':8443/axl/'
+USERNAME = creds.USERNAME
+PASSWD = creds.PASSWORD
 
 # If you have a pem file certificate for CUCM, uncomment and define it here
 

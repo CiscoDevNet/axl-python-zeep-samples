@@ -1,4 +1,4 @@
-# axl-python-zeep-sample
+# axl-python-zeep-samples
 
 ## Overview
 
@@ -25,7 +25,7 @@ The concepts and techniques shown can be extended to enable automated management
   $ pip install zeep
   ```
   
-* Edit axlZeep.py to specify your CUCM location and AXL user credentials
+* Edit creds.py to specify your CUCM location and AXL user credentials
 
 * Add the AXL WSDL files for your CUCM version
 
@@ -62,17 +62,17 @@ The concepts and techniques shown can be extended to enable automated management
 
     are represented a little differently than expected by Zeep.  Note that `<member>` becomes an array, not `<members>`:
 
-    ```json
+    ```python
     { 
-        members: {
-            member: [
+        'members': {
+            'member': [
                 {
-                    "subElement1": None,
-                    "subElement2": None
+                    'subElement1': 'value',
+                    'subElement2': 'value'
                 },
-                                {
-                    "subElement1": None,
-                    "subElement2": None
+                {
+                    'subElement1': 'value',
+                    'subElement2': 'value'
                 }
             ]
         }

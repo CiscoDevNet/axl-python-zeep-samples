@@ -46,10 +46,14 @@ from zeep.cache import SqliteCache
 from zeep.plugins import HistoryPlugin
 from zeep.exceptions import Fault
 
+# Configure CUCM location and AXL credentials in creds.py
+import creds
+
+CUCM_URL = 'https://' + creds.CUCM_ADDRESS + ':8443/axl/'
+USERNAME = creds.USERNAME
+PASSWD = creds.PASSWORD
+
 WSDL_URL = 'AXLAPI.wsdl'
-CUCM_URL = 'https://10.10.20.1:8443/axl/'
-USERNAME = 'administrator'
-PASSWD = 'ciscopsdt'
 
 #CERT = 'some.pem'
 
