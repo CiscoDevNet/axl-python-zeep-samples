@@ -1,6 +1,3 @@
-AXLAPI.wsdl
-AXLEnums.xsd
-AXLSoap.xsd
 .vscode/
 *.pyc
 wsdl.txt
