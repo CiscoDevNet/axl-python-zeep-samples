@@ -51,7 +51,7 @@ import creds
 DEBUG = False
 
 # The WSDL is a local file in the working directory, see README
-WSDL_FILE = 'AXLAPI.wsdl'
+WSDL_FILE = 'schema/AXLAPI.wsdl'
 
 # The below Partions and CSSs will be created
 
@@ -63,7 +63,7 @@ CSS_NAME = 'newCss'
 
 class MyLoggingPlugin(Plugin):
 
-    def egress(self, envelope, http_headers, operation, binding_options):
+    def egress( self, envelope, http_headers, operation, binding_options ):
         print(
 '''Request
 -------
@@ -71,14 +71,14 @@ Headers:
 {headers}
 
 Body:
-{xml}
+{ xml }
 
 '''.format( headers = http_headers, 
-            xml = etree.tostring( envelope, pretty_print = True, encoding = 'unicode') )
+            xml = etree.tostring( envelope, pretty_print = True, encoding = 'unicode' ) )
         )
 
     def ingress( self, envelope, http_headers, operation ):
-        print('\n')
+        print( '\n' )
         print(
 '''Response
 -------
@@ -86,19 +86,17 @@ Headers:
 {headers}
 
 Body:
-{xml}
+{ xml }
 
 '''.format( headers = http_headers, 
-            xml = etree.tostring( envelope, pretty_print = True, encoding = 'unicode') )
+            xml = etree.tostring( envelope, pretty_print = True, encoding = 'unicode' ) )
         )
 
 # This is where the meat of the application starts
 # The first step is to create a SOAP client session
-
 session = Session()
 
 # We avoid certificate verification by default
-
 session.verify = False
 
 # To enabled SSL cert checking (production)
@@ -108,21 +106,23 @@ session.verify = False
 # CERT = 'changeme.pem'
 # session.verify = CERT
 
-session.auth = HTTPBasicAuth(creds.AXL_USERNAME, creds.AXL_PASSWORD)
+session.auth = HTTPBasicAuth( creds.USERNAME, creds.PASSWORD )
 
 transport = Transport( session = session, timeout = 10 )
 
 # strict=False is not always necessary, but it allows zeep to parse imperfect XML
 settings = Settings( strict = False, xml_huge_tree = True )
 
-if DEBUG:
-    client = Client( WSDL_FILE, settings = settings, transport = transport,
-        plugins = [MyLoggingPlugin() ] )
-else:
-      client = Client( WSDL_FILE, settings = settings, transport = transport )  
+# If debug output is requested, add the MyLoggingPlugin callback
+plugin = [ MyLoggingPlugin() ] if DEBUG else [ ]
 
+# Create the Zeep client with the specified settings
+client = Client( WSDL_FILE, settings = settings, transport = transport,
+        plugins = plugin )  
+
+# Create the Zeep service binding to AXL at the specified CUCM
 service = client.create_service( "{http://www.cisco.com/AXLAPIService/}AXLAPIBinding",
-                                'https://{cucm}:8443/axl/'.format( cucm = creds.CUCM_ADDRESS ))
+                                'https://{cucm}:8443/axl/'.format( cucm = creds.CUCM_ADDRESS ) )
 
 # Add testPartition1
 partition_data = {
@@ -132,77 +132,83 @@ partition_data = {
 try:
     resp = service.addRoutePartition( partition_data )
 except Fault as err:
-    print('Zeep error: addRoutePartition (1 of 2): {err}'.format( err = err))
+    print( 'Zeep error: addRoutePartition (1 of 2): {err}'.format( err = err ) )
 else:
-    print('addRoutePartition (1 of 2) response:')
-    print(resp)
+    print( '\naddRoutePartition (1 of 2) response:' )
+    print( resp, '\n' )
 
-input( 'Press Enter to continue...')
+input( 'Press Enter to continue...' )
 
-# # Add testPartition2
+# Add testPartition2
 partition_data = {
     'name': PARTITION2_NAME
 }
 try:
     resp = service.addRoutePartition( partition_data )
 except Fault as err:
-    print('Zeep error: addRoutePartition (2 of 2): {err}'.format( err = err))
+    print( 'Zeep error: addRoutePartition (2 of 2): {err}'.format( err = err ) )
 else:
-    print('addRoutePartition (2 of 2) response:')
-    print(resp)
+    print( '\naddRoutePartition (2 of 2) response:' )
+    print( resp )
 
-input( 'Press Enter to continue...')
+input( 'Press Enter to continue...' )
+print()
 
 # Add testCss
 css_data = {
     'name': CSS_NAME,
-    'members': { 'member': [ ] }
-}
+    'members': { 
+        'member': [ ] 
+    }
+} 
 
-css_data['members']['member'].append(
+css_data[ 'members' ][ 'member' ].append(
     {
             'routePartitionName': PARTITION1_NAME,
             'index': '1'
-    } )
+    }
+)
 
-css_data['members']['member'].append(
+css_data[ 'members' ][ 'member' ].append(
     {
             'routePartitionName': PARTITION2_NAME,
             'index': '2'
-    } )
+    }
+)
 
 try:
     resp = service.addCss( css_data )
 except Fault as err:
-    print('Zeep error: addCss: {err}'.format( err = err))
+    print( 'Zeep error: addCss: {err}'.format( err = err ) )
 else:
-    print('addCss response:')
-    print(resp)
+    print( '\naddCss response:' )
+    print( resp )
 
-input( 'Press Enter to continue...')
+input( 'Press Enter to continue...' )
+
 
 # Cleanup the objects we just created
 
 try:
     resp = service.removeCss( name = CSS_NAME )
 except Fault as err:
-    print('Zeep error: removeCss: {err}'.format( err = err))
+    print( 'Zeep error: removeCss: {err}'.format( err = err ) )
 else:
-    print('removeCss response:')
-    print(resp)
+    print( '\nremoveCss response:' )
+    print( resp )
 
 try:
     resp = service.removeRoutePartition( name = PARTITION1_NAME )
 except Fault as err:
-    print('Zeep error: remoteRoutePartition (1 of 2): {err}'.format( err = err))
+    print( 'Zeep error: remoteRoutePartition (1 of 2): {err}'.format( err = err ) )
 else:
-    print('removeRoutePartition (1 or 2) response:')
-    print(resp)
+    print( '\nremoveRoutePartition (1 or 2) response:' )
+    print( resp )
 
 try:
     resp = service.removeRoutePartition( name = PARTITION2_NAME )
 except Fault as err:
-    print('Zeep error: remoteRoutePartition (2 of 2): {err}'.format( err = err))
+    print( 'Zeep error: remoteRoutePartition (2 of 2): {err}'.format( err = err ) )
 else:
-    print('removeRoutePartition (2 or 2) response:')
-    print(resp)
+    print( '\nremoveRoutePartition (2 or 2) response:' )
+    print( resp )

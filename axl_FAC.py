@@ -51,7 +51,7 @@ import creds
 DEBUG = False
 
 # The WSDL is a local file in the working directory, see README
-WSDL_FILE = 'AXLAPI.wsdl'
+WSDL_FILE = 'schema/AXLAPI.wsdl'
 
 # This class lets you view the incoming and outgoing http headers and XML
 
@@ -88,11 +88,9 @@ Body:
 
 # This is where the meat of the application starts
 # The first step is to create a SOAP client session
-
 session = Session()
 
 # We avoid certificate verification by default
-
 session.verify = False
 
 # To enabled SSL cert checking (production)
@@ -102,28 +100,31 @@ session.verify = False
 # CERT = 'changeme.pem'
 # session.verify = CERT
 
-session.auth = HTTPBasicAuth(creds.AXL_USERNAME, creds.AXL_PASSWORD)
+session.auth = HTTPBasicAuth(creds.USERNAME, creds.PASSWORD)
 
 transport = Transport( session = session, timeout = 10 )
 
 # strict=False is not always necessary, but it allows zeep to parse imperfect XML
 settings = Settings( strict = False, xml_huge_tree = True )
 
+# If debug output is requested, add the MyLoggingPlugin callback
 plugin = [ MyLoggingPlugin() ] if DEBUG else [ ]
 
+# Create the Zeep client with the specified settings
 client = Client( WSDL_FILE, settings = settings, transport = transport,
         plugins = plugin ) 
 
 service = client.create_service( "{http://www.cisco.com/AXLAPIService/}AXLAPIBinding",
                                 'https://{cucm}:8443/axl/'.format( cucm = creds.CUCM_ADDRESS ))
 
-# Add FAC
+# Create an object with the new FAC fields
 fac_data = {
     'name': 'testFAC',
     'code': '1234',
     'authorizationLevel': '0'
 }
 
+# Execute an addFacInfo request
 try:
     resp = service.addFacInfo( fac_data )
 except Fault as err:
@@ -136,7 +137,8 @@ input( 'Press Enter to continue...')
 
 # Update FAC
 try:
-    resp = service.updateFacInfo( name = 'testFAC',
+    resp = service.updateFacInfo(
+        name = 'testFAC',
         newName = 'newTestFAC',
         code = '5678',
         authorizationLevel = '1' )
@@ -156,5 +158,3 @@ except Fault as err:
 else:
     print('removeFacInfo response:')
     print(resp)
-
-input( 'Press Enter to continue...')

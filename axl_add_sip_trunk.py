@@ -51,13 +51,13 @@ import creds
 DEBUG = False
 
 # The WSDL is a local file in the working directory, see README
-WSDL_FILE = 'AXLAPI.wsdl'
+WSDL_FILE = 'schema/AXLAPI.wsdl'
 
 # This class lets you view the incoming and outgoing http headers and XML
 
-class MyLoggingPlugin(Plugin):
+class MyLoggingPlugin( Plugin ):
 
-    def egress(self, envelope, http_headers, operation, binding_options):
+    def egress( self, envelope, http_headers, operation, binding_options ):
         print(
 '''Request
 -------
@@ -101,23 +101,25 @@ session.verify = False
 # CERT = 'changeme.pem'
 # session.verify = CERT
 
-session.auth = HTTPBasicAuth(creds.AXL_USERNAME, creds.AXL_PASSWORD)
+session.auth = HTTPBasicAuth( creds.USERNAME, creds.PASSWORD )
 
 transport = Transport( session = session, timeout = 10 )
 
 # strict=False is not always necessary, but it allows zeep to parse imperfect XML
 settings = Settings( strict = False, xml_huge_tree = True )
 
+# If debug output is requested, add the MyLoggingPlugin callback
 plugin = [ MyLoggingPlugin() ] if DEBUG else [ ]
 
+# Create the Zeep client with the specified settings
 client = Client( WSDL_FILE, settings = settings, transport = transport,
         plugins = plugin )
 
+# Create the Zeep service binding to AXL at the specified CUCM
 service = client.create_service( '{http://www.cisco.com/AXLAPIService/}AXLAPIBinding',
                                 'https://{cucm}:8443/axl/'.format( cucm = creds.CUCM_ADDRESS ))
 
-# Add SIP trunk
-
+# Create an object with the new SIP trunk fields and data
 sip_trunk_data = {
     'name': 'testSipTrunk',
     'description': 'testDescription',
@@ -134,25 +136,29 @@ sip_trunk_data = {
     'destinations': [ ],
 }
 
-sip_trunk_data['destinations'].append( { 'destination': 
-    { 'addressIpv4': '1.1.1.1', 'port': '5060', 'sortOrder': 1 }
-    } )
+# Create and add a Destination object to the Destinations array
+sip_trunk_data['destinations'].append(
+    { 'destination': { 
+        'addressIpv4': '1.1.1.1', 'port': '5060', 'sortOrder': 1 }
+    } 
+)
 
+# Execute the addSipTrunk request
 try:
     resp = service.addSipTrunk( sip_trunk_data )
 except Fault as err:
-    print('Zeep error: addSipTrunk: {err}'.format( err = err))
+    print('Zeep error: addSipTrunk: {err}'.format( err = err ) )
 else:
-    print('addSipTrunk response:')
-    print(resp)
+    print( 'addSipTrunk response:' )
+    print( resp )
 
-input( 'Press Enter to continue...')
+input( 'Press Enter to continue...' )
 
-# Delete FAC
+# Cleanup the SIP Trunk we just created
 try:
     resp = service.removeSipTrunk( name = 'testSipTrunk' )
 except Fault as err:
-    print('Zeep error: removeSipTrunk: {err}'.format( err = err))
+    print( 'Zeep error: removeSipTrunk: {err}'.format( err = err ) )
 else:
-    print('removeSipTrunk response:')
-    print(resp)
+    print( 'removeSipTrunk response:' )
+    print( resp )
