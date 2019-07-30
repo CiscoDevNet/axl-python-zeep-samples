@@ -4,7 +4,7 @@
 
 This basic sample demonstrates how to use the Python Zeep SOAP library to provision a CUCM user, DN and phone via the AXL API
 
-https://developer.cisco.com/site/axl/
+[https://developer.cisco.com/site/axl/](https://developer.cisco.com/site/axl/)
 
 The concepts and techniques shown can be extended to enable automated management of virtually any configuration or setting in the CUCM admin UI.
 
@@ -20,10 +20,14 @@ The concepts and techniques shown can be extended to enable automated management
 
 * `axl_add_sip_trunk.py` - Adds a new SIP trunk with destination address ( `<addSipTrunk`, `<removeSipTrunk>` )
 
+* `axl_executeSqlQuery.py` - Creates a Call Pickup Group and associates two test Lines, then executes a SQL query joining the numplan, pickupgrouplinemap, and pickupgroup tables to list the DNs belonging to the pickup group ( `<addCallPickupGroup>`, `<addLine>`, `<executeSqlQuery>`, `<removeCallPickupGroup>`, `<removeLine>` )
+
 ## Getting started
 
 * Install Python 2.7 or 3.7
   On Windows, choose the option to add to PATH environment variable
+
+* The project was built/tested using [Visual Studio Code](https://code.visualstudio.com/)
 
 * If this is a fresh installation, update pip (you may need to use `pip3` on Linux or Mac)
 
@@ -47,6 +51,8 @@ The concepts and techniques shown can be extended to enable automated management
 
     1. Copy the three WSDL files to the `schema/` directory of this project: `AXLAPI.wsdl`, `AXLEnums.xsd`, `AXLSoap.xsd`
 
+* To run a specific sample, in Visual Studio Code open the sample `.py` file you want to run, then press `F5`, or open the Debugging panel and click the green 'Launch' arrow
+
 ## Hints
 
 * You can get a 'dump' of the AXL WSDL to see how Zeep interprets it by copying the AXL WSDL files to the project root (see above) and running (Mac/Linux):
@@ -68,7 +74,7 @@ The concepts and techniques shown can be extended to enable automated management
         <member>
             <subElement1/>
             <subElement2/>
-        </member>        
+        </member>
     </members>
     ```
 
