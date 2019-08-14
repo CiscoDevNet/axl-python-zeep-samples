@@ -158,14 +158,10 @@ else:
 
 input( 'Press Enter to continue...' )
 
-# Update the line with the new pickup group
-line = {
-    'callPickupGroupName': 'testCallPickupGroup'
-}
-
 # Execute the updateLine request
 try:
-    resp = service.updateLine( pattern = '9876543211', routePartitionName = '',
+    resp = service.updateLine( pattern = '9876543211', 
+        routePartitionName = '',
         callPickupGroupName = 'testCallPickupGroup' 
         )
 except Fault as err:
