@@ -12,6 +12,8 @@ The concepts and techniques shown can be extended to enable automated management
 
 * `axlZeep.py` - Demonstrates adding a user, line, and phone ( `<addLine>`, `<addPhone>`, `<addUser>`, `<updatePhone>`, `<getUser>` )
 
+* `axl_add_updateLine.py` - Creates a line, then performs updateLine to modify the call pickup group ( `<addCallPickupGroup>`, `<addLine>`, `<updateLine>`, `<removeLine>`, `<removeCallPickupGroup>`)
+
 * `axl_updateDevicePool` - Demonstrates creating a Device Pool and its sub-objects, then updating the Device Pool's Local Route Group Settings ( `<addDevicePool>`, `<addH323Gateway>`, `<addRouteGroup>`, `<addLocalRouteGroup>`, `<updateDevicePool>`, `<removeH323Gateway>`, `<removeDevicePool>`, `<removeLocalRouteGroup>`, `<removeRouteGroup>` )
 
 * `axl_add_partition_css.py` - Adds two partitions, then adds a CSS containing the two new partitions ( `<addRoutePartition>`, `<addCss>` )
