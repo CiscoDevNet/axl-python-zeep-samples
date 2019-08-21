@@ -22,7 +22,9 @@ The concepts and techniques shown can be extended to enable automated management
 
 * `axl_add_sip_trunk.py` - Adds a new SIP trunk with destination address ( `<addSipTrunk`, `<removeSipTrunk>` )
 
-* `axl_executeSqlQuery.py` - Creates a Call Pickup Group and associates two test Lines, then executes a SQL query joining the numplan, pickupgrouplinemap, and pickupgroup tables to list the DNs belonging to the pickup group ( `<addCallPickupGroup>`, `<addLine>`, `<executeSqlQuery>`, `<removeCallPickupGroup>`, `<removeLine>` )
+* `axl_executeSQLQuery.py` - Creates a Call Pickup Group and associates two test Lines, then executes a SQL query joining the numplan, pickupgrouplinemap, and pickupgroup tables to list the DNs belonging to the pickup group ( `<addCallPickupGroup>`, `<addLine>`, `<executeSQLQuery>`, `<removeCallPickupGroup>`, `<removeLine>` )
+
+* `axl_executeSQLUpdate.py` - Creates a set of Video Conference Scheduling Portal Profiles and a new UC Service.   Then executes a SQL update to associate the additional primary/secondary profiles (`<addUcService>`, `<addServiceProfile>`, `<executeSQLUpdate>`, `<removeServiceProfile>`, `<removeUcService>`)
 
 ## Getting started
 

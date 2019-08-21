@@ -1,4 +1,4 @@
-"""AXL <executeSqlQuery> sample script, using the Zeep SOAP library
+"""AXL <executeSQLQuery> sample script, using the Zeep SOAP library
 
 Creates a Call Pickup Group and associates two test Lines, then executes a SQL
 query joining the numplan, pickupgrouplinemap, pickupgroup to list the DNs 
