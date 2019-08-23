@@ -1,8 +1,7 @@
-"""AXL <addUcService> and <executeSQLUpdate> sample script, using the Zeep SOAP library
+"""AXL <addRemoteDestination> sample script, using the Zeep SOAP library
 
-Creates a set of UC Services of type Video Conference Scheduling Portal, and an
-empty Service Profile.   Then executes a SQL update to associate the 
-primary/secondary Services to the Profile.
+Creates an EndUser, and associates a new Remote Destination Profile, 
+then adds a Remote Destination.
 
 Install Python 2.7 or 3.7
 On Windows, choose the option to add to PATH environment variable
@@ -41,6 +40,7 @@ SOFTWARE.
 """
 
 from lxml import etree
+# import requests
 from requests import Session
 from requests.auth import HTTPBasicAuth
 
@@ -121,134 +121,113 @@ client = Client( WSDL_FILE, settings = settings, transport = transport,
 service = client.create_service( '{http://www.cisco.com/AXLAPIService/}AXLAPIBinding',
                                 'https://{cucm}:8443/axl/'.format( cucm = creds.CUCM_ADDRESS ))
 
-# Create UC Service #1
-uc_service = {
-    'serviceType': 'Video Conference Scheduling Portal',
-    'productType': 'Telepresence Management System',
-    'name': 'testConferenceSchedulingPortal1',
-    'hostnameorip': '10.10.10.101',
-    'port': 80,
-    'protocol': 'http',
-    'ucServiceXml': '<TmsPortalUrl>http://10.10.10.101/</TmsPortalUrl>'
+# Create an End User
+end_user = {
+    'lastName': 'testEndUser',
+    'userid': 'testEndUser',
+    'presenceGroupName': 'Standard Presence Group',
+    'enableMobility': True
 }
 
-# Execute the addUcService request
+# Execute the addUser request
 try:
-	resp = service.addUcService( uc_service )
+	resp = service.addUser( end_user )
 except Fault as err:
-	print("Zeep error: addUcService: {0}".format( err ) )
+	print("Zeep error: addUser: {0}".format( err ) )
 else:
-	print( "\naddUcService response:\n" )
+	print( "\naddUser response:\n" )
 	print( resp,"\n" )
-
-# Store the returned unique ID, removing braces and converting to lowercase
-ucServiceId_1 = resp['return'].strip('{}').lower()
 
 input( 'Press Enter to continue...' )
 
-# Create UC Service #2
-uc_service = {
-    'serviceType': 'Video Conference Scheduling Portal',
-    'productType': 'Telepresence Management System',
-    'name': 'testConferenceSchedulingPortal2',
-    'hostnameorip': '10.10.10.102',
-    'port': 80,
-    'protocol': 'http',
-    'ucServiceXml': '<TmsPortalUrl>http://10.10.10.102/</TmsPortalUrl>'
+# Create and associate a Remote Destination Profile
+remote_destination_profile = {
+    'name': 'testRemoteDestinationProfile',
+    'product': 'Remote Destination Profile',
+    'class': 'Remote Destination Profile',
+    'protocol': 'Remote Destination',
+    'protocolSide': 'User',
+    'devicePoolName': 'Default',
+    'callInfoPrivacyStatus': 'Default',
+    'userId': 'testEndUser'
 }
 
-# Execute the addUcService request
+# Execute the addRemoteDestinationProfile request
 try:
-	resp = service.addUcService( uc_service )
+    resp = service.addRemoteDestinationProfile( remote_destination_profile )
 except Fault as err:
-	print("Zeep error: addUcService: {0}".format( err ) )
+	print("Zeep error: addRemoteDestinationProfile: {0}".format( err ) )
 else:
-	print( "\naddUcService response:\n" )
+	print( "\naddRemoteDestinationProfile response:\n" )
 	print( resp,"\n" )
-
-# Store the returned unique ID, removing braces and converting to lowercase
-ucServiceId_2 = resp['return'].strip('{}').lower()
 
 input( 'Press Enter to continue...' )
 
-# Create the UC Service Profile
-uc_service_profile = {
-    'name': 'testServiceProfile',
-    'isDefault': False,
-    'serviceProfileInfos': {
-        'serviceProfileInfo': []
-    }
+# Create a Remote Destination
+remote_destination = {
+    'name': 'testRemoteDestination',
+    'destination': '4055551212',
+    'answerTooSoonTimer': 1500,
+    'answerTooLateTimer': 19000,
+    'delayBeforeRingingCell': 4000,
+    'ownerUserId': 'testEndUser',
+    'enableUnifiedMobility': True,
+    'remoteDestinationProfileName': 'testRemoteDestinationProfile',
+    'isMobilePhone': True,
+    'enableMobileConnect': True
 }
 
-# Normally you would include specific profile type primary/secondary/tertiary
-# services as below.  However this is not working as of this writing due to CSCvq97982.
-# Subsequently we'll show how to associate these via executeSQLUpdate
+# Due to an issue with the AXL schema vs. implementation (11.5/12.5 - CSCvq98025)
+# we have to remove the nil <dualModeDeviceName> element Zeep creates 
+# via the following lines
 
-# uc_service_profile['serviceProfileInfos']['serviceProfileInfo'].append(
-#     {
-#         'profileName': 'Video Conference Scheduling Portal Profile',
-#         'primary': 'testConferenceSchedulingPortal1'
-#     }
-# )
+# Use the Zeep service to create an XML object of the request - don't send
+node = client.create_message( service, 'addRemoteDestination', remoteDestination = remote_destination)
 
-# Execute the addServiceProfile request
+# Remove the dualModeDeviceName element
+for element in node.xpath("//dualModeDeviceName"):
+  element.getparent().remove( element )
+
+# Execute the addRemoteDestination request
+# This has to be done a little differently since we want to send a custom payload
 try:
-	resp = service.addServiceProfile( uc_service_profile )
+    resp = transport.post_xml(
+        'https://{cucm}:8443/axl/'.format( cucm = creds.CUCM_ADDRESS ),
+        envelope = node,
+        headers = None
+    )
 except Fault as err:
-	print("Zeep error: addServiceProfile: {0}".format( err ) )
+	print("Zeep error: addRemoteDestination: {0}".format( err ) )
 else:
-	print( "\naddServiceProfile response:\n" )
-	print( resp,"\n" )
-
-# Store the returned unique ID, removing braces and converting to lowercase
-ucServiceProfileId = resp['return'].strip('{}').lower()
-
-input( 'Press Enter to continue...' )
-
-# Create an object containing the raw SQL update to run
-sql = '''UPDATE ucserviceprofiledetail SET fkucservice_1 = "{ucServiceId_1}", 
-    fkucservice_2 = "{ukServiceId_2}"
-    WHERE fkucserviceprofile = "{ucServiceProfileId}" AND
-    tkucservice = 41'''.format( 
-        ucServiceId_1 = ucServiceId_1,
-        ukServiceId_2 = ucServiceId_2,
-        ucServiceProfileId = ucServiceProfileId)
-
-# Execute the executeSQLQuery request
-try:
-    resp = service.executeSQLUpdate( sql )
-except Fault as err:
-    print('Zeep error: executeSQLUpdate: {err}'.format( err = err ) )
-else:
-    print( 'executeSQLUpdate response:' )
-    print( resp )
+	print( "\naddRemoteDestination response:\n" )
+	print( resp.text,"\n" )
 
 input( 'Press Enter to continue...' )
 
 # Cleanup the objects we just created
-
 try:
-    resp = service.removeServiceProfile( name = 'testServiceProfile' )
+    # removeRemoteDestination uses the destination vs the name
+    resp = service.removeRemoteDestination( destination = '4055551212' )
 except Fault as err:
-    print( 'Zeep error: removeServiceProfile: {err}'.format( err = err ) )
+    print( 'Zeep error: removeRemoteDestination: {err}'.format( err = err ) )
 else:
-    print( '\nremoveServiceProfile response:' )
+    print( '\nremoveRemoteDestination response:' )
     print( resp, '\n' )
 
 try:
-    resp = service.removeUcService( name = 'testConferenceSchedulingPortal1' )
+    resp = service.removeRemoteDestinationProfile( name = 'testRemoteDestinationProfile' )
 except Fault as err:
-    print( 'Zeep error: removeUcService: {err}'.format( err = err ) )
+    print( 'Zeep error: remoteRemoveDestinationProfile: {err}'.format( err = err ) )
 else:
-    print( '\nremoveUcService response:' )
+    print( '\nremoveRemoteDestinationProfile response:' )
     print( resp, '\n' )
 
 try:
-    resp = service.removeUcService( name = 'testConferenceSchedulingPortal2' )
+    resp = service.removeUser( userid = 'testEndUser' )
 except Fault as err:
-    print( 'Zeep error: removeUcService: {err}'.format( err = err ) )
+    print( 'Zeep error: removeUser: {err}'.format( err = err ) )
 else:
-    print( '\nremoveUcService response:' )
+    print( '\nremoveUser response:' )
     print( resp, '\n' )
 
 

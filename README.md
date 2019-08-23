@@ -24,7 +24,11 @@ The concepts and techniques shown can be extended to enable automated management
 
 * `axl_executeSQLQuery.py` - Creates a Call Pickup Group and associates two test Lines, then executes a SQL query joining the numplan, pickupgrouplinemap, and pickupgroup tables to list the DNs belonging to the pickup group ( `<addCallPickupGroup>`, `<addLine>`, `<executeSQLQuery>`, `<removeCallPickupGroup>`, `<removeLine>` )
 
-* `axl_executeSQLUpdate.py` - Creates a set of Video Conference Scheduling Portal Profiles and a new UC Service.   Then executes a SQL update to associate the additional primary/secondary profiles (`<addUcService>`, `<addServiceProfile>`, `<executeSQLUpdate>`, `<removeServiceProfile>`, `<removeUcService>`)
+* `axl_executeSQLUpdate.py` - Creates a set of UC Services of type Video Conference Scheduling Portal, and an empty Service Profile.   Then executes a SQL update to associate the primary/secondary Services to the Profile (`<addUcService>`, `<addServiceProfile>`, `<executeSQLUpdate>`, `<removeServiceProfile>`, `<removeUcService>`)
+
+* `axl_addRemoteDestination.py` - Creates an EndUser, and associates a new Remote Destination Profile, then adds a Remote Destination (`<addUser>`, `<addRemoteDestinationProfile>`, `<addRemoteDestination>` )
+
+* `axl_addAppUser.py` - Creates a CSF Phone device, then creates an Application User and associates the new device.  Finally the Application User and Phone are removed.
 
 ## Getting started
 
