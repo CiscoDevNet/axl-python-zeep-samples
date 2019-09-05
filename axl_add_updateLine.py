@@ -141,10 +141,18 @@ else:
 input( 'Press Enter to continue...' )
 
 # Create Line with no pickup group
+ePI = {
+        'presentationInfo': {
+            'externalPresentationNumber': '8005551212',
+            'externalPresentationName': 'John Doe'
+        }
+}
+
 line = {
     'pattern': '9876543211',
     'usage': 'Device',
-    'routePartitionName': None
+    'routePartitionName': None,
+    'externalPresentationInfo': ePI
 }
 
 # Execute the addLine request
@@ -158,19 +166,13 @@ else:
 
 input( 'Press Enter to continue...' )
 
-ePI = {
-        'presentationInfo': {
-            'externalPresentationNumber': '8005551212',
-            'externalPresentationName': 'John Doe'
-        }
-}
+
 
 # Execute the updateLine request
 try:
     resp = service.updateLine( pattern = '9876543211', 
         routePartitionName = '',
-        callPickupGroupName = 'testCallPickupGroup',
-        externalPresentationInfo = ePI
+        callPickupGroupName = 'testCallPickupGroup'
         )
 except Fault as err:
 	print("Zeep error: updateLine: {0}".format( err ) )
