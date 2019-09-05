@@ -1,6 +1,6 @@
 """AXL <addSipTrunk> sample script, using the Zeep SOAP library
 
-Install Python 2.7 or 3.7
+Install Python 3.7
 On Windows, choose the option to add to PATH environment variable
 
 If this is a fresh installation, update pip (you may need to use `pip3` on Linux or Mac)

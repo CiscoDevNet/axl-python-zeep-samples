@@ -1,8 +1,8 @@
 <?xml version="1.0"?>
 <xsd:schema 
-	targetNamespace="http://www.cisco.com/AXL/11.5" 
+	targetNamespace="http://www.cisco.com/AXL/12.5" 
 	xmlns:xsd="http://www.w3.org/2001/XMLSchema" 
-	xmlns:axl="http://www.cisco.com/AXL/11.5" 
+	xmlns:axl="http://www.cisco.com/AXL/12.5" 
 	elementFormDefault="unqualified" 
 	attributeFormDefault="unqualified">
 	
@@ -42,6 +42,7 @@
 			<xsd:enumeration value="CER Location Management"/>
 			<xsd:enumeration value="Cisco Web Dialer"/>
 			<xsd:enumeration value="Remote Syslog Server"/>
+			<xsd:enumeration value="Cisco Webex Hybrid Call Service"/>
 		</xsd:restriction>
 	</xsd:simpleType>
 	<xsd:simpleType name="XAppServerContent">
@@ -193,6 +194,8 @@
 			<xsd:enumeration value="ITLRecovery"/>
 			<xsd:enumeration value="CallManager-ECDSA"/>
 			<xsd:enumeration value="tomcat-ECDSA"/>
+			<xsd:enumeration value="Phone-CTL-ASA-trust"/>
+			<xsd:enumeration value="GDS-trust"/>
 		</xsd:restriction>
 	</xsd:simpleType>
 	<xsd:simpleType name="XCertificateStatus">
@@ -385,6 +388,7 @@
 			<xsd:enumeration value="Lithuania"/>
 			<xsd:enumeration value="Latvia"/>
 			<xsd:enumeration value="Estonia"/>
+			<xsd:enumeration value="Ukraine"/>
 		</xsd:restriction>
 	</xsd:simpleType>
 	<xsd:simpleType name="XCredential">
@@ -769,6 +773,8 @@
 			<xsd:enumeration value="VG-3VWIC-MBRD"/>
 			<xsd:enumeration value="ISR-2NIM-MBRD"/>
 			<xsd:enumeration value="SM-X-NIM-ADPTR"/>
+			<xsd:enumeration value="ENCS-1NIM-MBRD"/>
+			<xsd:enumeration value="VG-1NIM-MBRD"/>
 		</xsd:restriction>
 	</xsd:simpleType>
 	<xsd:simpleType name="XMGCPVic">
@@ -922,6 +928,31 @@
 			<xsd:enumeration value="NIM-4FXS-SCCP"/>
 			<xsd:enumeration value="NIM-4BRI-NT/TE-SCCP"/>
 			<xsd:enumeration value="NIM-2FXS/4FXO-SCCP"/>
+			<xsd:enumeration value="SM-X-16FXS/2FXO"/>
+			<xsd:enumeration value="SM-X-24FXS/4FXO"/>
+			<xsd:enumeration value="SM-X-8FXS/12FXO"/>
+			<xsd:enumeration value="SM-X-72FXS"/>
+			<xsd:enumeration value="SM-X-56FXS"/>
+			<xsd:enumeration value="SM-X-72FXS-SCCP"/>
+			<xsd:enumeration value="SM-X-56FXS-SCCP"/>
+			<xsd:enumeration value="SM-X-16FXS/2FXO-SCCP"/>
+			<xsd:enumeration value="SM-X-24FXS/4FXO-SCCP"/>
+			<xsd:enumeration value="SM-X-8FXS/12FXO-SCCP"/>
+			<xsd:enumeration value="VG-8FXS"/>
+			<xsd:enumeration value="VG-2FXS/2FXO"/>
+			<xsd:enumeration value="VG-4FXS/4FXO"/>
+			<xsd:enumeration value="VG-6FXS/6FXO"/>
+			<xsd:enumeration value="VG-8FXS-SCCP"/>
+			<xsd:enumeration value="VG-2FXS/2FXO-SCCP"/>
+			<xsd:enumeration value="VG-4FXS/4FXO-SCCP"/>
+			<xsd:enumeration value="VG-6FXS/6FXO-SCCP"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="XMRAPolicy">
+		<xsd:restriction base="xsd:string">
+			<xsd:enumeration value="No Service"/>
+			<xsd:enumeration value="IM &amp; Presence only"/>
+			<xsd:enumeration value="IM &amp; Presence, Voice and Video calls"/>
 		</xsd:restriction>
 	</xsd:simpleType>
 	<xsd:simpleType name="XMWLPolicy">
@@ -1158,6 +1189,27 @@
 			<xsd:enumeration value="Cisco TelePresence MX800 Dual"/>
 			<xsd:enumeration value="Cisco 8851NR"/>
 			<xsd:enumeration value="Cisco Spark Remote Device"/>
+			<xsd:enumeration value="Cisco Webex DX80"/>
+			<xsd:enumeration value="Cisco TelePresence DX70"/>
+			<xsd:enumeration value="Cisco 7832"/>
+			<xsd:enumeration value="Cisco 8865NR"/>
+			<xsd:enumeration value="Cisco Meeting Server"/>
+			<xsd:enumeration value="Cisco Webex Room Kit"/>
+			<xsd:enumeration value="Cisco Webex Room 55"/>
+			<xsd:enumeration value="Cisco Webex Room Kit Plus"/>
+			<xsd:enumeration value="CP-8800-Video 28-Button Key Expansion Module"/>
+			<xsd:enumeration value="CP-8800-Audio 28-Button Key Expansion Module"/>
+			<xsd:enumeration value="Cisco 8832"/>
+			<xsd:enumeration value="Cisco Webex Room 70 Single"/>
+			<xsd:enumeration value="Cisco 8832NR"/>
+			<xsd:enumeration value="Cisco ATA 191"/>
+			<xsd:enumeration value="Cisco Collaboration Mobile Convergence"/>
+			<xsd:enumeration value="Cisco Webex Room 70 Dual"/>
+			<xsd:enumeration value="Cisco Webex Room Kit Pro"/>
+			<xsd:enumeration value="Cisco Webex Room 55 Dual"/>
+			<xsd:enumeration value="Cisco Webex Room 70 Single G2"/>
+			<xsd:enumeration value="Cisco Webex Room 70 Dual G2"/>
+			<xsd:enumeration value="Cisco Webex Room Kit Mini"/>
 		</xsd:restriction>
 	</xsd:simpleType>
 	<xsd:simpleType name="XMonthOfYear">
@@ -1225,6 +1277,13 @@
 			<xsd:enumeration value="National Standard"/>
 			<xsd:enumeration value="Private"/>
 			<xsd:enumeration value="Unknown"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="XOnboardingRegistrationStatus">
+		<xsd:restriction base="xsd:string">
+			<xsd:enumeration value="Onboarding completed"/>
+			<xsd:enumeration value="Onboarding pending"/>
+			<xsd:enumeration value="Voucher Details unavailable"/>
 		</xsd:restriction>
 	</xsd:simpleType>
 	<xsd:simpleType name="XOperator">
@@ -1699,6 +1758,31 @@
 			<xsd:enumeration value="Cisco TelePresence MX800 Dual"/>
 			<xsd:enumeration value="Cisco 8851NR"/>
 			<xsd:enumeration value="Cisco Spark Remote Device"/>
+			<xsd:enumeration value="Cisco Webex DX80"/>
+			<xsd:enumeration value="Cisco TelePresence DX70"/>
+			<xsd:enumeration value="Cisco 7832"/>
+			<xsd:enumeration value="Cisco 8865NR"/>
+			<xsd:enumeration value="Cisco Meeting Server"/>
+			<xsd:enumeration value="Cisco Webex Room Kit"/>
+			<xsd:enumeration value="Cisco Webex Room 55"/>
+			<xsd:enumeration value="Cisco Webex Room Kit Plus"/>
+			<xsd:enumeration value="CP-8800-Audio 28-Button Key Expansion Module"/>
+			<xsd:enumeration value="CP-8800-Video 28-Button Key Expansion Module"/>
+			<xsd:enumeration value="Cisco 8832"/>
+			<xsd:enumeration value="Cisco Webex Room 70 Single"/>
+			<xsd:enumeration value="Cisco 8832NR"/>
+			<xsd:enumeration value="Cisco ATA 191"/>
+			<xsd:enumeration value="Cisco Collaboration Mobile Convergence"/>
+			<xsd:enumeration value="Cisco Webex Room 70 Dual"/>
+			<xsd:enumeration value="VG450"/>
+			<xsd:enumeration value="Cisco ISR 4461"/>
+			<xsd:enumeration value="Cisco ENCS 5400 ISRV"/>
+			<xsd:enumeration value="VG400"/>
+			<xsd:enumeration value="Cisco Webex Room Kit Pro"/>
+			<xsd:enumeration value="Cisco Webex Room 55 Dual"/>
+			<xsd:enumeration value="Cisco Webex Room 70 Single G2"/>
+			<xsd:enumeration value="Cisco Webex Room 70 Dual G2"/>
+			<xsd:enumeration value="Cisco Webex Room Kit Mini"/>
 		</xsd:restriction>
 	</xsd:simpleType>
 	<xsd:simpleType name="XProtocolSide">
@@ -1945,6 +2029,13 @@
 			<xsd:enumeration value="Cisco XCP File Transfer Manager"/>
 			<xsd:enumeration value="Cisco Certificate Change Notification Service"/>
 			<xsd:enumeration value="Cisco Wireless Controller Synchronization Service"/>
+			<xsd:enumeration value="Cisco Smart License Manager"/>
+			<xsd:enumeration value="Cisco Upgrade Agent Service"/>
+			<xsd:enumeration value="Cisco Management Agent Service"/>
+			<xsd:enumeration value="Cisco Push Notification Service"/>
+			<xsd:enumeration value="Cisco Certificate Enrollment Service"/>
+			<xsd:enumeration value="Platform Communication Web Service"/>
+			<xsd:enumeration value="Cisco Device Activation Service"/>
 		</xsd:restriction>
 	</xsd:simpleType>
 	<xsd:simpleType name="XServiceGrouping">
@@ -1963,6 +2054,7 @@
 			<xsd:enumeration value="Platform Services"/>
 			<xsd:enumeration value="IM and Presence Services"/>
 			<xsd:enumeration value="Location based Tracking Services"/>
+			<xsd:enumeration value="Cloud based Management Services"/>
 		</xsd:restriction>
 	</xsd:simpleType>
 	<xsd:simpleType name="XSilenceSuppressionThreshold">
@@ -2744,6 +2836,13 @@
 			<xsd:enumeration value="IP Multimedia Subsystem Service Control (ISC)"/>
 		</xsd:restriction>
 	</xsd:simpleType>
+	<xsd:simpleType name="XTrustReceivedIdentity">
+		<xsd:restriction base="xsd:string">
+			<xsd:enumeration value="Trust All (Default)"/>
+			<xsd:enumeration value="Trust PAI Only"/>
+			<xsd:enumeration value="Trust None"/>
+		</xsd:restriction>
+	</xsd:simpleType>
 	<xsd:simpleType name="XTrustRole">
 		<xsd:restriction base="xsd:string">
 			<xsd:enumeration value="SAST"/>
@@ -2764,6 +2863,7 @@
 			<xsd:enumeration value="Serviceability"/>
 			<xsd:enumeration value="Unknown"/>
 			<xsd:enumeration value="CallManager-ECDSA"/>
+			<xsd:enumeration value="GDS-trust"/>
 		</xsd:restriction>
 	</xsd:simpleType>
 	<xsd:simpleType name="XTunneledProtocol">
@@ -2786,6 +2886,7 @@
 			<xsd:enumeration value="CTI"/>
 			<xsd:enumeration value="Enhanced Directory"/>
 			<xsd:enumeration value="Telepresence Management System"/>
+			<xsd:enumeration value="Jabber"/>
 		</xsd:restriction>
 	</xsd:simpleType>
 	<xsd:simpleType name="XUCService">
@@ -2797,6 +2898,7 @@
 			<xsd:enumeration value="IM and Presence"/>
 			<xsd:enumeration value="CTI"/>
 			<xsd:enumeration value="Video Conference Scheduling Portal"/>
+			<xsd:enumeration value="Jabber Client Configuration (jabber-config.xml)"/>
 		</xsd:restriction>
 	</xsd:simpleType>
 	<xsd:simpleType name="XURIDisambiguationPolicy">
@@ -2998,6 +3100,7 @@
 			<xsd:enumeration value="CiscoCatalyst6000E1VoIPGateway"/>
 			<xsd:enumeration value="CiscoCatalyst6000T1VoIPGatewayPri"/>
 			<xsd:enumeration value="CiscoCatalyst6000T1VoIPGatewayT1"/>
+			<xsd:enumeration value="CiscoCloudOnboarding"/>
 			<xsd:enumeration value="CmcInfo"/>
 			<xsd:enumeration value="CommonDeviceConfig"/>
 			<xsd:enumeration value="CommonPhoneConfig"/>
@@ -3009,9 +3112,11 @@
 			<xsd:enumeration value="CtiRoutePoint"/>
 			<xsd:enumeration value="CumaServerSecurityProfile"/>
 			<xsd:enumeration value="CustomUserField"/>
+			<xsd:enumeration value="Customer"/>
 			<xsd:enumeration value="DateTimeGroup"/>
 			<xsd:enumeration value="Ddi"/>
 			<xsd:enumeration value="DefaultDeviceProfile"/>
+			<xsd:enumeration value="DeviceDefaults"/>
 			<xsd:enumeration value="DeviceMobility"/>
 			<xsd:enumeration value="DeviceMobilityGroup"/>
 			<xsd:enumeration value="DevicePool"/>
@@ -3027,6 +3132,7 @@
 			<xsd:enumeration value="EmccFeatureConfig"/>
 			<xsd:enumeration value="EndUserCapfProfile"/>
 			<xsd:enumeration value="EnterpriseFeatureAccessConfiguration"/>
+			<xsd:enumeration value="ExpresswayCConfiguration"/>
 			<xsd:enumeration value="ExternalCallControlProfile"/>
 			<xsd:enumeration value="FacInfo"/>
 			<xsd:enumeration value="FallbackProfile"/>
@@ -3088,9 +3194,11 @@
 			<xsd:enumeration value="MobilityProfile"/>
 			<xsd:enumeration value="MohAudioSource"/>
 			<xsd:enumeration value="MohServer"/>
+			<xsd:enumeration value="MraServiceDomain"/>
 			<xsd:enumeration value="Mtp"/>
 			<xsd:enumeration value="NetworkAccessProfile"/>
 			<xsd:enumeration value="Phone"/>
+			<xsd:enumeration value="PhoneActivationCode"/>
 			<xsd:enumeration value="PhoneButtonTemplate"/>
 			<xsd:enumeration value="PhoneNtp"/>
 			<xsd:enumeration value="PhoneSecurityProfile"/>

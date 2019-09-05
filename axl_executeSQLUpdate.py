@@ -4,7 +4,7 @@ Creates a set of UC Services of type Video Conference Scheduling Portal, and an
 empty Service Profile.   Then executes a SQL update to associate the 
 primary/secondary Services to the Profile.
 
-Install Python 2.7 or 3.7
+Install Python 3.7
 On Windows, choose the option to add to PATH environment variable
 
 If this is a fresh installation, update pip (you may need to use `pip3` on Linux or Mac)

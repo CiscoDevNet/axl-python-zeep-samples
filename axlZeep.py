@@ -1,6 +1,6 @@
 """AXL <addLine>, <addPhone>, <addUser>, <updatePhone>, <getUser> sample script, using the zeep library
 
-Install Python 2.7 or 3.7
+Install Python 3.7
 On Windows, choose the option to add to PATH environment variable
 
 If this is a fresh installation, update pip (you may need to use `pip3` on Linux or Mac)
@@ -44,19 +44,16 @@ from requests.auth import HTTPBasicAuth
 from zeep import Client, Settings, Plugin
 from zeep.transports import Transport
 from zeep.cache import SqliteCache
-from zeep.plugins import HistoryPlugin
 from zeep.exceptions import Fault
 
 # The WSDL is a local file
-
-WSDL_URL = 'AXLAPI.wsdl'
+WSDL_FILE = 'schema/AXLAPI.wsdl'
 
 # Configure CUCM location and AXL credentials in creds.py
 import creds
 
-CUCM_URL = 'https://' + creds.CUCM_ADDRESS + ':8443/axl/'
-USERNAME = creds.USERNAME
-PASSWD = creds.PASSWORD
+# Change to true to enable output of request/response headers and XML
+DEBUG = False
 
 # If you have a pem file certificate for CUCM, uncomment and define it here
 
@@ -71,22 +68,38 @@ USERFNAME = 'johnq'
 USERLNAME = 'public'
 USERPASS = 'public'
 
-# history shows http_headers
-history = HistoryPlugin()
 
 # This class lets you view the incoming and outgoing http headers and/or XML
-class MyLoggingPlugin(Plugin):
+class MyLoggingPlugin( Plugin ):
 
-    def ingress(self, envelope, http_headers, operation):
-        print(etree.tostring(envelope, pretty_print=True))
-        return envelope, http_headers
+    def egress( self, envelope, http_headers, operation, binding_options ):
+        print(
+'''Request
+-------
+Headers:
+{headers}
 
-    def egress(self, envelope, http_headers, operation, binding_options):
-        print(etree.tostring(envelope, pretty_print=True))
-        return envelope, http_headers
+Body:
+{xml}
 
-# This is where the meat of the application starts
-# The first step is to create a SOAP client session
+'''.format( headers = http_headers, 
+            xml = etree.tostring( envelope, pretty_print = True, encoding = 'unicode') )
+        )
+
+    def ingress( self, envelope, http_headers, operation ):
+        print('\n')
+        print(
+'''Response
+-------
+Headers:
+{headers}
+
+Body:
+{xml}
+
+'''.format( headers = http_headers, 
+            xml = etree.tostring( envelope, pretty_print = True, encoding = 'unicode' ) )
+        )
 
 session = Session()
 
@@ -95,16 +108,24 @@ session = Session()
 
 #session.verify = CERT
 session.verify = False
-session.auth = HTTPBasicAuth(USERNAME, PASSWD)
+session.auth = HTTPBasicAuth( creds.USERNAME, creds.PASSWORD )
 
-transport = Transport(session=session, timeout=10, cache=SqliteCache())
+# Create a Zeep transport and set a reasonable timeout value
+transport = Transport( session = session, timeout = 10 )
 
 # strict=False is not always necessary, but it allows zeep to parse imperfect XML
-settings = Settings(strict=False, xml_huge_tree=True)
+settings = Settings( strict=False, xml_huge_tree=True )
 
-client = Client(WSDL_URL, settings=settings, transport=transport, plugins=[MyLoggingPlugin(),history])
+# If debug output is requested, add the MyLoggingPlugin callback
+plugin = [ MyLoggingPlugin() ] if DEBUG else [ ]
 
-service = client.create_service("{http://www.cisco.com/AXLAPIService/}AXLAPIBinding", CUCM_URL)
+# Create the Zeep client with the specified settings
+client = Client( WSDL_FILE, settings = settings, transport = transport,
+        plugins = plugin )
+
+# service = client.create_service("{http://www.cisco.com/AXLAPIService/}AXLAPIBinding", CUCM_URL)
+service = client.create_service( '{http://www.cisco.com/AXLAPIService/}AXLAPIBinding',
+                                'https://{cucm}:8443/axl/'.format( cucm = creds.CUCM_ADDRESS ))
 
 line_data = {
     'line': {
@@ -121,12 +142,12 @@ line_data = {
 try:
 	line_resp = service.addLine(**line_data)
 except Fault as err:
-	print("Zeep error: {0}".format(err))
+	print("\nZeep error: {0}".format(err))
 else:
 	print("\naddLine response:\n")
 	print(line_resp,"\n")
-	print(history.last_sent)
-	print(history.last_received)
+
+input( 'Press Enter to continue...' )
 
 phone_data = {
     'phone': {
@@ -213,12 +234,12 @@ phone_data = {
 try:
   phone_resp = service.addPhone(**phone_data)
 except Fault as err:
-	print("Zeep error: {0}".format(err))
+	print("\nZeep error: {0}".format(err))
 else:
 	print("\naddPhone response:\n")
 	print(phone_resp,"\n")
-	print(history.last_sent)
-	print(history.last_received)
+
+input( 'Press Enter to continue...' )
 
 user_data = {
     'user': {
@@ -287,12 +308,12 @@ user_data = {
 try:
 	user_resp = service.addUser(**user_data)
 except Fault as err:
-	print("Zeep error: {0}".format(err))
+	print("\nZeep error: {0}".format(err))
 else:
 	print("\naddUser response:\n")
 	print(user_resp,"\n")
-	print(history.last_sent)
-	print(history.last_received)
+
+input( 'Press Enter to continue...' )
 
 phone_data = {
     'name': PHONEID,
@@ -320,12 +341,12 @@ phone_data = {
 try:
 	phone_resp = service.updatePhone(**phone_data)
 except Fault as err:
-	print("Zeep error: {0}".format(err))
+	print("\nZeep error: {0}".format(err))
 else:
 	print("\nupdatePhone response:\n")
 	print(phone_resp,"\n")
-	print(history.last_sent)
-	print(history.last_received)
+
+input( 'Press Enter to continue...' )
 
 user_data = {
     'userid': USERFNAME
@@ -348,13 +369,11 @@ user_data = {
 try:
 	user_resp = service.getUser(**user_data)
 except Fault as err:
-	print("Zeep error: {0}".format(err))
+	print("\nZeep error: {0}".format(err))
 else:
 	print("\ngetUser response:\n")
 	print(user_resp,"\n\n")
 	fname = user_resp['return']['user']['firstName']
 	lname = user_resp['return']['user']['lastName']
-	print(fname,lname)
-	print(history.last_sent)
-	print(history.last_received)
+	print( 'Parsed user info: {0} {1}'.format( fname, lname ) )
 

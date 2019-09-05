@@ -15,7 +15,7 @@ sub-objects in the proper order:
 <removeLocalRouteGroup>
 <removeRouteGroup>
 
-Install Python 2.7 or 3.7
+Install Python 3.7
 On Windows, choose the option to add to PATH environment variable
 
 If this is a fresh installation, update pip (you may need to use `pip3` on Linux or Mac)
@@ -147,7 +147,7 @@ resp = service.addDevicePool( device_pool )
 
 print( '\naddDevicePool response:\n', resp )
 
-input( 'Press Enter to continue...' )
+input( '\nPress Enter to continue...' )
 
 # Create a H.323 Gateway device
 # Represents the minimal set of required fields
@@ -176,7 +176,7 @@ resp = service.addH323Gateway( h323_gateway )
 
 print( '\naddH323Gateway response:\n', resp )
 
-input( 'Press Enter to continue...' )
+input( '\nPress Enter to continue...' )
 
 # Create a Route Group
 # members is a field, while member is the array
@@ -202,7 +202,7 @@ resp = service.addRouteGroup( route_group )
 
 print( '\naddRouteGroup response:\n', resp )
 
-input( 'Press Enter to continue...' )
+input( '\nPress Enter to continue...' )
 
 # Create a Local Route Group
 local_route_group = {
@@ -215,7 +215,7 @@ resp = service.addLocalRouteGroup( local_route_group )
 
 print( '\naddLocalRouteGroup response:\n', resp )
 
-input( 'Press Enter to continue...' )
+input( '\nPress Enter to continue...' )
 
 # Now, update the Device Pool to specify Local Route Groups
 
@@ -242,7 +242,7 @@ resp = service.updateDevicePool( name = 'testDevicePool', localRouteGroup = loca
 
 print( '\nupdateDevicePool response:\n', resp )
     
-input( 'Press Enter to continue...' )
+input( '\nPress Enter to continue...' )
 
 # Cleanup the objects we just created
 resp = service.removeH323Gateway( name = 'testH323Gateway' )

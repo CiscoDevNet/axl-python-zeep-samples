@@ -32,7 +32,7 @@ The concepts and techniques shown can be extended to enable automated management
 
 ## Getting started
 
-* Install Python 2.7 or 3.7
+* Install Python 3.7
   On Windows, choose the option to add to PATH environment variable
 
 * The project was built/tested using [Visual Studio Code](https://code.visualstudio.com/)
@@ -51,7 +51,7 @@ The concepts and techniques shown can be extended to enable automated management
   
 * Edit `creds.py` to specify your CUCM address and AXL user credentials
 
-* The AXL v11.5 WSDL files are included in this project.  If you'd like to use a different version, replace with the AXL WSDL files for your CUCM version:
+* The AXL v12.5 WSDL files are included in this project.  If you'd like to use a different version, replace with the AXL WSDL files for your CUCM version:
 
     1. From the CUCM Administration UI, download the 'Cisco AXL Tookit' from **Applications** / **Plugins**
 
@@ -66,7 +66,7 @@ The concepts and techniques shown can be extended to enable automated management
 * You can get a 'dump' of the AXL WSDL to see how Zeep interprets it by copying the AXL WSDL files to the project root (see above) and running (Mac/Linux):
 
     ```bash
-    python3 -mzeep AXLAPI.wsdl > wsdl.txt
+    python3 -mzeep schema/AXLAPI.wsdl > wsdl.txt
     ```
 
     This can help with identifying the proper object structure to send to Zeep

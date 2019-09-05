@@ -1,6 +1,6 @@
 """AXL <removeLine>, <removePhone>, <removeUser> sample script, using the zeep library
 
-Install Python 2.7 or 3.7
+Install Python 3.7
 On Windows, choose the option to add to PATH environment variable
 
 If this is a fresh installation, update pip (you may need to use `pip3` on Linux or Mac)
@@ -46,14 +46,16 @@ from zeep.cache import SqliteCache
 from zeep.plugins import HistoryPlugin
 from zeep.exceptions import Fault
 
+# The WSDL is a local file
+WSDL_FILE = 'schema/AXLAPI.wsdl'
+
 # Configure CUCM location and AXL credentials in creds.py
 import creds
 
-CUCM_URL = 'https://' + creds.CUCM_ADDRESS + ':8443/axl/'
-USERNAME = creds.USERNAME
-PASSWD = creds.PASSWORD
+# Change to true to enable output of request/response headers and XML
+DEBUG = False
 
-WSDL_URL = 'AXLAPI.wsdl'
+# If you have a pem file certificate for CUCM, uncomment and define it here
 
 #CERT = 'some.pem'
 
@@ -63,33 +65,64 @@ USERFNAME = 'johnq'
 USERLNAME = 'public'
 USERPASS = 'public'
 
-# history shows http_headers, important if you want to re-use JSESSIONID
-history = HistoryPlugin()
+# This class lets you view the incoming and outgoing http headers and/or XML
+class MyLoggingPlugin( Plugin ):
 
-# This class lets you view the incoming and outgoing XML
-class MyLoggingPlugin(Plugin):
+    def egress( self, envelope, http_headers, operation, binding_options ):
+        print(
+'''Request
+-------
+Headers:
+{headers}
 
-    def ingress(self, envelope, http_headers, operation):
-        print(etree.tostring(envelope, pretty_print=True))
-        return envelope, http_headers
+Body:
+{xml}
 
-    def egress(self, envelope, http_headers, operation, binding_options):
-        print(etree.tostring(envelope, pretty_print=True))
-        return envelope, http_headers
+'''.format( headers = http_headers, 
+            xml = etree.tostring( envelope, pretty_print = True, encoding = 'unicode') )
+        )
+
+    def ingress( self, envelope, http_headers, operation ):
+        print('\n')
+        print(
+'''Response
+-------
+Headers:
+{headers}
+
+Body:
+{xml}
+
+'''.format( headers = http_headers, 
+            xml = etree.tostring( envelope, pretty_print = True, encoding = 'unicode' ) )
+        )
+
 
 session = Session()
-session.verify = False
-#session.verify = CERT
-session.auth = HTTPBasicAuth(USERNAME, PASSWD)
 
-transport = Transport(session=session, timeout=10, cache=SqliteCache())
+# We avoid certificate verification by default, but you can uncomment and set
+# your certificate here, and comment out the False setting
+
+#session.verify = CERT
+session.verify = False
+session.auth = HTTPBasicAuth( creds.USERNAME, creds.PASSWORD )
+
+# Create a Zeep transport and set a reasonable timeout value
+transport = Transport( session = session, timeout = 10 )
 
 # strict=False is not always necessary, but it allows zeep to parse imperfect XML
-settings = Settings(strict=False, xml_huge_tree=True)
+settings = Settings( strict=False, xml_huge_tree=True )
 
-client = Client(WSDL_URL, settings=settings, transport=transport, plugins=[MyLoggingPlugin(),history])
+# If debug output is requested, add the MyLoggingPlugin callback
+plugin = [ MyLoggingPlugin() ] if DEBUG else [ ]
 
-service = client.create_service("{http://www.cisco.com/AXLAPIService/}AXLAPIBinding", CUCM_URL)
+# Create the Zeep client with the specified settings
+client = Client( WSDL_FILE, settings = settings, transport = transport,
+        plugins = plugin )
+
+# service = client.create_service("{http://www.cisco.com/AXLAPIService/}AXLAPIBinding", CUCM_URL)
+service = client.create_service( '{http://www.cisco.com/AXLAPIService/}AXLAPIBinding',
+                                'https://{cucm}:8443/axl/'.format( cucm = creds.CUCM_ADDRESS ))
 
 line_data = {
     'pattern' : LINEDN
@@ -98,13 +131,11 @@ line_data = {
 try:
 	line_resp = service.removeLine(**line_data)
 except Fault as err:
-	print("Zeep error: {0}".format(err))
+	print( '\nZeep error: {0}'.format( err ) )
 else:
 	l = line_resp
-	print("\nremoveLine response:\n")
-	print(l,"\n")
-	print(history.last_sent)
-	print(history.last_received)
+	print( '\nremoveLine response:\n' )
+	print( l, '\n')
 
 phone_data = {
     'name': PHONEID
@@ -113,13 +144,11 @@ phone_data = {
 try:
 	phone_resp = service.removePhone(**phone_data)
 except Fault as err:
-	print("Zeep error: {0}".format(err))
+	print( '\nZeep error: {0}'.format( err ) )
 else:
 	p = phone_resp
-	print("\nremovePhone response:\n")
-	print(p,"\n")
-	print(history.last_sent)
-	print(history.last_received)
+	print( '\nremovePhone response:\n' )
+	print( p, '\n' )
 
 user_data = {
     'userid': USERFNAME
@@ -128,11 +157,8 @@ user_data = {
 try:
 	user_resp = service.removeUser(**user_data)
 except Fault as err:
-	print("Zeep error: {0}".format(err))
+	print( '\nZeep error: {0}'.format( err ) )
 else:
 	u = user_resp
-	print("\nremoveUser response:\n")
-	print(u,"\n")
-	print(history.last_sent)
-	print(history.last_received)
-
+	print( '\nremoveUser response:\n' )
+	print( u, '\n' )

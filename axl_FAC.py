@@ -1,6 +1,6 @@
 """AXL <addFacInfo> / <updateFacInfo>sample script, using the zeep library
 
-Install Python 2.7 or 3.7
+Install Python 3.7
 On Windows, choose the option to add to PATH environment variable
 
 If this is a fresh installation, update pip (you may need to use `pip3` on Linux or Mac)
@@ -128,12 +128,12 @@ fac_data = {
 try:
     resp = service.addFacInfo( fac_data )
 except Fault as err:
-    print('Zeep error: addFacInfo: {err}'.format( err = err))
+    print('\nZeep error: addFacInfo: {err}'.format( err = err))
 else:
-    print('addFacInfo response:')
+    print('\naddFacInfo response:')
     print(resp)
 
-input( 'Press Enter to continue...')
+input( '\nPress Enter to continue...')
 
 # Update FAC
 try:
@@ -143,10 +143,10 @@ try:
         code = '5678',
         authorizationLevel = '1' )
 except Fault as err:
-    print('Zeep error: updateFacInfo: {err}'.format( err = err))
+    print('\nZeep error: updateFacInfo: {err}'.format( err = err))
 else:
-    print('updateFacInfo response:')
-    print(resp)
+    print('\nupdateFacInfo response:')
+    print( resp )
 
 input( 'Press Enter to continue...')
 
@@ -154,7 +154,7 @@ input( 'Press Enter to continue...')
 try:
     resp = service.removeFacInfo( name = 'newTestFAC' )
 except Fault as err:
-    print('Zeep error: removeFacInfo: {err}'.format( err = err))
+    print('\nZeep error: removeFacInfo: {err}'.format( err = err))
 else:
-    print('removeFacInfo response:')
+    print('\nremoveFacInfo response:')
     print(resp)
