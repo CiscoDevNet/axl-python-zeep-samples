@@ -1,4 +1,4 @@
-"""AXL <addRoutePartition> and <addCss> sample script, using the zeep library
+"""AXL <addSipTrunk> sample script, using the Zeep SOAP library
 
 Install Python 3.7
 On Windows, choose the option to add to PATH environment variable
@@ -53,53 +53,33 @@ DEBUG = False
 # The WSDL is a local file in the working directory, see README
 WSDL_FILE = 'schema/AXLAPI.wsdl'
 
-# The below Partions and CSSs will be created
-
-PARTITION1_NAME = 'testPartition1'
-PARTITION2_NAME = 'testPartition2'
-CSS_NAME = 'newCss'
-
 # This class lets you view the incoming and outgoing http headers and XML
 
-class MyLoggingPlugin(Plugin):
+class MyLoggingPlugin( Plugin ):
 
     def egress( self, envelope, http_headers, operation, binding_options ):
-        print(
-'''Request
--------
-Headers:
-{headers}
 
-Body:
-{ xml }
+        # Format the request body as pretty printed XML
+        xml = etree.tostring( envelope, pretty_print = True, encoding = 'unicode')
 
-'''.format( headers = http_headers, 
-            xml = etree.tostring( envelope, pretty_print = True, encoding = 'unicode' ) )
-        )
+        print( f'\nRequest\n-------\nHeaders:\n{http_headers}\n\nBody:\n{xml}' )
 
     def ingress( self, envelope, http_headers, operation ):
-        print( '\n' )
-        print(
-'''Response
--------
-Headers:
-{headers}
 
-Body:
-{ xml }
+        # Format the response body as pretty printed XML
+        xml = etree.tostring( envelope, pretty_print = True, encoding = 'unicode')
 
-'''.format( headers = http_headers, 
-            xml = etree.tostring( envelope, pretty_print = True, encoding = 'unicode' ) )
-        )
+        print( f'\nResponse\n-------\nHeaders:\n{http_headers}\n\nBody:\n{xml}' )
 
-# This is where the meat of the application starts
 # The first step is to create a SOAP client session
+
 session = Session()
 
 # We avoid certificate verification by default
+
 session.verify = False
 
-# To enabled SSL cert checking (production)
+# To enabled SSL cert checking (recommended for production)
 # place the CUCM Tomcat cert .pem file in the root of the project
 # and uncomment the two lines below
 
@@ -118,96 +98,52 @@ plugin = [ MyLoggingPlugin() ] if DEBUG else [ ]
 
 # Create the Zeep client with the specified settings
 client = Client( WSDL_FILE, settings = settings, transport = transport,
-        plugins = plugin )  
+        plugins = plugin )
 
 # Create the Zeep service binding to AXL at the specified CUCM
-service = client.create_service( "{http://www.cisco.com/AXLAPIService/}AXLAPIBinding",
-                                'https://{cucm}:8443/axl/'.format( cucm = creds.CUCM_ADDRESS ) )
+service = client.create_service( '{http://www.cisco.com/AXLAPIService/}AXLAPIBinding',
+                                'https://{cucm}:8443/axl/'.format( cucm = creds.CUCM_ADDRESS ))
 
-# Add testPartition1
-partition_data = {
-    'name': PARTITION1_NAME
+# Create an object with the new SIP trunk fields and data
+sip_trunk_data = {
+    'name': 'testSipTrunk',
+    'description': 'testDescription',
+    'product': 'SIP Trunk',
+    'class': 'Trunk',
+    'protocol': 'SIP',
+    'protocolSide': 'Network',
+    'devicePoolName': 'Default',
+    'locationName': 'Hub_None',
+    'securityProfileName': 'Non Secure SIP Trunk Profile',
+    'sipProfileName': 'Standard SIP Profile',
+    'presenceGroupName': 'Standard Presence group',
+    'callingAndCalledPartyInfoFormat': 'Deliver DN only in connected party',
+    'destinations': [ ],
 }
 
-try:
-    resp = service.addRoutePartition( partition_data )
-except Fault as err:
-    print( 'Zeep error: addRoutePartition (1 of 2): {err}'.format( err = err ) )
-else:
-    print( '\naddRoutePartition (1 of 2) response:' )
-    print( resp, '\n' )
-
-input( 'Press Enter to continue...' )
-
-# Add testPartition2
-partition_data = {
-    'name': PARTITION2_NAME
-}
-try:
-    resp = service.addRoutePartition( partition_data )
-except Fault as err:
-    print( 'Zeep error: addRoutePartition (2 of 2): {err}'.format( err = err ) )
-else:
-    print( '\naddRoutePartition (2 of 2) response:' )
-    print( resp )
-
-input( 'Press Enter to continue...' )
-print()
-
-# Add testCss
-css_data = {
-    'name': CSS_NAME,
-    'members': { 
-        'member': [ ] 
-    }
-} 
-
-css_data[ 'members' ][ 'member' ].append(
-    {
-            'routePartitionName': PARTITION1_NAME,
-            'index': '1'
-    }
+# Create and add a Destination object to the Destinations array
+sip_trunk_data['destinations'].append(
+    { 'destination': { 
+        'addressIpv4': '1.1.1.1', 'port': '5060', 'sortOrder': 1 }
+    } 
 )
 
-css_data[ 'members' ][ 'member' ].append(
-    {
-            'routePartitionName': PARTITION2_NAME,
-            'index': '2'
-    }
-)
-
+# Execute the addSipTrunk request
 try:
-    resp = service.addCss( css_data )
+    resp = service.addSipTrunk( sip_trunk_data )
 except Fault as err:
-    print( 'Zeep error: addCss: {err}'.format( err = err ) )
+    print('Zeep error: addSipTrunk: {err}'.format( err = err ) )
 else:
-    print( '\naddCss response:' )
+    print( 'addSipTrunk response:' )
     print( resp )
 
 input( 'Press Enter to continue...' )
 
-# Cleanup the objects we just created
-
+# Cleanup the SIP Trunk we just created
 try:
-    resp = service.removeCss( name = CSS_NAME )
+    resp = service.removeSipTrunk( name = 'testSipTrunk' )
 except Fault as err:
-    print( 'Zeep error: removeCss: {err}'.format( err = err ) )
+    print( 'Zeep error: removeSipTrunk: {err}'.format( err = err ) )
 else:
-    print( '\nremoveCss response:' )
-    print( resp )
-
-try:
-    resp = service.removeRoutePartition( name = PARTITION1_NAME )
-except Fault as err:
-    print( 'Zeep error: remoteRoutePartition (1 of 2): {err}'.format( err = err ) )
-else:
-    print( '\nremoveRoutePartition (1 or 2) response:' )
-    print( resp )
-
-try:
-    resp = service.removeRoutePartition( name = PARTITION2_NAME )
-except Fault as err:
-    print( 'Zeep error: remoteRoutePartition (2 of 2): {err}'.format( err = err ) )
-else:
-    print( '\nremoveRoutePartition (2 or 2) response:' )
+    print( 'removeSipTrunk response:' )
     print( resp )

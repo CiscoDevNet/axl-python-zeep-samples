@@ -72,33 +72,18 @@ DEBUG = False
 class MyLoggingPlugin( Plugin ):
 
     def egress( self, envelope, http_headers, operation, binding_options ):
-        print(
-'''Request
--------
-Headers:
-{}
 
-Body:
-{}
+        # Format the request body as pretty printed XML
+        xml = etree.tostring( envelope, pretty_print = True, encoding = 'unicode')
 
-'''.format( http_headers, 
-                etree.tostring( envelope, pretty_print = True, encoding = 'unicode' ) )
-        )
+        print( f'\nRequest\n-------\nHeaders:\n{http_headers}\n\nBody:\n{xml}' )
 
     def ingress( self, envelope, http_headers, operation ):
-        print( '\n' )
-        print(
-'''Response
--------
-Headers:
-{}
 
-Body:
-{}
+        # Format the response body as pretty printed XML
+        xml = etree.tostring( envelope, pretty_print = True, encoding = 'unicode')
 
-'''.format( http_headers, 
-                etree.tostring( envelope, pretty_print = True, encoding = 'unicode' ) )
-        )
+        print( f'\nResponse\n-------\nHeaders:\n{http_headers}\n\nBody:\n{xml}' )
 
 # This is where the meat of the application starts
 # The first step is to create a SOAP client session

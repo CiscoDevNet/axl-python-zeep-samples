@@ -62,33 +62,18 @@ WSDL_FILE = 'schema/AXLAPI.wsdl'
 class MyLoggingPlugin( Plugin ):
 
     def egress( self, envelope, http_headers, operation, binding_options ):
-        print(
-'''Request
--------
-Headers:
-{headers}
 
-Body:
-{xml}
+        # Format the request body as pretty printed XML
+        xml = etree.tostring( envelope, pretty_print = True, encoding = 'unicode')
 
-'''.format( headers = http_headers, 
-            xml = etree.tostring( envelope, pretty_print = True, encoding = 'unicode') )
-        )
+        print( f'\nRequest\n-------\nHeaders:\n{http_headers}\n\nBody:\n{xml}' )
 
     def ingress( self, envelope, http_headers, operation ):
-        print('\n')
-        print(
-'''Response
--------
-Headers:
-{headers}
 
-Body:
-{xml}
+        # Format the response body as pretty printed XML
+        xml = etree.tostring( envelope, pretty_print = True, encoding = 'unicode')
 
-'''.format( headers = http_headers, 
-            xml = etree.tostring( envelope, pretty_print = True, encoding = 'unicode') )
-        )
+        print( f'\nResponse\n-------\nHeaders:\n{http_headers}\n\nBody:\n{xml}' )
 
 # The first step is to create a SOAP client session
 session = Session()

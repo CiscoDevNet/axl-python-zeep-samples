@@ -1,8 +1,6 @@
-"""AXL <executeSQLQuery> sample script, using the Zeep SOAP library
+"""AXL addLine/updateLine sample script, using the Zeep SOAP library
 
-Creates a Call Pickup Group and associates two test Lines, then executes a SQL
-query joining the numplan, pickupgrouplinemap, pickupgroup to list the DNs 
-belonging to the pickup group.
+Creates a line, then performs updateLine to modify the call pickup group.
 
 Install Python 3.7
 On Windows, choose the option to add to PATH environment variable
@@ -76,22 +74,21 @@ class MyLoggingPlugin( Plugin ):
         print( f'\nResponse\n-------\nHeaders:\n{http_headers}\n\nBody:\n{xml}' )
 
 # The first step is to create a SOAP client session
-
 session = Session()
 
 # We avoid certificate verification by default
-
 session.verify = False
 
 # To enabled SSL cert checking (recommended for production)
 # place the CUCM Tomcat cert .pem file in the root of the project
-# and uncomment the two lines below
+# and uncomment the line below
 
-# CERT = 'changeme.pem'
-# session.verify = CERT
+# session.verify = 'changeme.pem'
 
+# Add Basic Auth credentials
 session.auth = HTTPBasicAuth( creds.USERNAME, creds.PASSWORD )
 
+# Create a Zeep transport and set a reasonable timeout value
 transport = Transport( session = session, timeout = 10 )
 
 # strict=False is not always necessary, but it allows zeep to parse imperfect XML
@@ -128,12 +125,19 @@ else:
 
 input( 'Press Enter to continue...' )
 
-# Create the first test Line
+# Create Line with no pickup group
+ePI = {
+        'presentationInfo': {
+            'externalPresentationNumber': '8005551212',
+            'externalPresentationName': 'John Doe'
+        }
+}
+
 line = {
     'pattern': '9876543211',
     'usage': 'Device',
     'routePartitionName': None,
-    'callPickupGroupName': 'testCallPickupGroup'
+    'externalPresentationInfo': ePI
 }
 
 # Execute the addLine request
@@ -145,59 +149,27 @@ else:
 	print( "\naddLine response:\n" )
 	print( resp,"\n" )
 
-# Create the second test Line
-line[ 'pattern' ] = '9876543212'
+input( 'Press Enter to continue...' )
 
-# Execute the addLine request
+
+
+# Execute the updateLine request
 try:
-	resp = service.addLine( line )
+    resp = service.updateLine( pattern = '9876543211', 
+        routePartitionName = '',
+        callPickupGroupName = 'testCallPickupGroup'
+        )
 except Fault as err:
-	print("Zeep error: addLine: {0}".format( err ) )
+	print("Zeep error: updateLine: {0}".format( err ) )
 else:
-	print( "\naddLine response:\n" )
+	print( "\nupdateLine response:\n" )
 	print( resp,"\n" )
 
 input( 'Press Enter to continue...' )
 
-# Create an object containing the raw SQL query to run
-sql = '''select numplan.dnorpattern from numplan, pickupgrouplinemap, pickupgroup
-            where numplan.pkid = pickupgrouplinemap.fknumplan_line and
-            pickupgrouplinemap.fkpickupgroup = pickupgroup.pkid and
-            pickupgroup.name = "testCallPickupGroup"'''
-
-# Execute the executeSQLQuery request
-try:
-    resp = service.executeSQLQuery( sql )
-except Fault as err:
-    print('Zeep error: executeSQLQuery: {err}'.format( err = err ) )
-else:
-    print( '\nexecuteSQLQuery response:' )
-    print( resp )
-
-input( 'Press Enter to continue...' )
-
-
-# Create a simple report of the SQL response
-print( 'Directory Numbers belonging to testCallPickupGroup' )
-print( '==================================================')
-
-for rowXml in resp[ 'return' ][ 'row' ]:
-
-    z = rowXml[ 0 ].text
-    print( z )
-
-
 # Cleanup the objects we just created
 try:
     resp = service.removeLine( pattern = '9876543211', routePartitionName = None )
-except Fault as err:
-    print( 'Zeep error: removeLine: {err}'.format( err = err ) )
-else:
-    print( '\nremoveLine response:' )
-    print( resp, '\n' )
-
-try:
-    resp = service.removeLine( pattern = '9876543212', routePartitionName = None )
 except Fault as err:
     print( 'Zeep error: removeLine: {err}'.format( err = err ) )
 else:

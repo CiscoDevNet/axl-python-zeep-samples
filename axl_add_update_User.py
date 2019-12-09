@@ -1,7 +1,7 @@
-"""AXL <addAppUser> and <addPhone> sample script, using the Zeep SOAP library
+"""AXL <addUser>, <updateUser> and <addPhone> sample script, using the Zeep SOAP library
 
-Creates a CSF phone device, then creates a new Application User and associates
-the new device.  Finally the Application User and phone are removed.
+Creates a CSF phone device, then creates a new End-User and associates
+the new device via <updateUser>.  Finally the End-User and phone are removed.
 
 Install Python 3.7
 On Windows, choose the option to add to PATH environment variable
@@ -57,37 +57,21 @@ DEBUG = False
 WSDL_FILE = 'schema/AXLAPI.wsdl'
 
 # This class lets you view the incoming and outgoing http headers and XML
-
 class MyLoggingPlugin( Plugin ):
 
     def egress( self, envelope, http_headers, operation, binding_options ):
-        print(
-'''Request
--------
-Headers:
-{headers}
 
-Body:
-{xml}
+        # Format the request body as pretty printed XML
+        xml = etree.tostring( envelope, pretty_print = True, encoding = 'unicode')
 
-'''.format( headers = http_headers, 
-            xml = etree.tostring( envelope, pretty_print = True, encoding = 'unicode') )
-        )
+        print( f'\nRequest\n-------\nHeaders:\n{http_headers}\n\nBody:\n{xml}' )
 
     def ingress( self, envelope, http_headers, operation ):
-        print('\n')
-        print(
-'''Response
--------
-Headers:
-{headers}
 
-Body:
-{xml}
+        # Format the response body as pretty printed XML
+        xml = etree.tostring( envelope, pretty_print = True, encoding = 'unicode')
 
-'''.format( headers = http_headers, 
-            xml = etree.tostring( envelope, pretty_print = True, encoding = 'unicode') )
-        )
+        print( f'\nResponse\n-------\nHeaders:\n{http_headers}\n\nBody:\n{xml}' )
 
 # The first step is to create a SOAP client session
 session = Session()
@@ -151,36 +135,54 @@ else:
 
 input( '\nPress Enter to continue...' )
 
-# Create an Application User
-app_user = {
-    'userid': 'testAppUser',
+# Create an End User
+end_user = {
+    'userid': 'testEndUser',
+    'lastName': 'testEndUser',
     'password': 'Cisco1234!',
-    'presenceGroupName': 'Standard Presence Group',
-    'associatedDevices': {
-        'device': []
-    }
+    'presenceGroupName': 'Standard Presence Group'
 }
 
-app_user['associatedDevices']['device'].append( 'CSFTESTPHONE' )
-
-# Execute the addAppUser request
+# Execute the addUser request
 try:
-	resp = service.addAppUser( app_user )
+	resp = service.addUser( end_user )
 except Exception as err:
-	print("\nZeep error: addAppUser: {0}".format( err ) )
+	print("\nZeep error: addUser: {0}".format( err ) )
 else:
-	print( "\naddAppUser response:\n" )
+	print( "\naddUser response:\n" )
+	print( resp,"\n" )
+
+input( 'Press Enter to continue...' )
+
+# Create an associated devices object
+devices = {
+        'device': []
+    }
+devices['device'].append( 'CSFTESTPHONE' )
+
+# Execute the updateUser request
+try:
+	resp = service.updateUser(
+        userid = 'testEndUser',
+        associatedDevices = devices,
+        homeCluster = True,
+        imAndPresenceEnable = True
+        )
+except Exception as err:
+	print("\nZeep error: updateUser: {0}".format( err ) )
+else:
+	print( "\nupdateUser response:\n" )
 	print( resp,"\n" )
 
 input( 'Press Enter to continue...' )
 
 # Cleanup the objects we just created
 try:
-    resp = service.removeAppUser( userid = 'testAppUser' )
+    resp = service.removeUser( userid = 'testAppUser' )
 except Fault as err:
-    print( 'Zeep error: removeAppUser: {err}'.format( err = err ) )
+    print( 'Zeep error: removeUser: {err}'.format( err = err ) )
 else:
-    print( '\nremoveAppUser response:' )
+    print( '\nremoveUser response:' )
     print( resp, '\n' )
 
 try:

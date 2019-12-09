@@ -1,6 +1,7 @@
-"""AXL addLine/updateLine sample script, using the Zeep SOAP library
+"""AXL <addAppUser> and <addPhone> sample script, using the Zeep SOAP library
 
-Creates a line, then performs updateLine to modify the call pickup group.
+Creates a CSF phone device, then creates a new Application User and associates
+the new device.  Finally the Application User and phone are removed.
 
 Install Python 3.7
 On Windows, choose the option to add to PATH environment variable
@@ -60,33 +61,18 @@ WSDL_FILE = 'schema/AXLAPI.wsdl'
 class MyLoggingPlugin( Plugin ):
 
     def egress( self, envelope, http_headers, operation, binding_options ):
-        print(
-'''Request
--------
-Headers:
-{headers}
 
-Body:
-{xml}
+        # Format the request body as pretty printed XML
+        xml = etree.tostring( envelope, pretty_print = True, encoding = 'unicode')
 
-'''.format( headers = http_headers, 
-            xml = etree.tostring( envelope, pretty_print = True, encoding = 'unicode') )
-        )
+        print( f'\nRequest\n-------\nHeaders:\n{http_headers}\n\nBody:\n{xml}' )
 
     def ingress( self, envelope, http_headers, operation ):
-        print('\n')
-        print(
-'''Response
--------
-Headers:
-{headers}
 
-Body:
-{xml}
+        # Format the response body as pretty printed XML
+        xml = etree.tostring( envelope, pretty_print = True, encoding = 'unicode')
 
-'''.format( headers = http_headers, 
-            xml = etree.tostring( envelope, pretty_print = True, encoding = 'unicode') )
-        )
+        print( f'\nResponse\n-------\nHeaders:\n{http_headers}\n\nBody:\n{xml}' )
 
 # The first step is to create a SOAP client session
 session = Session()
@@ -94,23 +80,22 @@ session = Session()
 # We avoid certificate verification by default
 session.verify = False
 
-# To enabled SSL cert checking (recommended for production)
+# To enable SSL cert checking (recommended for production)
 # place the CUCM Tomcat cert .pem file in the root of the project
-# and uncomment the line below
+# and uncomment the two lines below
 
-# session.verify = 'changeme.pem'
+# CERT = 'changeme.pem'
+# session.verify = CERT
 
-# Add Basic Auth credentials
 session.auth = HTTPBasicAuth( creds.USERNAME, creds.PASSWORD )
 
-# Create a Zeep transport and set a reasonable timeout value
 transport = Transport( session = session, timeout = 10 )
 
-# strict=False is not always necessary, but it allows zeep to parse imperfect XML
+# strict=False is not always necessary, but it allows Zeep to parse imperfect XML
 settings = Settings( strict = False, xml_huge_tree = True )
 
 # If debug output is requested, add the MyLoggingPlugin callback
-plugin = [ MyLoggingPlugin() ] if DEBUG else [ ]
+plugin = [ MyLoggingPlugin() ] if DEBUG else []
 
 # Create the Zeep client with the specified settings
 client = Client( WSDL_FILE, settings = settings, transport = transport,
@@ -120,82 +105,81 @@ client = Client( WSDL_FILE, settings = settings, transport = transport,
 service = client.create_service( '{http://www.cisco.com/AXLAPIService/}AXLAPIBinding',
                                 'https://{cucm}:8443/axl/'.format( cucm = creds.CUCM_ADDRESS ))
 
-# Create a test Call Pickup Group
-call_pickup_group = {
-    'pattern': '9876543210',
-    'routePartitionName': None,
-    'pickupNotification': 'Visual Alert',
-    'pickupNotificationTimer': 6,
-    'name': 'testCallPickupGroup'
+# Create a simple phone
+# Of note, this appears to be the minimum set of elements required 
+# by the schema/Zeep
+phone = {
+        'name': 'CSFTESTPHONE',
+        'product': 'Cisco Unified Client Services Framework',
+        'model': 'Cisco Unified Client Services Framework',
+        'class': 'Phone',
+        'protocol': 'SIP',
+        'protocolSide': 'User',
+        'devicePoolName': 'Default',
+        'commonPhoneConfigName': 'Standard Common Phone Profile',
+        'locationName': 'Hub_None',
+        'useTrustedRelayPoint': 'Default',
+        'builtInBridgeStatus': 'Default',
+        'packetCaptureMode': 'None',
+        'certificateOperation': 'No Pending Operation',
+        'deviceMobilityMode': 'Default'
 }
 
-# Execute the addCallPickupGroup request
+# Execute the addPhone request
 try:
-	resp = service.addCallPickupGroup( call_pickup_group )
-except Fault as err:
-	print("Zeep error: addCallPickupGroup: {0}".format( err ) )
+	resp = service.addPhone( phone )
+except Exception as err:
+	print("\nZeep error: addPhone: {0}".format( err ) )
 else:
-	print( "\naddCallPickupGroup response:\n" )
-	print( resp,"\n" )
+	print( "\naddPhone response:\n" )
+	print( resp )
 
-input( 'Press Enter to continue...' )
+input( '\nPress Enter to continue...' )
 
-# Create Line with no pickup group
-ePI = {
-        'presentationInfo': {
-            'externalPresentationNumber': '8005551212',
-            'externalPresentationName': 'John Doe'
-        }
+# Create an Application User
+app_user = {
+    'userid': 'testAppUser',
+    'password': 'Cisco1234!',
+    'presenceGroupName': 'Standard Presence Group',
+    'associatedDevices': {
+        'device': []
+    }
 }
 
-line = {
-    'pattern': '9876543211',
-    'usage': 'Device',
-    'routePartitionName': None,
-    'externalPresentationInfo': ePI
-}
+app_user['associatedDevices']['device'].append( 'CSFTESTPHONE' )
 
-# Execute the addLine request
+# Execute the addAppUser request
 try:
-	resp = service.addLine( line )
-except Fault as err:
-	print("Zeep error: addLine: {0}".format( err ) )
+	resp = service.addAppUser( app_user )
+except Exception as err:
+	print("\nZeep error: addAppUser: {0}".format( err ) )
 else:
-	print( "\naddLine response:\n" )
-	print( resp,"\n" )
-
-input( 'Press Enter to continue...' )
-
-
-
-# Execute the updateLine request
-try:
-    resp = service.updateLine( pattern = '9876543211', 
-        routePartitionName = '',
-        callPickupGroupName = 'testCallPickupGroup'
-        )
-except Fault as err:
-	print("Zeep error: updateLine: {0}".format( err ) )
-else:
-	print( "\nupdateLine response:\n" )
+	print( "\naddAppUser response:\n" )
 	print( resp,"\n" )
 
 input( 'Press Enter to continue...' )
 
 # Cleanup the objects we just created
 try:
-    resp = service.removeLine( pattern = '9876543211', routePartitionName = None )
+    resp = service.removeAppUser( userid = 'testAppUser' )
 except Fault as err:
-    print( 'Zeep error: removeLine: {err}'.format( err = err ) )
+    print( 'Zeep error: removeAppUser: {err}'.format( err = err ) )
 else:
-    print( '\nremoveLine response:' )
+    print( '\nremoveAppUser response:' )
     print( resp, '\n' )
 
 try:
-    resp = service.removeCallPickupGroup( name = 'testCallPickupGroup' )
+    resp = service.removePhone( name = 'CSFTESTPHONE' )
 except Fault as err:
-    print( 'Zeep error: removeCallPickupGroup: {err}'.format( err = err ) )
+    print( 'Zeep error: removePhone: {err}'.format( err = err ) )
 else:
-    print( '\nremoteCallPickupGroup response:' )
+    print( '\nremovePhone response:' )
     print( resp, '\n' )
+
+
+
+
+
+
+
 
