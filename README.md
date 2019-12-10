@@ -30,6 +30,9 @@ The concepts and techniques shown can be extended to enable automated management
 
 * `axl_addAppUser.py` - Creates a CSF Phone device, then creates an Application User and associates the new device.  Finally the Application User and Phone are removed.
 
+* 'axl_add_update_User.py' - Creates a CSF phone device, then creates a new End-User and associates
+the new device via `<updateUser>` (`<addPhone>`, `<addUser>`, `<updateUser>`, `<removeUser>`, `<removePhone>`)
+
 ## Getting started
 
 * Install Python 3.7
@@ -89,7 +92,7 @@ The concepts and techniques shown can be extended to enable automated management
     are represented a little differently than expected by Zeep.  Note that `<member>` becomes an array, not `<members>`:
 
     ```python
-    { 
+    {
         'members': {
             'member': [
                 {
