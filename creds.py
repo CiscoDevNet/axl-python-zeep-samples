@@ -1,3 +1,3 @@
-CUCM_LOCATION = 'changeme'
-AXL_USERNAME = 'changeme'
-AXL_PASSWORD = 'changeme'
+CUCM_ADDRESS = 'changeme'
+USERNAME = 'changeme'
+PASSWORD = 'changeme'
