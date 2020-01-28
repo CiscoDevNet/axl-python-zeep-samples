@@ -1,7 +1,8 @@
-"""AXL <addUser>, <updateUser> and <addPhone> sample script, using the Zeep SOAP library
+"""AXL <addPhone> and <executeSQLUpdate> sample script, using the Zeep SOAP library
 
-Creates a CSF phone device, then creates a new End-User and associates
-the new device via <updateUser>.  Finally the End-User and phone are removed.
+Creates an enduser, line and Jabber for Android BOT phone and associates the three.
+Then sets Do-not-Disturb on the phone via <executeSqlUpdate> to the CUCM 'dnddynamic'
+ table.  Finally, all objects are deleted.
 
 Copyright (c) 2018 Cisco and/or its affiliates.
 Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -42,6 +43,7 @@ DEBUG = False
 WSDL_FILE = 'schema/AXLAPI.wsdl'
 
 # This class lets you view the incoming and outgoing http headers and XML
+
 class MyLoggingPlugin( Plugin ):
 
     def egress( self, envelope, http_headers, operation, binding_options ):
@@ -89,17 +91,45 @@ client = Client( WSDL_FILE, settings = settings, transport = transport,
 service = client.create_service( '{http://www.cisco.com/AXLAPIService/}AXLAPIBinding',
                                 f'https://{os.getenv( "CUCM_ADDRESS" )}:8443/axl/' )
 
+line = {
+    'pattern': '9876543211',
+    'usage': 'Device',
+    'routePartitionName': None
+}
+
+# Execute the addLine request
+try:
+	resp = service.addLine( line )
+except Fault as err:
+	print("Zeep error: addLine: {0}".format( err ) )
+else:
+	print( "\naddLine response:\n" )
+	print( resp,"\n" )
+
+input( 'Press Enter to continue...' )
+
 # Create a simple phone
 # Of note, this appears to be the minimum set of elements required 
 # by the schema/Zeep
 phone = {
-        'name': 'CSFTESTPHONE',
-        'product': 'Cisco Unified Client Services Framework',
-        'model': 'Cisco Unified Client Services Framework',
+        'name': 'BOTTESTPHONE',
+        'product': 'Cisco Dual Mode for Android',
+        'model': 'Cisco Dual Mode for Android',
         'class': 'Phone',
         'protocol': 'SIP',
         'protocolSide': 'User',
         'devicePoolName': 'Default',
+        'lines': { 
+            'line': [
+                {
+                    'dirn': {
+                        'pattern': '9876543211',
+                        'routePartitionName': ''
+                    },
+                    'index': 1
+                }
+            ]
+        },
         'commonPhoneConfigName': 'Standard Common Phone Profile',
         'locationName': 'Hub_None',
         'useTrustedRelayPoint': 'Default',
@@ -114,10 +144,11 @@ try:
 	resp = service.addPhone( phone )
 except Exception as err:
 	print("\nZeep error: addPhone: {0}".format( err ) )
-    sys.exit( 1 )
+else:
+	print( "\naddPhone response:\n" )
+	print( resp )
 
-print( "\naddPhone response:\n" )
-print( resp )
+deviceId = resp['return'].strip('{}').lower()
 
 input( '\nPress Enter to continue...' )
 
@@ -126,7 +157,16 @@ end_user = {
     'userid': 'testEndUser',
     'lastName': 'testEndUser',
     'password': 'Cisco1234!',
-    'presenceGroupName': 'Standard Presence Group'
+    'presenceGroupName': 'Standard Presence Group',
+    'associatedDevices': {
+        'device': [ 'BOTTESTPHONE' ]
+    },
+    'associatedGroups': {
+        'userGroup': [
+            { 'name': 'Standard CCM End Users'}
+        ]
+    },
+    'imAndPresenceEnable': True
 }
 
 # Execute the addUser request
@@ -134,56 +174,51 @@ try:
 	resp = service.addUser( end_user )
 except Exception as err:
 	print("\nZeep error: addUser: {0}".format( err ) )
-    sys.exit( 1 )
-
-print( "\naddUser response:\n" )
-print( resp,"\n" )
+else:
+	print( "\naddUser response:\n" )
+	print( resp,"\n" )
 
 input( 'Press Enter to continue...' )
 
-# Create an associated devices object
-devices = {
-        'device': []
-    }
-devices['device'].append( 'CSFTESTPHONE' )
+# Create an object containing the raw SQL update to run
+sql = f'UPDATE dnddynamic SET dndstatus = "t" where fkdevice="{deviceId}"'
 
-# Execute the updateUser request
+# Execute the executeSQLQuery request
 try:
-	resp = service.updateUser(
-        userid = 'testEndUser',
-        associatedDevices = devices,
-        homeCluster = True,
-        imAndPresenceEnable = True
-        )
-except Exception as err:
-	print("\nZeep error: updateUser: {0}".format( err ) )
-    sys.exit( 1 )
-
-print( "\nupdateUser response:\n" )
-print( resp,"\n" )
+    resp = service.executeSQLUpdate( sql )
+except Fault as err:
+    print('Zeep error: executeSQLUpdate: {err}'.format( err = err ) )
+else:
+    print( 'executeSQLUpdate response:' )
+    print( resp )
 
 input( 'Press Enter to continue...' )
 
 # Cleanup the objects we just created
+
 try:
     resp = service.removeUser( userid = 'testEndUser' )
 except Fault as err:
     print( 'Zeep error: removeUser: {err}'.format( err = err ) )
-    sys.exit( 1 )
-
-print( '\nremoveUser response:' )
-print( resp, '\n' )
+else:
+    print( '\nremoveUser response:' )
+    print( resp, '\n' )
 
 try:
-    resp = service.removePhone( name = 'CSFTESTPHONE' )
+    resp = service.removePhone( name = 'BOTTESTPHONE' )
 except Fault as err:
     print( 'Zeep error: removePhone: {err}'.format( err = err ) )
-    sys.exit( 1 )
+else:
+    print( '\nremovePhone response:' )
+    print( resp, '\n' )
 
-print( '\nremovePhone response:' )
-print( resp, '\n' )
-
-
+try:
+    resp = service.removeLine( pattern = '9876543211', routePartitionName = None )
+except Fault as err:
+    print( 'Zeep error: removeLine: {err}'.format( err = err ) )
+else:
+    print( '\nremoveLine response:' )
+    print( resp, '\n' )
 
 
 

@@ -1,0 +1,17 @@
+appdirs==1.4.3
+attrs==19.3.0
+cached-property==1.5.1
+certifi==2019.11.28
+chardet==3.0.4
+defusedxml==0.6.0
+idna==2.8
+isodate==0.6.0
+lxml==4.4.2
+pkg-resources==0.0.0
+python-dotenv==0.10.5
+pytz==2019.3
+requests==2.22.0
+requests-toolbelt==0.9.1
+six==1.14.0
+urllib3==1.25.8
+zeep==3.4.0

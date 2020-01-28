@@ -2,24 +2,6 @@
 
 Creates a line, then performs updateLine to modify the call pickup group.
 
-Install Python 3.7
-On Windows, choose the option to add to PATH environment variable
-
-If this is a fresh installation, update pip (you may need to use `pip3` on Linux or Mac)
-
-    $ python -m pip install --upgrade pip
-
-Script Dependencies:
-    lxml
-    requests
-    zeep
-
-Dependency Installation:
-
-    $ pip install zeep
-
-This will install automatically all of zeep dependencies, including lxml, requests
-
 Copyright (c) 2018 Cisco and/or its affiliates.
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -45,9 +27,12 @@ from requests.auth import HTTPBasicAuth
 from zeep import Client, Settings, Plugin
 from zeep.transports import Transport
 from zeep.exceptions import Fault
+import sys
 
-# Configure CUCM location and AXL credentials in creds.py
-import creds
+# Edit .env file to specify your Webex site/user details
+import os
+from dotenv import load_dotenv
+load_dotenv()
 
 # Change to true to enable output of request/response headers and XML
 DEBUG = False
@@ -86,7 +71,7 @@ session.verify = False
 # session.verify = 'changeme.pem'
 
 # Add Basic Auth credentials
-session.auth = HTTPBasicAuth( creds.USERNAME, creds.PASSWORD )
+session.auth = HTTPBasicAuth( os.getenv( 'USERNAME' ), os.getenv( 'PASSWORD' ) )
 
 # Create a Zeep transport and set a reasonable timeout value
 transport = Transport( session = session, timeout = 10 )
@@ -103,7 +88,7 @@ client = Client( WSDL_FILE, settings = settings, transport = transport,
 
 # Create the Zeep service binding to AXL at the specified CUCM
 service = client.create_service( '{http://www.cisco.com/AXLAPIService/}AXLAPIBinding',
-                                'https://{cucm}:8443/axl/'.format( cucm = creds.CUCM_ADDRESS ))
+                                f'https://{os.getenv( "CUCM_ADDRESS" )}:8443/axl/' )
 
 # Create a test Call Pickup Group
 call_pickup_group = {
@@ -116,12 +101,13 @@ call_pickup_group = {
 
 # Execute the addCallPickupGroup request
 try:
-	resp = service.addCallPickupGroup( call_pickup_group )
+    resp = service.addCallPickupGroup( call_pickup_group )
 except Fault as err:
-	print("Zeep error: addCallPickupGroup: {0}".format( err ) )
-else:
-	print( "\naddCallPickupGroup response:\n" )
-	print( resp,"\n" )
+    print("Zeep error: addCallPickupGroup: {0}".format( err ) )
+    sys.exit( 1 )
+
+print( "\naddCallPickupGroup response:\n" )
+print( resp,"\n" )
 
 input( 'Press Enter to continue...' )
 
@@ -142,12 +128,13 @@ line = {
 
 # Execute the addLine request
 try:
-	resp = service.addLine( line )
+    resp = service.addLine( line )
 except Fault as err:
-	print("Zeep error: addLine: {0}".format( err ) )
-else:
-	print( "\naddLine response:\n" )
-	print( resp,"\n" )
+    print("Zeep error: addLine: {0}".format( err ) )
+    sys.exit( 1 )
+
+print( "\naddLine response:\n" )
+print( resp,"\n" )
 
 input( 'Press Enter to continue...' )
 
@@ -160,10 +147,11 @@ try:
         callPickupGroupName = 'testCallPickupGroup'
         )
 except Fault as err:
-	print("Zeep error: updateLine: {0}".format( err ) )
-else:
-	print( "\nupdateLine response:\n" )
-	print( resp,"\n" )
+    print("Zeep error: updateLine: {0}".format( err ) )
+    sys.exit( 1 )
+
+print( "\nupdateLine response:\n" )
+print( resp,"\n" )
 
 input( 'Press Enter to continue...' )
 
@@ -172,15 +160,17 @@ try:
     resp = service.removeLine( pattern = '9876543211', routePartitionName = None )
 except Fault as err:
     print( 'Zeep error: removeLine: {err}'.format( err = err ) )
-else:
-    print( '\nremoveLine response:' )
-    print( resp, '\n' )
+    sys.exit( 1 )
+
+print( '\nremoveLine response:' )
+print( resp, '\n' )
 
 try:
     resp = service.removeCallPickupGroup( name = 'testCallPickupGroup' )
 except Fault as err:
     print( 'Zeep error: removeCallPickupGroup: {err}'.format( err = err ) )
-else:
-    print( '\nremoteCallPickupGroup response:' )
-    print( resp, '\n' )
+    sys.exit( 1 )
+
+print( '\nremoteCallPickupGroup response:' )
+print( resp, '\n' )
 

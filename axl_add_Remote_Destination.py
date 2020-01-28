@@ -1,26 +1,5 @@
 """AXL <addRemoteDestination> sample script, using the Zeep SOAP library
 
-Creates an EndUser, and associates a new Remote Destination Profile, 
-then adds a Remote Destination.
-
-Install Python 3.7
-On Windows, choose the option to add to PATH environment variable
-
-If this is a fresh installation, update pip (you may need to use `pip3` on Linux or Mac)
-
-    $ python -m pip install --upgrade pip
-
-Script Dependencies:
-    lxml
-    requests
-    zeep
-
-Dependency Installation:
-
-    $ pip install zeep
-
-This will install automatically all of zeep dependencies, including lxml, requests
-
 Copyright (c) 2018 Cisco and/or its affiliates.
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -47,9 +26,12 @@ from requests.auth import HTTPBasicAuth
 from zeep import Client, Settings, Plugin
 from zeep.transports import Transport
 from zeep.exceptions import Fault
+import sys
 
-# Configure CUCM location and AXL credentials in creds.py
-import creds
+# Edit .env file to specify your Webex site/user details
+import os
+from dotenv import load_dotenv
+load_dotenv()
 
 # Change to true to enable output of request/response headers and XML
 DEBUG = False
@@ -88,7 +70,7 @@ session.verify = False
 # CERT = 'changeme.pem'
 # session.verify = CERT
 
-session.auth = HTTPBasicAuth( creds.USERNAME, creds.PASSWORD )
+session.auth = HTTPBasicAuth( os.getenv( 'USERNAME' ), os.getenv( 'PASSWORD' ) )
 
 transport = Transport( session = session, timeout = 10 )
 
@@ -104,7 +86,7 @@ client = Client( WSDL_FILE, settings = settings, transport = transport,
 
 # Create the Zeep service binding to AXL at the specified CUCM
 service = client.create_service( '{http://www.cisco.com/AXLAPIService/}AXLAPIBinding',
-                                'https://{cucm}:8443/axl/'.format( cucm = creds.CUCM_ADDRESS ))
+                                f'https://{os.getenv( "CUCM_ADDRESS" )}:8443/axl/' )
 
 # Create an End User
 end_user = {
@@ -177,7 +159,7 @@ for element in node.xpath("//dualModeDeviceName"):
 # This has to be done a little differently since we want to send a custom payload
 try:
     resp = transport.post_xml(
-        'https://{cucm}:8443/axl/'.format( cucm = creds.CUCM_ADDRESS ),
+        f'https://{os.getenv( "CUCM_ADDRESS" )}:8443/axl/',
         envelope = node,
         headers = None
     )

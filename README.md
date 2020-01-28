@@ -2,7 +2,7 @@
 
 ## Overview
 
-This basic sample demonstrates how to use the Python Zeep SOAP library to provision a CUCM user, DN and phone via the AXL API
+These samples demonstrates how to use the Python Zeep SOAP library to read/update CUCM configurations via the AXL API
 
 [https://developer.cisco.com/site/axl/](https://developer.cisco.com/site/axl/)
 
@@ -30,8 +30,9 @@ The concepts and techniques shown can be extended to enable automated management
 
 * `axl_addAppUser.py` - Creates a CSF Phone device, then creates an Application User and associates the new device.  Finally the Application User and Phone are removed.
 
-* 'axl_add_update_User.py' - Creates a CSF phone device, then creates a new End-User and associates
-the new device via `<updateUser>` (`<addPhone>`, `<addUser>`, `<updateUser>`, `<removeUser>`, `<removePhone>`)
+* `axl_add_update_User.py` - Creates a CSF phone device, then creates a new End-User and associates the new device via `<updateUser>` (`<addPhone>`, `<addUser>`, `<updateUser>`, `<removeUser>`, `<removePhone>`)
+
+* `axl_listChange.py` - Demonstrates usage of the AXL 'Data Change Notification' feature to continuosly monitor and display incremental changes to the CUCM configuration database (`<listChange>`)
 
 ## Getting started
 
@@ -40,19 +41,15 @@ the new device via `<updateUser>` (`<addPhone>`, `<addUser>`, `<updateUser>`, `<
 
 * The project was built/tested using [Visual Studio Code](https://code.visualstudio.com/)
 
-* If this is a fresh installation, update pip (you may need to use `pip3` on Linux or Mac)
+* Dependency installation:
 
     ```bash
-    python -m pip install --upgrade pip
+    pip3 install -r requirements.txt
     ```
   
-* Dependency Installation:
+    (You may need to use `pip` on Windows)
 
-    ```bash
-    pip install zeep
-    ```
-  
-* Edit `creds.py` to specify your CUCM address and AXL user credentials
+* Rename `.env.example` to `.env`, and edit it to specify your CUCM address and AXL user credentials
 
 * The AXL v12.5 WSDL files are included in this project.  If you'd like to use a different version, replace with the AXL WSDL files for your CUCM version:
 
@@ -105,6 +102,23 @@ the new device via `<updateUser>` (`<addPhone>`, `<addUser>`, `<updateUser>`, `<
                 }
             ]
         }
+    }
+    ```
+
+* Zeep expects elements with attributes and values to be constructed as below:
+
+    To generate this XML...
+
+    ```xml
+    <startChangeId queueId='foo'>bar</startChangeId>
+    ```
+
+    Define the object like this...
+
+    ```python
+    startChangeId = {
+        'queueId': 'fee',
+        '_value_1': 'bar'
     }
     ```
 

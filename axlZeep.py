@@ -1,23 +1,5 @@
 """AXL <addLine>, <addPhone>, <addUser>, <updatePhone>, <getUser> sample script, using the zeep library
 
-Install Python 3.7
-On Windows, choose the option to add to PATH environment variable
-
-If this is a fresh installation, update pip (you may need to use `pip3` on Linux or Mac)
-
-    $ python -m pip install --upgrade pip
-
-Script Dependencies:
-    lxml
-    requests
-    zeep
-
-Dependency Installation:
-
-    $ pip install zeep
-
-This will install automatically all of zeep dependencies, including lxml, requests
-
 Copyright (c) 2018 Cisco and/or its affiliates.
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -45,12 +27,15 @@ from zeep import Client, Settings, Plugin
 from zeep.transports import Transport
 from zeep.cache import SqliteCache
 from zeep.exceptions import Fault
+import sys
+
+# Edit .env file to specify your Webex site/user details
+import os
+from dotenv import load_dotenv
+load_dotenv()
 
 # The WSDL is a local file
 WSDL_FILE = 'schema/AXLAPI.wsdl'
-
-# Configure CUCM location and AXL credentials in creds.py
-import creds
 
 # Change to true to enable output of request/response headers and XML
 DEBUG = False
@@ -93,7 +78,7 @@ session = Session()
 
 #session.verify = CERT
 session.verify = False
-session.auth = HTTPBasicAuth( creds.USERNAME, creds.PASSWORD )
+session.auth = HTTPBasicAuth( os.getenv( 'USERNAME' ), os.getenv( 'PASSWORD' ) )
 
 # Create a Zeep transport and set a reasonable timeout value
 transport = Transport( session = session, timeout = 10 )
@@ -110,7 +95,7 @@ client = Client( WSDL_FILE, settings = settings, transport = transport,
 
 # service = client.create_service("{http://www.cisco.com/AXLAPIService/}AXLAPIBinding", CUCM_URL)
 service = client.create_service( '{http://www.cisco.com/AXLAPIService/}AXLAPIBinding',
-                                'https://{cucm}:8443/axl/'.format( cucm = creds.CUCM_ADDRESS ))
+                                f'https://{os.getenv( "CUCM_ADDRESS" )}:8443/axl/' )
 
 line_data = {
     'line': {

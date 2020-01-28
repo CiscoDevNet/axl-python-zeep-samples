@@ -3,24 +3,6 @@
 Creates a CSF phone device, then creates a new Application User and associates
 the new device.  Finally the Application User and phone are removed.
 
-Install Python 3.7
-On Windows, choose the option to add to PATH environment variable
-
-If this is a fresh installation, update pip (you may need to use `pip3` on Linux or Mac)
-
-    $ python -m pip install --upgrade pip
-
-Script Dependencies:
-    lxml
-    requests
-    zeep
-
-Dependency Installation:
-
-    $ pip install zeep
-
-This will install automatically all of zeep dependencies, including lxml, requests
-
 Copyright (c) 2018 Cisco and/or its affiliates.
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -42,13 +24,16 @@ SOFTWARE.
 from lxml import etree
 from requests import Session
 from requests.auth import HTTPBasicAuth
+import sys
 
 from zeep import Client, Settings, Plugin
 from zeep.transports import Transport
 from zeep.exceptions import Fault
 
-# Configure CUCM location and AXL credentials in creds.py
-import creds
+# Edit .env file to specify your Webex site/user details
+import os
+from dotenv import load_dotenv
+load_dotenv()
 
 # Change to true to enable output of request/response headers and XML
 DEBUG = False
@@ -87,7 +72,7 @@ session.verify = False
 # CERT = 'changeme.pem'
 # session.verify = CERT
 
-session.auth = HTTPBasicAuth( creds.USERNAME, creds.PASSWORD )
+session.auth = HTTPBasicAuth( os.getenv( 'USERNAME' ), os.getenv( 'PASSWORD' ) )
 
 transport = Transport( session = session, timeout = 10 )
 
@@ -103,7 +88,7 @@ client = Client( WSDL_FILE, settings = settings, transport = transport,
 
 # Create the Zeep service binding to AXL at the specified CUCM
 service = client.create_service( '{http://www.cisco.com/AXLAPIService/}AXLAPIBinding',
-                                'https://{cucm}:8443/axl/'.format( cucm = creds.CUCM_ADDRESS ))
+                                f'https://{os.getenv("CUCM_ADDRESS")}:8443/axl/' )
 
 # Create a simple phone
 # Of note, this appears to be the minimum set of elements required 
@@ -127,12 +112,13 @@ phone = {
 
 # Execute the addPhone request
 try:
-	resp = service.addPhone( phone )
+    resp = service.addPhone( phone )
 except Exception as err:
-	print("\nZeep error: addPhone: {0}".format( err ) )
-else:
-	print( "\naddPhone response:\n" )
-	print( resp )
+    print("\nZeep error: addPhone: {0}".format( err ) )
+    sys.exit( 1 )
+
+print( "\naddPhone response:\n" )
+print( resp )
 
 input( '\nPress Enter to continue...' )
 
@@ -150,12 +136,13 @@ app_user['associatedDevices']['device'].append( 'CSFTESTPHONE' )
 
 # Execute the addAppUser request
 try:
-	resp = service.addAppUser( app_user )
+    resp = service.addAppUser( app_user )
 except Exception as err:
-	print("\nZeep error: addAppUser: {0}".format( err ) )
-else:
-	print( "\naddAppUser response:\n" )
-	print( resp,"\n" )
+    print("\nZeep error: addAppUser: {0}".format( err ) )
+    sys.exit( 1 )
+
+print( "\naddAppUser response:\n" )
+print( resp,"\n" )
 
 input( 'Press Enter to continue...' )
 
@@ -164,17 +151,19 @@ try:
     resp = service.removeAppUser( userid = 'testAppUser' )
 except Fault as err:
     print( 'Zeep error: removeAppUser: {err}'.format( err = err ) )
-else:
-    print( '\nremoveAppUser response:' )
-    print( resp, '\n' )
+    sys.exit( 1 )
+
+print( '\nremoveAppUser response:' )
+print( resp, '\n' )
 
 try:
     resp = service.removePhone( name = 'CSFTESTPHONE' )
 except Fault as err:
     print( 'Zeep error: removePhone: {err}'.format( err = err ) )
-else:
-    print( '\nremovePhone response:' )
-    print( resp, '\n' )
+    sys.exit( 1 )
+
+print( '\nremovePhone response:' )
+print( resp, '\n' )
 
 
 
