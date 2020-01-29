@@ -3,3 +3,4 @@
 wsdl.txt
 .env
 env
+*.pem

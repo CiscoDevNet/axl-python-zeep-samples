@@ -121,5 +121,8 @@ The concepts and techniques shown can be extended to enable automated management
         '_value_1': 'bar'
     }
     ```
+* **Requests Sessions** While creating and using a [Requests Session](https://2.python-requests.org/en/master/user/advanced/#id1) object to use with Zeep allows disabling certificate verfication during development via `session.verify = False`, you should also use a Session even if you don't need to disable cert checks. 
+
+    This allows Zeep to use AXL cookies and HTTP persistent connections to keep CUCM resource impact low: fresh user authentication checks and Tomcat sessions are expensive, and CUCM socket connections are not unlimited...
 
 [![published](https://static.production.devnetcloud.com/codeexchange/assets/images/devnet-published.svg)](https://developer.cisco.com/codeexchange/github/repo/CiscoDevNet/axl-python-zeep-sample)
