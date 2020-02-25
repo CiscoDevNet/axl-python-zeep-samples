@@ -1,6 +1,6 @@
-"""AXL addLine/updateLine sample script, using the Zeep SOAP library
+"""AXL addRoutePattern/addRouteList sample script, using the Zeep SOAP library
 
-Creates a line, then performs updateLine to modify the call pickup group.
+Creates a Route List, then creates a Route Pattern using the new Route List.
 
 Copyright (c) 2018 Cisco and/or its affiliates.
 Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -90,87 +90,68 @@ client = Client( WSDL_FILE, settings = settings, transport = transport,
 service = client.create_service( '{http://www.cisco.com/AXLAPIService/}AXLAPIBinding',
                                 f'https://{os.getenv( "CUCM_ADDRESS" )}:8443/axl/' )
 
-# Create a test Call Pickup Group
-call_pickup_group = {
-    'pattern': '9876543210',
-    'routePartitionName': None,
-    'pickupNotification': 'Visual Alert',
-    'pickupNotificationTimer': 6,
-    'name': 'testCallPickupGroup'
+# Create a test Route List
+route_list = {
+    'name': 'testRouteList',
+    'callManagerGroupName': 'Default'
 }
 
-# Execute the addCallPickupGroup request
+# Execute the addRouteList request
 try:
-    resp = service.addCallPickupGroup( call_pickup_group )
+    resp = service.addRouteList( route_list )
 except Fault as err:
-    print("Zeep error: addCallPickupGroup: {0}".format( err ) )
+    print( f'Zeep error: addRouteList: { err }' )
     sys.exit( 1 )
 
-print( "\naddCallPickupGroup response:\n" )
-print( resp,"\n" )
+print( '\naddRouteList response:\n' )
+print( resp,'\n' )
 
 input( 'Press Enter to continue...' )
 
-# Create Line with no pickup group
-ePI = {
-        'presentationInfo': {
-            'externalPresentationNumber': '8005551212',
-            'externalPresentationName': 'John Doe'
-        }
-}
-
-line = {
-    'pattern': '9876543211',
-    'usage': 'Device',
+# create a test Route Pattern
+route_pattern = {
+    'pattern': '1234567890',
     'routePartitionName': None,
-    'externalPresentationInfo': ePI
+    'blockEnable': False,
+    'useCallingPartyPhoneMask': 'Default',
+    'dialPlanName': None,
+    'digitDiscardInstructionName': None,
+    'networkLocation': 'OnNet',
+    'prefixDigitsOut': None,
+    'routeFilterName': None,
+    'destination': {
+        'routeListName': 'testRouteList'
+    }
 }
 
-# Execute the addLine request
+# Execute the addRoutePattern request
 try:
-    resp = service.addLine( line )
+    resp = service.addRoutePattern( route_pattern )
 except Fault as err:
-    print("Zeep error: addLine: {0}".format( err ) )
+    print( f'Zeep error: addMediaRaddRoutePatternesourceList: { err }' )
     sys.exit( 1 )
 
-print( "\naddLine response:\n" )
-print( resp,"\n" )
-
-input( 'Press Enter to continue...' )
-
-
-
-# Execute the updateLine request
-try:
-    resp = service.updateLine( pattern = '9876543211', 
-        routePartitionName = '',
-        callPickupGroupName = 'testCallPickupGroup'
-        )
-except Fault as err:
-    print("Zeep error: updateLine: {0}".format( err ) )
-    sys.exit( 1 )
-
-print( "\nupdateLine response:\n" )
-print( resp,"\n" )
+print( '\naddRoutePattern response:\n' )
+print( resp,'\n' )
 
 input( 'Press Enter to continue...' )
 
 # Cleanup the objects we just created
 try:
-    resp = service.removeLine( pattern = '9876543211', routePartitionName = None )
+    resp = service.removeRoutePattern( pattern = '1234567890', routePartitionName = None )
 except Fault as err:
-    print( 'Zeep error: removeLine: {err}'.format( err = err ) )
+    print( f'Zeep error: remremoveRoutePatternoveDevicePool: { err }' )
     sys.exit( 1 )
 
-print( '\nremoveLine response:' )
+print( '\nremoveRoutePattern response:' )
 print( resp, '\n' )
 
 try:
-    resp = service.removeCallPickupGroup( name = 'testCallPickupGroup' )
+    resp = service.removeRouteList( name = 'testRouteList' )
 except Fault as err:
-    print( 'Zeep error: removeCallPickupGroup: {err}'.format( err = err ) )
+    print( f'Zeep error: removeMeremoveRouteListdiaResourceList: { err }' )
     sys.exit( 1 )
 
-print( '\nremoteCallPickupGroup response:' )
+print( '\nremoveRouteList response:' )
 print( resp, '\n' )
 

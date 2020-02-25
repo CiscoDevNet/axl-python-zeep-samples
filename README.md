@@ -34,6 +34,10 @@ The concepts and techniques shown can be extended to enable automated management
 
 * `axl_listChange.py` - Demonstrates usage of the AXL 'Data Change Notification' feature to continuosly monitor and display incremental changes to the CUCM configuration database (`<listChange>`)
 
+* `axl_add_update_Device_Pool.py` - Creates a new Device Pool, then creates a new Media Resource Group List and updates the Device Pool (`<addDevicePool>`, `<addMediaResourceList>`,`<updateDevicePool>`)
+
+* `axl_add_Route_Pattern.py` - Creates a Route List, then creates a Route Pattern using the new Route List (`<addRouteList>`, `<addRoutePattern>`)
+
 ## Getting started
 
 * Install Python 3.7
