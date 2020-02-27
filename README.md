@@ -38,6 +38,8 @@ The concepts and techniques shown can be extended to enable automated management
 
 * `axl_add_Route_Pattern.py` - Creates a Route List, then creates a Route Pattern using the new Route List (`<addRouteList>`, `<addRoutePattern>`)
 
+* `axl_add_Region.py` - Creates a Region including a region relationship  (`<addRegion>`)
+
 ## Getting started
 
 * Install Python 3.7
