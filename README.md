@@ -40,6 +40,8 @@ The concepts and techniques shown can be extended to enable automated management
 
 * `axl_add_Region.py` - Creates a Region including a region relationship  (`<addRegion>`)
 
+* `axl_add_Location.py` - Add a new Location including related Location and between Location settings  (`<addLocation>`)
+
 ## Getting started
 
 * Install Python 3.7
