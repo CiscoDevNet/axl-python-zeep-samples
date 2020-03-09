@@ -1,7 +1,7 @@
-"""AXL addLocation sample script, using the Zeep SOAP library
+"""AXL addUser/addLine/addPhone sample script, using the Zeep SOAP library
 
-Creates a new Device Pool, then creates a new Media Resource Group List and
-updates the Device Pool.
+Creates a new Line and Phone, associates the two; then creates a new End User,
+and associates with the new Phone.
 
 Copyright (c) 2018 Cisco and/or its affiliates.
 Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -91,59 +91,134 @@ client = Client( WSDL_FILE, settings = settings, transport = transport,
 service = client.create_service( '{http://www.cisco.com/AXLAPIService/}AXLAPIBinding',
                                 f'https://{os.getenv( "CUCM_ADDRESS" )}:8443/axl/' )
 
-# Create a test Region
-location = {
-    'name': 'testLocation',
-    'relatedLocations': {
-        'relatedLocation': []
-    },
-    'withinAudioBandwidth': '76',
-    'withinVideoBandwidth': '384',
-    'withinImmersiveKbits': '384',
-    'betweenLocations': {
-        'betweenLocation': []
+# Create a test Line
+line = {
+    'pattern': '1234567890',
+    'description': 'Test Line',
+    'usage': 'Device',
+    'routePartitionName': None
+}
+
+# Execute the addLine request
+try:
+    resp = service.addLine( line )
+
+except Fault as err:
+    print( f'Zeep error: addLine: { err }' )
+    sys.exit( 1 )
+
+print( '\naddLine response:\n' )
+print( resp,'\n' )
+
+input( 'Press Enter to continue...' )
+
+# Create a test phone, associating the User and Line
+phone = {
+    'name': 'testPhone',
+    'product': 'Cisco Unified Client Services Framework',
+    'model': 'Cisco Unified Client Services Framework',
+    'class': 'Phone',
+    'protocol': 'SIP',
+    'protocolSide': 'User',
+    'devicePoolName': 'Default',
+    'commonPhoneConfigName': 'Standard Common Phone Profile',
+    'locationName': 'Hub_None',
+    'useTrustedRelayPoint': 'Default',
+    'builtInBridgeStatus': 'Default',
+    'packetCaptureMode': 'None',
+    'certificateOperation': 'No Pending Operation',
+    'deviceMobilityMode': 'Default',
+    'lines': {
+        'line': [
+            {
+                'index': 1,
+                'dirn': {
+                    'pattern': '1234567890',
+                    'routePartitionName': None
+                }
+            }
+        ]
     }
 }
 
-# Create test relatedLocation object
-related_location = {
-    'locationName': 'Hub_None',
-    'rsvpSetting': 'No Reservation'
-}
-
-# Create a test betweenLocations 
-between_location = {
-    'locationName': 'Hub_None',
-    'weight': '50',
-    'audioBandwidth': '76',
-    'videoBandwidth': '384',
-    'immersiveBandwidth': '384'
-}
-
-#Insert the relatedLocation and betweenLocation objects into
-# their respective arrays
-location['relatedLocations']['relatedLocation'].append( related_location )
-location['betweenLocations']['betweenLocation'].append( between_location)
-
-# Execute the addLocation request
+# Execute the addPhone request
 try:
-    resp = service.addLocation( location )
+    resp = service.addPhone( phone )
+
 except Fault as err:
-    print( f'Zeep error: addLocation: { err }' )
+    print( f'Zeep error: addPhone: { err }' )
     sys.exit( 1 )
 
-print( '\naddLocation response:\n' )
+print( '\naddPhone response:\n' )
+print( resp,'\n' )
+
+input( 'Press Enter to continue...' )
+
+# Create a test End User
+end_user = {
+    'firstName': 'testFirstName',
+    'lastName': 'testLastName',
+    'userid': 'testUser',
+    'password': 'C1sco12345',
+    'pin': '123456',
+    'userLocale': 'English United States',
+    'associatedGroups': {
+        'userGroup': [
+            {
+                'name': 'Standard CCM End Users',
+                'userRoles': {
+                    'userRole': [
+                        'Standard CCM End Users',
+                        'Standard CCMUSER Administration'
+                    ]
+                }
+            }
+        ]
+    },
+    'associatedDevices': {
+        'device': [
+            'testPhone'
+        ]
+    },
+    'presenceGroupName': 'Standard Presence group'
+}
+
+try:
+    resp = service.addUser( end_user )
+
+except Fault as err:
+    print( f'Zeep error: addUser: { err }' )
+    sys.exit( 1 )
+
+print( '\naddUser response:\n' )
 print( resp,'\n' )
 
 input( 'Press Enter to continue...' )
 
 # Cleanup the objects we just created
 try:
-    resp = service.removeLocation( name = 'testLocation')
+    resp = service.removeUser( userid = 'testUser')
 except Fault as err:
-    print( f'Zeep error: removeLocation: { err }' )
+    print( f'Zeep error: removeUser: { err }' )
     sys.exit( 1 )
 
-print( '\nremoveLocation response:' )
+print( '\nremoveUser response:' )
 print( resp, '\n' )
 
+try:
+    resp = service.removeLine( pattern = '1234567890')
+except Fault as err:
+    print( f'Zeep error: removeLine: { err }' )
+    sys.exit( 1 )
+
+print( '\nremoveLine response:' )
+print( resp, '\n' )
+
+try:
+    resp = service.removePhone( name = 'testPhone')
+except Fault as err:
+    print( f'Zeep error: removePhone: { err }' )
+    sys.exit( 1 )
+
+print( '\nremovePhone response:' )
+print( resp, '\n' )

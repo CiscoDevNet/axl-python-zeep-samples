@@ -42,6 +42,9 @@ The concepts and techniques shown can be extended to enable automated management
 
 * `axl_add_Location.py` - Add a new Location including related Location and between Location settings  (`<addLocation>`)
 
+* `axl_add_User_Line_Phone.py` - Creates a new Line and Phone, associates the two; then creates a new End User, and associates with the new Phone (`<addLine>`, `<addPhone>`, `<addUser>`)
+
+
 ## Getting started
 
 * Install Python 3.7
