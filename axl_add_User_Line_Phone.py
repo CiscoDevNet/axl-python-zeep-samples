@@ -125,6 +125,7 @@ phone = {
     'locationName': 'Hub_None',
     'useTrustedRelayPoint': 'Default',
     'builtInBridgeStatus': 'Default',
+    'sipProfileName': 'Standard SIP Profile',
     'packetCaptureMode': 'None',
     'certificateOperation': 'No Pending Operation',
     'deviceMobilityMode': 'Default',
