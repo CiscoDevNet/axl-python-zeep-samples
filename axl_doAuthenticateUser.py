@@ -1,7 +1,7 @@
-"""AXL <addAppUser> and <addPhone> sample script, using the Zeep SOAP library
+"""AXL <doAuthenticateUser> sample script, using the Zeep SOAP library
 
-Creates a CSF phone device, then creates a new Application User and associates
-the new device.  Finally the Application User and phone are removed.
+Creates an End User with password and PIN, authenticates the user using each,
+then deletes the user.
 
 Copyright (c) 2018 Cisco and/or its affiliates.
 Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -90,80 +90,61 @@ client = Client( WSDL_FILE, settings = settings, transport = transport,
 service = client.create_service( '{http://www.cisco.com/AXLAPIService/}AXLAPIBinding',
                                 f'https://{os.getenv("CUCM_ADDRESS")}:8443/axl/' )
 
-# Create a simple phone
-# Of note, this appears to be the minimum set of elements required 
-# by the schema/Zeep
-phone = {
-        'name': 'CSFTESTPHONE',
-        'product': 'Cisco Unified Client Services Framework',
-        'model': 'Cisco Unified Client Services Framework',
-        'class': 'Phone',
-        'protocol': 'SIP',
-        'protocolSide': 'User',
-        'devicePoolName': 'Default',
-        'commonPhoneConfigName': 'Standard Common Phone Profile',
-        'locationName': 'Hub_None',
-        'useTrustedRelayPoint': 'Default',
-        'builtInBridgeStatus': 'Default',
-        'packetCaptureMode': 'None',
-        'certificateOperation': 'No Pending Operation',
-        'deviceMobilityMode': 'Default'
-}
-
-# Execute the addPhone request
-try:
-    resp = service.addPhone( phone )
-except Exception as err:
-    print( f'\nZeep error: addPhone: { err }' )
-    sys.exit( 1 )
-
-print( '\naddPhone response:\n' )
-print( resp )
-
-input( '\nPress Enter to continue...' )
-
-# Create an Application User
-app_user = {
-    'userid': 'testAppUser',
+# Create an End User
+end_user = {
+    'userid': 'testEndUser',
+    'lastName': 'testEndUser',
     'password': 'Cisco1234!',
-    'presenceGroupName': 'Standard Presence Group',
-    'associatedDevices': {
-        'device': []
+    'pin': '09823490',
+    'presenceGroupName': 'Standard Presence Group'
     }
-}
 
-app_user['associatedDevices']['device'].append( 'CSFTESTPHONE' )
-
-# Execute the addAppUser request
+# Execute the addUser request
 try:
-    resp = service.addAppUser( app_user )
+    resp = service.addUser( end_user )
 except Exception as err:
-    print("\nZeep error: addAppUser: {0}".format( err ) )
+    print( f'\nZeep error: addUser: { err }' )
     sys.exit( 1 )
 
-print( "\naddAppUser response:\n" )
-print( resp,"\n" )
+print( '\naddUser response:\n' )
+print( resp, '\n' )
+
+input( 'Press Enter to continue...' )
+
+# Execute doAuthenticateUser using password
+try:
+    resp = service.doAuthenticateUser( userid = 'testEndUser', password = 'Cisco1234!' )
+except Exception as err:
+    print( f'\nZeep error: doAuthenticateUser (password): { err }' )
+    sys.exit( 1 )
+
+print( '\ndoAuthenticateUser (password) response: SUCCESS\n' )
+print( resp, '\n' )
+
+input( 'Press Enter to continue...' )
+
+# Execute doAuthenticateUser using PIN
+try:
+    resp = service.doAuthenticateUser( userid = 'testEndUser', pin = '09823490' )
+except Exception as err:
+    print( f'\nZeep error: doAuthenticateUser (PIN): { err }' )
+    sys.exit( 1 )
+
+print( '\ndoAuthenticateUser (PIN) response: SUCCESS\n' )
+print( resp, '\n' )
 
 input( 'Press Enter to continue...' )
 
 # Cleanup the objects we just created
 try:
-    resp = service.removeAppUser( userid = 'testAppUser' )
+    resp = service.removeUser( userid = 'testEndUser' )
 except Fault as err:
-    print( 'Zeep error: removeAppUser: {err}'.format( err = err ) )
+    print( f'Zeep error: removeUser: { err }' )
     sys.exit( 1 )
 
-print( '\nremoveAppUser response:' )
+print( '\nremoveUser response:' )
 print( resp, '\n' )
 
-try:
-    resp = service.removePhone( name = 'CSFTESTPHONE' )
-except Fault as err:
-    print( 'Zeep error: removePhone: {err}'.format( err = err ) )
-    sys.exit( 1 )
-
-print( '\nremovePhone response:' )
-print( resp, '\n' )
 
 
 

@@ -44,8 +44,9 @@ The concepts and techniques shown can be extended to enable automated management
 
 * `axl_add_User_Line_Phone.py` - Creates a new Line and Phone, associates the two; then creates a new End User, and associates with the new Phone (`<addLine>`, `<addPhone>`, `<addUser>`)
 
-* `axl_update_Service_Parameter.py` - Lists all Process Nodes with "CUCM Voice/Video" role, then for each sets the 
-"Cisco CallManager" service parameter "CdrEnabled" to true (`<listProcessNode>`, `<updateServiceParameter>`)
+* `axl_update_Service_Parameter.py` - Lists all Process Nodes with "CUCM Voice/Video" role, then for each sets the "Cisco CallManager" service parameter "CdrEnabled" to true (`<listProcessNode>`, `<updateServiceParameter>`)
+
+* `axl_doAuthenticateUser.py` - Creates an End User with password and PIN, authenticates the user using each, then deletes the user (`<addUser>`, `<doAuthenticateUser>`)
 
 ## Getting started
 
