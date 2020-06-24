@@ -49,14 +49,14 @@ class MyLoggingPlugin( Plugin ):
         # Format the request body as pretty printed XML
         xml = etree.tostring( envelope, pretty_print = True, encoding = 'unicode')
 
-        print( f'\nRequest\n-------\nHeaders:\n{http_headers}\n\nBody:\n{xml}' )
+        print( f'\nRequest\n-------\nHeaders:\n{ http_headers }\n\nBody:\n{ xml }' )
 
     def ingress( self, envelope, http_headers, operation ):
 
         # Format the response body as pretty printed XML
-        xml = etree.tostring( envelope, pretty_print = True, encoding = 'unicode')
+        xml = etree.tostring( envelope, pretty_print = True, encoding = 'unicode' )
 
-        print( f'\nResponse\n-------\nHeaders:\n{http_headers}\n\nBody:\n{xml}' )
+        print( f'\nResponse\n-------\nHeaders:\n{ http_headers }\n\nBody:\n{ xml }' )
 
 # The first step is to create a SOAP client session
 session = Session()
@@ -113,7 +113,7 @@ phone = {
 try:
 	resp = service.addPhone( phone )
 except Exception as err:
-	print("\nZeep error: addPhone: {0}".format( err ) )
+    print( f'\nZeep error: addPhone: { err }' )
     sys.exit( 1 )
 
 print( "\naddPhone response:\n" )
@@ -133,11 +133,11 @@ end_user = {
 try:
 	resp = service.addUser( end_user )
 except Exception as err:
-	print("\nZeep error: addUser: {0}".format( err ) )
+    print( f'\nZeep error: addUser: { err }' )
     sys.exit( 1 )
 
-print( "\naddUser response:\n" )
-print( resp,"\n" )
+print( '\naddUser response:\n' )
+print( resp,'\n' )
 
 input( 'Press Enter to continue...' )
 
@@ -145,7 +145,7 @@ input( 'Press Enter to continue...' )
 devices = {
         'device': []
     }
-devices['device'].append( 'CSFTESTPHONE' )
+devices[ 'device' ].append( 'CSFTESTPHONE' )
 
 # Execute the updateUser request
 try:
@@ -156,11 +156,11 @@ try:
         imAndPresenceEnable = True
         )
 except Exception as err:
-	print("\nZeep error: updateUser: {0}".format( err ) )
+    print(f'\nZeep error: updateUser: { err }' )
     sys.exit( 1 )
 
-print( "\nupdateUser response:\n" )
-print( resp,"\n" )
+print( '\nupdateUser response:\n' )
+print( resp,'\n' )
 
 input( 'Press Enter to continue...' )
 
@@ -168,7 +168,7 @@ input( 'Press Enter to continue...' )
 try:
     resp = service.removeUser( userid = 'testEndUser' )
 except Fault as err:
-    print( 'Zeep error: removeUser: {err}'.format( err = err ) )
+    print( f'Zeep error: removeUser: { err }' )
     sys.exit( 1 )
 
 print( '\nremoveUser response:' )
@@ -177,7 +177,7 @@ print( resp, '\n' )
 try:
     resp = service.removePhone( name = 'CSFTESTPHONE' )
 except Fault as err:
-    print( 'Zeep error: removePhone: {err}'.format( err = err ) )
+    print( f'Zeep error: removePhone: { err }' )
     sys.exit( 1 )
 
 print( '\nremovePhone response:' )

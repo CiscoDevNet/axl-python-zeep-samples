@@ -10,43 +10,45 @@ The concepts and techniques shown can be extended to enable automated management
 
 ## Available samples
 
-* `axlZeep.py` - Demonstrates adding a user, line, and phone ( `<addLine>`, `<addPhone>`, `<addUser>`, `<updatePhone>`, `<getUser>` )
+* `axlZeep.py` - Demonstrates adding a user, line, and phone ( `<addLine>`, `<addPhone>`, `<addUser>`, `<updatePhone>`, `<getUser>` ).
 
-* `axl_add_updateLine.py` - Creates a line, then performs updateLine to modify the call pickup group ( `<addCallPickupGroup>`, `<addLine>`, `<updateLine>`, `<removeLine>`, `<removeCallPickupGroup>`)
+* `axl_add_updateLine.py` - Creates a line, then performs updateLine to modify the call pickup group ( `<addCallPickupGroup>`, `<addLine>`, `<updateLine>`).
 
-* `axl_updateDevicePool` - Demonstrates creating a Device Pool and its sub-objects, then updating the Device Pool's Local Route Group Settings ( `<addDevicePool>`, `<addH323Gateway>`, `<addRouteGroup>`, `<addLocalRouteGroup>`, `<updateDevicePool>`, `<removeH323Gateway>`, `<removeDevicePool>`, `<removeLocalRouteGroup>`, `<removeRouteGroup>` )
+* `axl_updateDevicePool` - Demonstrates creating a Device Pool and its sub-objects, then updating the Device Pool's Local Route Group Settings ( `<addDevicePool>`, `<addH323Gateway>`, `<addRouteGroup>`, `<addLocalRouteGroup>`, `<updateDevicePool>`).
 
-* `axl_add_partition_css.py` - Adds two partitions, then adds a CSS containing the two new partitions ( `<addRoutePartition>`, `<addCss>` )
+* `axl_add_partition_css.py` - Adds two partitions, then adds a CSS containing the two new partitions ( `<addRoutePartition>`, `<addCss>` ).
 
-* `axl_FAC.py` - Adds a new FAC, then updates it ( `<addFacInfo>`, `<updateFacInfo>`, `<removeFacInfo>` )
+* `axl_FAC.py` - Adds a new FAC, then updates it ( `<addFacInfo>`, `<updateFacInfo>`).
 
-* `axl_add_sip_trunk.py` - Adds a new SIP trunk with destination address ( `<addSipTrunk`, `<removeSipTrunk>` )
+* `axl_add_sip_trunk.py` - Adds a new SIP trunk with destination address ( `<addSipTrunk`).
 
-* `axl_executeSQLQuery.py` - Creates a Call Pickup Group and associates two test Lines, then executes a SQL query joining the numplan, pickupgrouplinemap, and pickupgroup tables to list the DNs belonging to the pickup group ( `<addCallPickupGroup>`, `<addLine>`, `<executeSQLQuery>`, `<removeCallPickupGroup>`, `<removeLine>` )
+* `axl_executeSQLQuery.py` - Creates a Call Pickup Group and associates two test Lines, then executes a SQL query joining the numplan, pickupgrouplinemap, and pickupgroup tables to list the DNs belonging to the pickup group ( `<addCallPickupGroup>`, `<addLine>`, `<executeSQLQuery>`).
 
-* `axl_executeSQLUpdate.py` - Creates a set of UC Services of type Video Conference Scheduling Portal, and an empty Service Profile.   Then executes a SQL update to associate the primary/secondary Services to the Profile (`<addUcService>`, `<addServiceProfile>`, `<executeSQLUpdate>`, `<removeServiceProfile>`, `<removeUcService>`)
+* `axl_executeSQLUpdate.py` - Creates a set of UC Services of type Video Conference Scheduling Portal, and an empty Service Profile.   Then executes a SQL update to associate the primary/secondary Services to the Profile (`<addUcService>`, `<addServiceProfile>`, `<executeSQLUpdate>`).
 
-* `axl_addRemoteDestination.py` - Creates an EndUser, and associates a new Remote Destination Profile, then adds a Remote Destination (`<addUser>`, `<addRemoteDestinationProfile>`, `<addRemoteDestination>` )
+* `axl_addRemoteDestination.py` - Creates an EndUser, and associates a new Remote Destination Profile, then adds a Remote Destination (`<addUser>`, `<addRemoteDestinationProfile>`, `<addRemoteDestination>` ).
 
-* `axl_addAppUser.py` - Creates a CSF Phone device, then creates an Application User and associates the new device.  Finally the Application User and Phone are removed.
+* `axl_addAppUser.py` - Creates a CSF Phone device, then creates an Application User and associates the new device.  Finally the Application User and Phone are removed (`<addAppUser>`).
 
-* `axl_add_update_User.py` - Creates a CSF phone device, then creates a new End-User and associates the new device via `<updateUser>` (`<addPhone>`, `<addUser>`, `<updateUser>`, `<removeUser>`, `<removePhone>`)
+* `axl_add_update_User.py` - Creates a CSF phone device, then creates a new End-User and associates the new device via `<updateUser>` (`<addPhone>`, `<addUser>`, `<updateUser>`).
 
-* `axl_listChange.py` - Demonstrates usage of the AXL 'Data Change Notification' feature to continuosly monitor and display incremental changes to the CUCM configuration database (`<listChange>`)
+* `axl_listChange.py` - Demonstrates usage of the AXL 'Data Change Notification' feature to continuosly monitor and display incremental changes to the CUCM configuration database (`<listChange>`).
 
-* `axl_add_update_Device_Pool.py` - Creates a new Device Pool, then creates a new Media Resource Group List and updates the Device Pool (`<addDevicePool>`, `<addMediaResourceList>`,`<updateDevicePool>`)
+* `axl_add_update_Device_Pool.py` - Creates a new Device Pool, then creates a new Media Resource Group List and updates the Device Pool (`<addDevicePool>`, `<addMediaResourceList>`,`<updateDevicePool>`).
 
-* `axl_add_Route_Pattern.py` - Creates a Route List, then creates a Route Pattern using the new Route List (`<addRouteList>`, `<addRoutePattern>`)
+* `axl_add_Route_Pattern.py` - Creates a Route List, then creates a Route Pattern using the new Route List (`<addRouteList>`, `<addRoutePattern>`).
 
-* `axl_add_Region.py` - Creates a Region including a region relationship  (`<addRegion>`)
+* `axl_add_Region.py` - Creates a Region including a region relationship  (`<addRegion>`).
 
-* `axl_add_Location.py` - Add a new Location including related Location and between Location settings  (`<addLocation>`)
+* `axl_add_Location.py` - Add a new Location including related Location and between Location settings  (`<addLocation>`).
 
-* `axl_add_User_Line_Phone.py` - Creates a new Line and Phone, associates the two; then creates a new End User, and associates with the new Phone (`<addLine>`, `<addPhone>`, `<addUser>`)
+* `axl_add_User_Line_Phone.py` - Creates a new Line and Phone, associates the two; then creates a new End User, and associates with the new Phone (`<addLine>`, `<addPhone>`, `<addUser>`).
 
-* `axl_update_Service_Parameter.py` - Lists all Process Nodes with "CUCM Voice/Video" role, then for each sets the "Cisco CallManager" service parameter "CdrEnabled" to true (`<listProcessNode>`, `<updateServiceParameter>`)
+* `axl_update_Service_Parameter.py` - Lists all Process Nodes with "CUCM Voice/Video" role, then for each sets the "Cisco CallManager" service parameter "CdrEnabled" to true (`<listProcessNode>`, `<updateServiceParameter>`).
 
-* `axl_doAuthenticateUser.py` - Creates an End User with password and PIN, authenticates the user using each, then deletes the user (`<addUser>`, `<doAuthenticateUser>`)
+* `axl_doAuthenticateUser.py` - Creates an End User with password and PIN, authenticates the user using each, then deletes the user (`<addUser>`, `<doAuthenticateUser>`).
+
+* `axl_addGateway.py` - Creates a VG310 MGCP gateway with unit VG-2VWIC-MBRD and subunit 24FXS, then adds a new analog/POTS port/line to the subunit (`<addGateway>`, `<addGatewayEndpointAnalogAccess>`, `<addLine>`).
 
 ## Getting started
 
