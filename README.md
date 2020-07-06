@@ -50,6 +50,8 @@ The concepts and techniques shown can be extended to enable automated management
 
 * `axl_addGateway.py` - Creates a VG310 MGCP gateway with unit VG-2VWIC-MBRD and subunit 24FXS, then adds a new analog/POTS port/line to the subunit (`<addGateway>`, `<addGatewayEndpointAnalogAccess>`, `<addLine>`).
 
+* `axl_executeSQLUpdate_Jabber_config.py` - demonstrates provisioning a Jabber config UC Service via <executeSQLUpdate> operations (`<executeSQLUpdate>`, `<executeSQLQuery>`).
+
 ## Getting started
 
 * Install Python 3.7
