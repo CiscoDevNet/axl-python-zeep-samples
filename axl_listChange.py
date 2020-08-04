@@ -107,11 +107,11 @@ try:
     resp = service.listChange(  )
 
 except Exception as err:
-    print("\nZeep error: initial listChange: {0}".format( err ) )
+    print( f'\nZeep error: initial listChange: { err }' )
     sys.exit( 1 )
 
 print( )
-print( "initial listChange response:" )
+print( 'Initial listChange response:' )
 print( )
 print( resp )
 
@@ -123,7 +123,7 @@ print( )
 input( 'Press Enter to continue...' )
 
 print( )
-print('Starting loop to monitor changes')
+print( 'Starting loop to monitor changes...' )
 print('(Press Ctrl+C to exit)')
 print( )
 print( f'Action doGet? Type{16 * " "} UUID{32 * " "} Field{10 * " "} Value' )
@@ -151,7 +151,7 @@ while True:
         resp = service.listChange( startChangeId )
 
     except Exception as err:
-        print("\nZeep error: polling listChange: {0}".format( err ) )
+        print( f'\nZeep error: polling listChange: { err }' )
         sys.exit(1)
 
     # If any changes were retrieved...
