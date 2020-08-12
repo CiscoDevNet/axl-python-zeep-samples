@@ -56,20 +56,23 @@ The concepts and techniques shown can be extended to enable automated management
 
 ## Getting started
 
-* Install Python 3.7
-  On Windows, choose the option to add to PATH environment variable
+* Install Python 3
 
-* The project was built/tested using [Visual Studio Code](https://code.visualstudio.com/)
+    On Windows, choose the option to add to PATH environment variable
 
-* Dependency installation:
+* (Optional) Create/activate a Python virtual environment named `venv`:
 
     ```bash
-    pip3 install -r requirements.txt
+    python3 -m venv venv
+    source venv/bin/activate
     ```
-  
-    (You may need to use `pip` on Windows)
+* Install needed dependency packages:
 
-* Rename `.env.example` to `.env`, and edit it to specify your CUCM address and AXL user credentials
+    ```bash
+    pip install -r requirements.txt
+    ```
+
+* Rename `.env.example` to `.env`, and edit it to specify your CUCM address and AXL user credentials.
 
 * The AXL v12.5 WSDL files are included in this project.  If you'd like to use a different version, replace with the AXL WSDL files for your CUCM version:
 

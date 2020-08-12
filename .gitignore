@@ -1,6 +1,10 @@
 .vscode/settings.json
 *.pyc
 wsdl.txt
-.env
-env
+.env*
+!.env.example
+venv
 *.pem
+schema*/
+!schema/
+.DS_Store
