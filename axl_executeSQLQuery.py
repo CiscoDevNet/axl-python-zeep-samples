@@ -4,7 +4,7 @@ Creates a Call Pickup Group and associates two test Lines, then executes a SQL
 query joining the numplan, pickupgrouplinemap, pickupgroup to list the DNs 
 belonging to the pickup group.
 
-Copyright (c) 2018 Cisco and/or its affiliates.
+Copyright (c) 2020 Cisco and/or its affiliates.
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
 in the Software without restriction, including without limitation the rights
@@ -30,6 +30,7 @@ from zeep import Client, Settings, Plugin
 from zeep.transports import Transport
 from zeep.exceptions import Fault
 import sys
+import urllib3
 
 # Edit .env file to specify your Webex site/user details
 import os

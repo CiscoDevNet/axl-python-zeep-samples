@@ -1,7 +1,8 @@
-"""AXL addUser/addLine/addPhone sample script, using the Zeep SOAP library
+"""AXL addPhone sample script showing how to specify custom Product Specific
+configuration options via <vendorConfig>, using the Zeep SOAP library
 
-Creates a new Line and Phone, associates the two; then creates a new End User,
-and associates with the new Phone.
+Creates a test CSF device via <addPhone>, including Product Specific settings
+in <vendorConfig>, then retrieves/parses the setting via <getPhone>.
 
 Copyright (c) 2020 Cisco and/or its affiliates.
 Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -94,28 +95,9 @@ client = Client( WSDL_FILE, settings = settings, transport = transport,
 service = client.create_service( '{http://www.cisco.com/AXLAPIService/}AXLAPIBinding',
                                 f'https://{os.getenv( "CUCM_ADDRESS" )}:8443/axl/' )
 
-# Create a test Line
-line = {
-    'pattern': '1234567890',
-    'description': 'Test Line',
-    'usage': 'Device',
-    'routePartitionName': None
-}
-
-# Execute the addLine request
-try:
-    resp = service.addLine( line )
-
-except Fault as err:
-    print( f'Zeep error: addLine: { err }' )
-    sys.exit( 1 )
-
-print( '\naddLine response:\n' )
-print( resp,'\n' )
-
-input( 'Press Enter to continue...' )
-
 # Create a test phone, associating the User and Line
+#   Note, values with xsd.SkipValue are required by the schema
+#   but not by the AXL implementation and can be skipped/left-out of the request
 phone = {
     'name': 'testPhone',
     'product': 'Cisco Unified Client Services Framework',
@@ -124,26 +106,46 @@ phone = {
     'protocol': 'SIP',
     'protocolSide': 'User',
     'devicePoolName': 'Default',
-    'commonPhoneConfigName': 'Standard Common Phone Profile',
     'locationName': 'Hub_None',
-    'useTrustedRelayPoint': 'Default',
-    'builtInBridgeStatus': 'Default',
     'sipProfileName': 'Standard SIP Profile',
-    'packetCaptureMode': 'None',
-    'certificateOperation': 'No Pending Operation',
-    'deviceMobilityMode': 'Default',
-    'lines': {
-        'line': [
-            {
-                'index': 1,
-                'dirn': {
-                    'pattern': '1234567890',
-                    'routePartitionName': None
-                }
-            }
-        ]
-    }
+    'sipProfileName': 'Standard SIP Profile',
+    'commonPhoneConfigName': xsd.SkipValue,
+    'phoneTemplateName': xsd.SkipValue,
+    'primaryPhoneName': xsd.SkipValue,
+    'useTrustedRelayPoint': xsd.SkipValue,
+    'builtInBridgeStatus': xsd.SkipValue,
+    'packetCaptureMode': xsd.SkipValue,
+    'certificateOperation': xsd.SkipValue,
+    'deviceMobilityMode': xsd.SkipValue
 }
+
+# Create an Element object from scratch with tag 'videoCapability' and text '0'
+videoCapability = etree.Element( 'videoCapability' )
+videoCapability.text = '0'
+
+# The some config item Elements must be the child of a 'section' Element, e.g.:
+#     <desktopClient>
+#         <extendAndConnectCapability>0</extendAndConnectCapability>
+#     </desktopClient>
+desktopClient = etree.Element( 'desktopClient' )
+extendAndConnectCapability = etree.SubElement( desktopClient, 'extendAndConnectCapability' )
+extendAndConnectCapability.text = '0'
+
+problemReportServerUrl = etree.SubElement( desktopClient, 'problemReportServerUrl' )
+problemReportServerUrl.text = 'https://report.example.com'
+
+# Append each top-level element to an array
+vendorConfig = []
+vendorConfig.append( videoCapability )
+vendorConfig.append( desktopClient )
+
+# Create a Zeep xsd type object of type XVendorConfig from the client object
+xvcType = client.get_type( 'ns0:XVendorConfig' )
+
+# Use the XVendorConfig type object to creat a vendorConfig object
+#   using the array of vendorConfig elements from above, and set as
+#   phone.vendorConfig
+phone[ 'vendorConfig' ] = xvcType( vendorConfig )
 
 # Execute the addPhone request
 try:
@@ -158,66 +160,34 @@ print( resp,'\n' )
 
 input( 'Press Enter to continue...' )
 
-# Create a test End User
-end_user = {
-    'firstName': 'testFirstName',
-    'lastName': 'testLastName',
-    'userid': 'testUser',
-    'password': 'C1sco12345',
-    'pin': '123456',
-    'userLocale': 'English United States',
-    'associatedGroups': {
-        'userGroup': [
-            {
-                'name': 'Standard CCM End Users',
-                'userRoles': {
-                    'userRole': [
-                        'Standard CCM End Users',
-                        'Standard CCMUSER Administration'
-                    ]
-                }
-            }
-        ]
-    },
-    'associatedDevices': {
-        'device': [
-            'testPhone'
-        ]
-    },
-    'presenceGroupName': 'Standard Presence group'
-}
-
+# Execute a getPhone request to retrieve the phone we just created
 try:
-    resp = service.addUser( end_user )
+    resp = service.getPhone( name = 'testPhone' )
 
 except Fault as err:
-    print( f'Zeep error: addUser: { err }' )
+    print( f'Zeep error: getPhone: { err }' )
     sys.exit( 1 )
 
-print( '\naddUser response:\n' )
-print( resp,'\n' )
+print( '\ngetPhone: SUCCESS!\n' )
+print( 'Vendor Config settings:')
+print( '=======================')
+
+for elem in resp['return']['phone']['vendorConfig']._value_1:
+    
+    if elem.find( '*' ) is None:
+        print( f'{ elem.tag }: { elem.text }' )
+    else:
+
+        print( f'{ elem.tag }:' )
+
+        for subElem in elem.findall( '*' ):
+
+            print( f'\t{ subElem.tag }: { subElem.text }' )
+print( )            
 
 input( 'Press Enter to continue...' )
 
 # Cleanup the objects we just created
-try:
-    resp = service.removeUser( userid = 'testUser')
-except Fault as err:
-    print( f'Zeep error: removeUser: { err }' )
-    sys.exit( 1 )
-
-print( '\nremoveUser response:' )
-print( resp, '\n' )
-
-try:
-    resp = service.removeLine( pattern = '1234567890')
-except Fault as err:
-    print( f'Zeep error: removeLine: { err }' )
-    sys.exit( 1 )
-
-print( '\nremoveLine response:' )
-print( resp, '\n' )
-
 try:
     resp = service.removePhone( name = 'testPhone')
 except Fault as err:

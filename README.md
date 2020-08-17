@@ -54,6 +54,8 @@ The concepts and techniques shown can be extended to enable automated management
 
 * `axl_add_update_Line.py` - Creates a new Line with Call Forward All set to VoiceMail, then performs an updateLine request to clear the CFA setting. (`<addLine>`, `<updateLine>`).
 
+* `axl_add_Phone_vendorConfig.py` - Creates a test CSF device, including Product Specific settings in `<vendorConfig>`, then retrieves/parses the setting via. (`<addPhone>`, `<getPhone>`).
+
 ## Getting started
 
 * Install Python 3

@@ -15,7 +15,7 @@ sub-objects in the proper order:
 <removeLocalRouteGroup>
 <removeRouteGroup>
 
-Copyright (c) 2018 Cisco and/or its affiliates.
+Copyright (c) 2020 Cisco and/or its affiliates.
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
 in the Software without restriction, including without limitation the rights
@@ -41,6 +41,7 @@ from zeep import Client, Settings, Plugin
 from zeep.transports import Transport
 from zeep.exceptions import Fault
 import sys
+import urllib3
 
 # Edit .env file to specify your Webex site/user details
 import os
@@ -75,7 +76,9 @@ class MyLoggingPlugin( Plugin ):
 session = Session()
 
 # We avoid certificate verification by default
+# And disable insecure request warnings to keep the output clear
 session.verify = False
+urllib3.disable_warnings( urllib3.exceptions.InsecureRequestWarning )
 
 # To enabled SSL cert checking (production)
 # place the CUCM Tomcat cert .pem file in the root of the project

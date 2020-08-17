@@ -3,7 +3,7 @@
 Creates an End User with password and PIN, authenticates the user using each,
 then deletes the user.
 
-Copyright (c) 2018 Cisco and/or its affiliates.
+Copyright (c) 2020 Cisco and/or its affiliates.
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
 in the Software without restriction, including without limitation the rights
@@ -25,6 +25,7 @@ from lxml import etree
 from requests import Session
 from requests.auth import HTTPBasicAuth
 import sys
+import urllib3
 
 from zeep import Client, Settings, Plugin
 from zeep.transports import Transport
@@ -63,7 +64,9 @@ class MyLoggingPlugin( Plugin ):
 session = Session()
 
 # We avoid certificate verification by default
+# And disable insecure request warnings to keep the output clear
 session.verify = False
+urllib3.disable_warnings( urllib3.exceptions.InsecureRequestWarning )
 
 # To enable SSL cert checking (recommended for production)
 # place the CUCM Tomcat cert .pem file in the root of the project
