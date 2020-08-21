@@ -123,7 +123,7 @@ phone = {
 videoCapability = etree.Element( 'videoCapability' )
 videoCapability.text = '0'
 
-# The some config item Elements must be the child of a 'section' Element, e.g.:
+# Some config item Elements must be the child of a 'section' Element, e.g.:
 #     <desktopClient>
 #         <extendAndConnectCapability>0</extendAndConnectCapability>
 #     </desktopClient>
@@ -142,7 +142,7 @@ vendorConfig.append( desktopClient )
 # Create a Zeep xsd type object of type XVendorConfig from the client object
 xvcType = client.get_type( 'ns0:XVendorConfig' )
 
-# Use the XVendorConfig type object to creat a vendorConfig object
+# Use the XVendorConfig type object to create a vendorConfig object
 #   using the array of vendorConfig elements from above, and set as
 #   phone.vendorConfig
 phone[ 'vendorConfig' ] = xvcType( vendorConfig )

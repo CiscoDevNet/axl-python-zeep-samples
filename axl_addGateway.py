@@ -26,7 +26,7 @@ from lxml import etree
 from requests import Session
 from requests.auth import HTTPBasicAuth
 
-from zeep import Client, Settings, Plugin
+from zeep import Client, Settings, Plugin, xsd
 from zeep.transports import Transport
 from zeep.exceptions import Fault
 import sys
@@ -121,6 +121,30 @@ gateway = {
         ]
     }
 }
+
+# To add vendorConfig items, create lxml Element objects and append to 
+# an array named vendorConfig, a child element under <units>
+ModemPassthrough = etree.Element( 'ModemPassthrough' )
+ModemPassthrough.text = 'Disable'
+T38FaxRelay = etree.Element( 'T38FaxRelay' )
+T38FaxRelay.text = 'Enable'
+DtmfRelay = etree.Element( 'DtmfRelay' )
+DtmfRelay.text = 'NTE-CA'
+
+# Append each top-level element to an array
+vendorConfig = []
+vendorConfig.append( ModemPassthrough )
+vendorConfig.append( T38FaxRelay )
+vendorConfig.append( DtmfRelay )
+
+# Create a Zeep xsd type object of type XVendorConfig from the client object
+xvcType = client.get_type( 'ns0:XVendorConfig' )
+
+# Use the XVendorConfig type object to create a vendorConfig object
+#   using the array of vendorConfig elements from above, and set as
+#   phone.vendorConfig
+
+gateway[ 'vendorConfig' ] = xvcType( vendorConfig )
 
 # Execute the addGateway request
 try:
