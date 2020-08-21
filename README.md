@@ -2,7 +2,7 @@
 
 ## Overview
 
-These samples demonstrates how to use the Python Zeep SOAP library to read/update CUCM configurations via the AXL SOAP API
+These samples demonstrates how to use the Python Zeep SOAP library to read/update CUCM configurations via the AXL SOAP API.
 
 [https://developer.cisco.com/site/axl/](https://developer.cisco.com/site/axl/)
 
