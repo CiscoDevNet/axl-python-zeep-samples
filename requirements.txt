@@ -6,7 +6,7 @@ chardet==3.0.4
 defusedxml==0.6.0
 idna==2.10
 isodate==0.6.0
-lxml==4.5.2
+lxml==4.6.2
 python-dotenv==0.14.0
 pytz==2020.1
 requests==2.24.0
