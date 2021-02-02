@@ -79,7 +79,7 @@ session = Session()
 
 #session.verify = CERT
 session.verify = False
-session.auth = HTTPBasicAuth( os.getenv( 'USERNAME' ), os.getenv( 'PASSWORD' ) )
+session.auth = HTTPBasicAuth( os.getenv( 'AXL_USERNAME' ), os.getenv( 'AXL_PASSWORD' ) )
 
 # Create a Zeep transport and set a reasonable timeout value
 transport = Transport( session = session, timeout = 10 )

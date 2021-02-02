@@ -76,7 +76,7 @@ urllib3.disable_warnings( urllib3.exceptions.InsecureRequestWarning )
 # session.verify = 'changeme.pem'
 
 # Add Basic Auth credentials
-session.auth = HTTPBasicAuth( os.getenv( 'USERNAME' ), os.getenv( 'PASSWORD' ) )
+session.auth = HTTPBasicAuth( os.getenv( 'AXL_USERNAME' ), os.getenv( 'AXL_PASSWORD' ) )
 
 # Create a Zeep transport and set a reasonable timeout value
 transport = Transport( session = session, timeout = 10 )
