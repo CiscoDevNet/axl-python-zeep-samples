@@ -52,9 +52,11 @@ The concepts and techniques shown can be extended to enable automated management
 
 * `axl_executeSQLUpdate_Jabber_config.py` - demonstrates provisioning a Jabber config UC Service via <executeSQLUpdate> operations (`<executeSQLUpdate>`, `<executeSQLQuery>`).
 
-* `axl_add_update_Line.py` - Creates a new Line with Call Forward All set to VoiceMail, then performs an updateLine request to clear the CFA setting. (`<addLine>`, `<updateLine>`).
+* `axl_add_update_Line.py` - Creates a new Line with Call Forward All set to VoiceMail, then performs an updateLine request to clear the CFA setting (`<addLine>`, `<updateLine>`).
 
-* `axl_add_Phone_vendorConfig.py` - Creates a test CSF device, including Product Specific settings in `<vendorConfig>`, then retrieves/parses the setting via. (`<addPhone>`, `<getPhone>`).
+* `axl_add_Phone_vendorConfig.py` - Creates a test CSF device, including Product Specific settings in `<vendorConfig>`, then retrieves/parses the setting via (`<addPhone>`, `<getPhone>`).
+
+* `axl_add_DateTimeGroup.py` - Creates a two Phone NTP References, then creates a new Date Time Group using the NTP References (`<addPhoneNtp>`, `<addDateTimeGroup>`).
 
 ## Getting started
 
