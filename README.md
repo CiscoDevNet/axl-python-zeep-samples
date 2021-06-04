@@ -58,6 +58,8 @@ The concepts and techniques shown can be extended to enable automated management
 
 * `axl_add_DateTimeGroup.py` - Creates a two Phone NTP References, then creates a new Date Time Group using the NTP References (`<addPhoneNtp>`, `<addDateTimeGroup>`).
 
+* `axl_add_Role.py` - Creates a new user role via <executeSqlUpdate>, then creates a custom user group with the new role (`<executeSQLUpdate>`, `<executeSQLQuery>`).
+
 ## Getting started
 
 * Install Python 3

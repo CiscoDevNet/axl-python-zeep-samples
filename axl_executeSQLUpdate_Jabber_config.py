@@ -147,7 +147,7 @@ xml = textwrap.dedent( f'''\
 sql = f'''INSERT INTO ucservicexml (pkid,fkucservice,xml)
             VALUES ( newid(),"{ ucServiceId }","{ xml }")'''
 
-# Execute the executeSQLQuery request
+# Execute the executeSQLUpdate request
 try:
     resp = service.executeSQLUpdate( sql )
 except Fault as err:

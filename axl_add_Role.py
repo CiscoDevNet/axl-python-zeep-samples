@@ -1,6 +1,7 @@
-"""AXL <addRemoteDestination> sample script, using the Zeep SOAP library
+"""Creates a new user role via <executeSqlUpdate>, then creates a custom user 
+group with the new role.  Finally the role/group are removed.
 
-Copyright (c) 2020 Cisco and/or its affiliates.
+Copyright (c) 2021 Cisco and/or its affiliates.
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
 in the Software without restriction, including without limitation the rights
@@ -19,15 +20,14 @@ SOFTWARE.
 """
 
 from lxml import etree
-# import requests
 from requests import Session
 from requests.auth import HTTPBasicAuth
+import sys
+import urllib3
 
 from zeep import Client, Settings, Plugin
 from zeep.transports import Transport
 from zeep.exceptions import Fault
-import sys
-import urllib3
 
 # Edit .env file to specify your Webex site/user details
 import os
@@ -89,118 +89,90 @@ client = Client( WSDL_FILE, settings = settings, transport = transport,
 
 # Create the Zeep service binding to AXL at the specified CUCM
 service = client.create_service( '{http://www.cisco.com/AXLAPIService/}AXLAPIBinding',
-                                f'https://{os.getenv( "CUCM_ADDRESS" )}:8443/axl/' )
+                                f'https://{os.getenv("CUCM_ADDRESS")}:8443/axl/' )
 
-# Create an End User
-end_user = {
-    'lastName': 'testEndUser',
-    'userid': 'testEndUser',
-    'presenceGroupName': 'Standard Presence Group',
-    'enableMobility': True
-}
+# SQL to create a new role in the functionrole table
+sql = f'''INSERT INTO functionrole (pkid,description,name)
+            VALUES ( newid(),"testRole description","testRole")'''
 
-# Execute the addUser request
+# Execute the executeSQLUpdate request
 try:
-	resp = service.addUser( end_user )
+    resp = service.executeSQLUpdate( sql )
 except Fault as err:
-	print("Zeep error: addUser: {0}".format( err ) )
-else:
-	print( "\naddUser response:\n" )
-	print( resp,"\n" )
+    print( f'Zeep error: executeSQLUpdate/insert into functionrole: { err }' )
+    sys.exit( 1 )
 
-input( 'Press Enter to continue...' )
+# SQL to retrieve the pkid of the newly created role
+sql = 'SELECT pkid FROM functionrole WHERE name = "testRole"'
 
-# Create and associate a Remote Destination Profile
-remote_destination_profile = {
-    'name': 'testRemoteDestinationProfile',
-    'product': 'Remote Destination Profile',
-    'class': 'Remote Destination Profile',
-    'protocol': 'Remote Destination',
-    'protocolSide': 'User',
-    'devicePoolName': 'Default',
-    'callInfoPrivacyStatus': 'Default',
-    'userId': 'testEndUser'
-}
-
-# Execute the addRemoteDestinationProfile request
+# Execute the executeSQLQuery request
 try:
-    resp = service.addRemoteDestinationProfile( remote_destination_profile )
+    resp = service.executeSQLQuery( sql )
 except Fault as err:
-	print("Zeep error: addRemoteDestinationProfile: {0}".format( err ) )
-else:
-	print( "\naddRemoteDestinationProfile response:\n" )
-	print( resp,"\n" )
+    print( f'Zeep error: executeSQLQuery from functionrole: { err }' )
+    sys.exit( 1 )
 
-input( 'Press Enter to continue...' )
+rolePkid = resp['return'].row[0][0].text
 
-# Create a Remote Destination
-remote_destination = {
-    'name': 'testRemoteDestination',
-    'destination': '4055551212',
-    'answerTooSoonTimer': 1500,
-    'answerTooLateTimer': 19000,
-    'delayBeforeRingingCell': 4000,
-    'ownerUserId': 'testEndUser',
-    'enableUnifiedMobility': True,
-    'remoteDestinationProfileName': 'testRemoteDestinationProfile',
-    'isMobilePhone': True,
-    'enableMobileConnect': True,
-    'timeZone': 'Africa/Banjul',
-    'singleNumberReachVoicemail': 'Use System Default'
-}
+print( f'\nNew role pkid: { rolePkid }' )
 
-# Due to an issue with the AXL schema vs. implementation (11.5/12.5 - CSCvq98025)
-# we have to remove the nil <dualModeDeviceName> element Zeep creates 
-# via the following lines
+input( '\nPress Enter to continue...' )
 
-# Use the Zeep service to create an XML object of the request - don't send
-node = client.create_message( service, 'addRemoteDestination', remoteDestination = remote_destination)
+# SQL to create an entry in functionroleresourcemap, indicating which
+# low-level system permission(s) are associated with the role
+#   resource: from table typeresource (96 is 'AXL Database API')
+#   permission: Usage varies by the type of resource, in general for allow/disallow items
+#      this will be '1', for read and/or update items it will be 1 (read only), 2 (update only), 3 (both)
+#      For AXL Database API, the permission is 1 for 'Allow to use API'
 
-# Remove the dualModeDeviceName element
-for element in node.xpath("//dualModeDeviceName"):
-  element.getparent().remove( element )
+sql = f'''INSERT INTO functionroleresourcemap (pkid,fkfunctionrole,tkresource,permission)
+            VALUES (newid(),"{ rolePkid }",96,1)'''
 
-# Execute the addRemoteDestination request
-# This has to be done a little differently since we want to send a custom payload
+# Execute the executeSQLUpdate request
 try:
-    resp = transport.post_xml(
-        f'https://{os.getenv( "CUCM_ADDRESS" )}:8443/axl/',
-        envelope = node,
-        headers = None
-    )
+    resp = service.executeSQLUpdate( sql )
 except Fault as err:
-	print("Zeep error: addRemoteDestination: {0}".format( err ) )
-else:
-	print( "\naddRemoteDestination response:\n" )
-	print( resp.text,"\n" )
+    print( f'Zeep error: executeSQLUpdate from functionroleresourcemap: { err }' )
+    sys.exit( 1 )
 
-input( 'Press Enter to continue...' )
+# SQL to retrieve the pkid of the newly created roleresource mapping
+sql = f'''SELECT pkid FROM functionroleresourcemap WHERE 
+            fkfunctionrole = "{ rolePkid }" AND
+            tkresource = 96 AND
+            permission = 1'''
+
+# Execute the executeSQLQuery request
+try:
+    resp = service.executeSQLQuery( sql )
+except Fault as err:
+    print( f'Zeep error: executeSQLQuery from functionroleresourcemap: { err }' )
+    sys.exit( 1 )
+
+mappingPkid = resp['return'].row[0][0].text
+
+print( f'\nNew functionroleresourcemap pkid: { mappingPkid }' )
+
+input( '\nPress Enter to continue...' )
 
 # Cleanup the objects we just created
+sql = f'DELETE FROM functionroleresourcemap WHERE pkid = "{ mappingPkid }"'
 try:
-    # removeRemoteDestination uses the destination vs the name
-    resp = service.removeRemoteDestination( destination = '4055551212' )
+    resp = service.executeSQLUpdate( sql )
 except Fault as err:
-    print( 'Zeep error: removeRemoteDestination: {err}'.format( err = err ) )
-else:
-    print( '\nremoveRemoteDestination response:' )
-    print( resp, '\n' )
+    print( f'Zeep error: executeSQLUpdate delete from functionroleresourcemap: {err}' )
+    sys.exit( 1 )
 
-try:
-    resp = service.removeRemoteDestinationProfile( name = 'testRemoteDestinationProfile' )
-except Fault as err:
-    print( 'Zeep error: remoteRemoveDestinationProfile: {err}'.format( err = err ) )
-else:
-    print( '\nremoveRemoteDestinationProfile response:' )
-    print( resp, '\n' )
+print( '\nRemove functionroleresourcemap entry response: SUCCESS' )
 
+sql = f'DELETE FROM functionrole WHERE pkid = "{ rolePkid }"'
 try:
-    resp = service.removeUser( userid = 'testEndUser' )
+    resp = service.executeSQLUpdate( sql )
 except Fault as err:
-    print( 'Zeep error: removeUser: {err}'.format( err = err ) )
-else:
-    print( '\nremoveUser response:' )
-    print( resp, '\n' )
+    print( f'Zeep error: executeSQLUpdate delete from functionrole: {err}' )
+    sys.exit( 1 )
+
+print( '\nRemove functionrole entry response: SUCCESS' )
+
 
 
 
