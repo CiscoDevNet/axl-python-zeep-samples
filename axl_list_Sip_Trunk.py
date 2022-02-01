@@ -28,6 +28,7 @@ import sys
 import urllib3
 
 from zeep import Client, Settings, Plugin, xsd
+from zeep import xsd
 from zeep.transports import Transport
 from zeep.exceptions import Fault
 
@@ -132,7 +133,7 @@ input( 'Press Enter to continue...\n' )
 
 # Execute listSipTrunk request
 try:
-    resp = service.listSipTrunk( searchCriteria = { 'name': '%' }, returnedTags = { 'name': xsd.nil } )
+    resp = service.listSipTrunk( searchCriteria = { 'name': '%' }, returnedTags = { 'name': xsd.Nil } )
 except Exception as err:
     print( f'\nZeep error: listSipTrunk: { err }' )
     sys.exit( 1 )
