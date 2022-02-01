@@ -1,6 +1,7 @@
 """AXL <listSipTrunk> and <getSipTrunk> sample script, using the Zeep SOAP library
 
 Creates two SIP Trunks, then retrieves SIP Trunk names/details and prints a simple report.
+Demonstrates setting an element value to nil via xsd:nil
 
 Copyright (c) 2022 Cisco and/or its affiliates.
 Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -26,10 +27,9 @@ from requests.auth import HTTPBasicAuth
 import sys
 import urllib3
 
-from zeep import Client, Settings, Plugin
+from zeep import Client, Settings, Plugin, xsd
 from zeep.transports import Transport
 from zeep.exceptions import Fault
-from zeep import xsd
 
 # Edit .env file to specify your Webex site/user details
 import os
@@ -132,7 +132,7 @@ input( 'Press Enter to continue...\n' )
 
 # Execute listSipTrunk request
 try:
-    resp = service.listSipTrunk( searchCriteria = { 'name': '%' }, returnedTags = { 'name': xsd.Nil } )
+    resp = service.listSipTrunk( searchCriteria = { 'name': '%' }, returnedTags = { 'name': xsd.nil } )
 except Exception as err:
     print( f'\nZeep error: listSipTrunk: { err }' )
     sys.exit( 1 )
