@@ -60,6 +60,8 @@ The concepts and techniques shown can be extended to enable automated management
 
 * `axl_add_Role.py` - Creates a new user role via <executeSqlUpdate>, then creates a custom user group with the new role (`<executeSQLUpdate>`, `<executeSQLQuery>`).
 
+* `axl_list_Sip_Trunk.py` - Creates two SIP Trunks, then retrieves SIP Trunk names/details and prints a simple report (`<addSipTrunk>`, `<listSipTrunk>`).
+
 ## Getting started
 
 * Install Python 3
