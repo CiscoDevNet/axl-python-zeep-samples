@@ -68,6 +68,14 @@ The concepts and techniques shown can be extended to enable automated management
 
     On Windows, choose the option to add to PATH environment variable
 
+* If installing on Linux, you may need to install dependencies for `python3-lxml`, see [Installing lxml](https://lxml.de/3.3/installation.html)
+
+  E.g. for Debian/Ubuntu:
+
+  ```bash
+  sudo apt build-dep python3-lxml
+  ```    
+
 * (Optional) Create/activate a Python virtual environment named `venv`:
 
     ```bash
@@ -148,12 +156,12 @@ The concepts and techniques shown can be extended to enable automated management
 
     ```python
     startChangeId = {
-        'queueId': 'fee',
+        'queueId': 'foo',
         '_value_1': 'bar'
     }
     ```
-* **Requests Sessions** While creating and using a [Requests Session](https://2.python-requests.org/en/master/user/advanced/#id1) object to use with Zeep allows disabling certificate verfication during development via `session.verify = False`, you should also use a Session even if you don't need to disable cert checks. 
+* **Requests Sessions** Creating and using a [requests Session](https://docs.python-requests.org/en/latest/user/advanced/) object [to use with Zeep](https://docs.python-zeep.org/en/master/api.html) allows setting global request parameters like `auth`/`verify`/`headers`.
 
-    This allows Zeep to use AXL cookies and HTTP persistent connections to keep CUCM resource impact low: fresh user authentication checks and Tomcat sessions are expensive, and CUCM socket connections are not unlimited...
-
+    In addition, Session retains CUC API `JSESSION` cookies to bypass expensive backend authentication checks per-request, and HTTP persistent connections to keep network latency and networking CPU usage lower.
+    
 [![published](https://static.production.devnetcloud.com/codeexchange/assets/images/devnet-published.svg)](https://developer.cisco.com/codeexchange/github/repo/CiscoDevNet/axl-python-zeep-sample)
