@@ -160,6 +160,17 @@ The concepts and techniques shown can be extended to enable automated management
         '_value_1': 'bar'
     }
     ```
+* **xsd:SkipValue** When building the XML to send to CUCM, Zeep may include empty elements that are part of the schema but that you didn't explicity specify.  This may result in CUCM interpreting the empty element as indication to set the value to empty/nil/null.  To force Zeep to skip including an element, set its value to `xsd:SkipValue`:
+
+   ```python
+   updatePhoneObj = {
+    "description": "New Description",
+    "lines": xsd:SkipValue
+   }
+   ```
+
+   Be sure to import the `xsd` module: `from zeep import xsd`
+
 * **Requests Sessions** Creating and using a [requests Session](https://docs.python-requests.org/en/latest/user/advanced/) object [to use with Zeep](https://docs.python-zeep.org/en/master/api.html) allows setting global request parameters like `auth`/`verify`/`headers`.
 
     In addition, Session retains CUC API `JSESSION` cookies to bypass expensive backend authentication checks per-request, and HTTP persistent connections to keep network latency and networking CPU usage lower.
