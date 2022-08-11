@@ -1,5 +1,7 @@
-"""AXL adds CSF BOT TCT (Jabber Devices) for every user which is assigned as 
-Owner User ID to a SEP device, using the zeep library.
+"""AXL Creates a DN, SEP Device and End User.
+Then Searches for the SEP Device (Search Criteria can be expanded to include multiple entities in result) 
+and adds CSF BOT TCT (Jabber Devices) for the user which is assigned as 
+Owner User ID to that SEP device(s) and enables IM and Presence for that End User, using the zeep library.
 
 Copyright (c) 2022 Cisco and/or its affiliates.
 Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -19,20 +21,17 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
 
-
+import os
 from lxml import etree
 from requests import Session
 from requests.auth import HTTPBasicAuth
 
 from zeep import Client, Settings, Plugin, xsd
 from zeep.transports import Transport
-from zeep.cache import SqliteCache
 from zeep.exceptions import Fault
-import sys
-import urllib3
+
 
 # Edit .env file to specify your Webex site/user details
-import os
 from dotenv import load_dotenv
 load_dotenv()
 
@@ -96,12 +95,12 @@ service = client.create_service( '{http://www.cisco.com/AXLAPIService/}AXLAPIBin
 
 
 
-def fill_phone_info(_name, _product, _ownerUserName, _pattern, _partition, _caller_id, _busy_trigger):
+def fill_phone_info(name, product, owner_user_name, pattern, partition, caller_id, busy_trigger):
     phone_info = {
-        'name': _name,
-        'product': _product,
-        'model': _product,
-        'description': f'{_ownerUserName} {_name[:3]} {_pattern} AUTO JAB',
+        'name': name,
+        'product': product,
+        'model': product,
+        'description': f'{owner_user_name} {name[:3]} {pattern} AUTO',
         'class': 'Phone',
         'protocol': 'SIP',
         'protocolSide': 'User',
@@ -116,21 +115,21 @@ def fill_phone_info(_name, _product, _ownerUserName, _pattern, _partition, _call
         'packetCaptureMode': xsd.SkipValue,
         'certificateOperation': xsd.SkipValue,
         'deviceMobilityMode': xsd.SkipValue,
-        'ownerUserName': _ownerUserName,
+        'ownerUserName': owner_user_name,
         'lines': {
             'line': [
                 {
                     'index': 1,
-                    'display': _caller_id,
+                    'display': caller_id,
                     'dirn': {
-                        'pattern': _pattern,
-                        'routePartitionName': _partition,
-                        'busyTrigger': _busy_trigger
+                        'pattern': pattern,
+                        'routePartitionName': partition,
+                        'busyTrigger': busy_trigger
                         },
                         'associatedEndusers': {
                             'enduser': [
                                 {
-                                    'userId': _ownerUserName
+                                    'userId': owner_user_name
                                 }
                             ]    
                         }    
@@ -141,42 +140,142 @@ def fill_phone_info(_name, _product, _ownerUserName, _pattern, _partition, _call
     return phone_info
 
 
+# Create a test Line
+line = {
+    'pattern': '1234567890',
+    'description': 'Test Line',
+    'usage': 'Device',
+    'routePartitionName': None,
+    'callForwardAll': {
+        'forwardToVoiceMail': 'true'
+    }
+}
+
+# Execute the addLine request
+try:
+    resp = service.addLine( line )
+
+except Fault as err:
+    print( f'Zeep error: addLine: { err }' )
+
+print( '\naddLine response:\n' )
+print( resp,'\n' )
+
+# Create a test User
+end_user = {
+    'firstName': 'testFirstName',
+    'lastName': 'testLastName',
+    'userid': 'testUser',
+    'password': 'C1sco12345',
+    'pin': '123456',
+    'userLocale': 'English United States',
+    'associatedGroups': {
+        'userGroup': [
+            {
+                'name': 'Standard CCM End Users',
+                'userRoles': {
+                    'userRole': [
+                        'Standard CCM End Users',
+                        'Standard CTI Enabled'
+                    ]
+                }
+            }
+        ]
+    },
+    'presenceGroupName': 'Standard Presence group',
+    'imAndPresenceEnable': True
+}
+
+try:
+    resp = service.addUser( end_user )
+
+except Fault as err:
+    print( f'Zeep error: addUser: { err }' )
+
+print( '\naddUser response:\n' )
+print( resp,'\n' )
+
+
+new_phone = fill_phone_info('SEP123456789012', 'Cisco 7821', 'testUser', '1234567890', None, 'testUser', 1)
+try:
+    resp = service.addPhone(new_phone)
+except Fault as err:
+    print(f'Could Not Add SEP123456789012 for testUst \n{err}')
+
+try:
+    resp = service.updateUser(userid='testUser', associatedDevices={'device': ['SEP123456789012']})
+except Fault as err:
+    print(f'Error for testUser \n SEP123456789012 \n{err}')
+
+
 jabber_products = [{'Product': 'Cisco Dual Mode for Android', 'Prefix': 'BOT'},\
      {'Product':'Cisco Dual Mode for iPhone','Prefix': 'TCT'},\
      {'Product':'Cisco Unified Client Services Framework','Prefix': 'CSF'}]
-resp = service.listPhone(searchCriteria = { 'name': 'SEP%' }, returnedTags = { 'name': '', 'ownerUserName': '' })
+
+# You can use 'name': 'SEP%' to retrieve all SEP Phones but if you have large set of SEP Phones be caution
+# Using the Search Criteria like 'name' : 'SEP1%' could reduce the search scope to avoid any issues
+resp = service.listPhone(searchCriteria = { 'name': 'SEP123456789012%' }, returnedTags = { 'name': '', 'ownerUserName': '' })
 
 phones_list = resp['return']['phone']
+
 for i in phones_list:
     resp = service.getPhone(name=i['name'])
-    owner_user_name = resp['return']['phone']['ownerUserName']['_value_1']
-    if owner_user_name != None:
+    phone_owner_user_name = resp['return']['phone']['ownerUserName']['_value_1']
+    if phone_owner_user_name is not None:
         phone = resp['return']['phone']
-        line = phone['lines']['line'][0]
-        pattern = line['dirn']['pattern']
-        partition = line['dirn']['routePartitionName']['_value_1']
-        caller_id = line['display']
-        busy_trigger = line['busyTrigger']
-        resp = service.getUser(userid=owner_user_name)
+        phone_line = phone['lines']['line'][0]
+        phone_pattern = phone_line['dirn']['pattern']
+        phone_partition = phone_line['dirn']['routePartitionName']['_value_1']
+        phone_caller_id = phone_line['display']
+        phone_busy_trigger = phone_line['busyTrigger']
+        resp = service.getUser(userid=phone_owner_user_name)
         devices = resp['return']['user']['associatedDevices']
-        
-        if devices == None:
+
+        if devices is None:
             devices = []
             associated_devices = {'device': devices}
         else:
             associated_devices = devices
 
         for prod in jabber_products:
-            device_name = prod['Prefix'] + pattern
+            device_name = prod['Prefix'] + phone_pattern
             new_phone = fill_phone_info(device_name, prod['Product']\
-                ,owner_user_name, pattern, partition, caller_id, busy_trigger)
+                ,phone_owner_user_name, phone_pattern, phone_partition, phone_caller_id, phone_busy_trigger)
             
             try:
                 resp = service.addPhone(new_phone)
                 associated_devices['device'].append(device_name)
+                resp = service.updateUser(userid=phone_owner_user_name, associatedDevices=associated_devices, imAndPresenceEnable=True)
             except Fault as err:
-                print(f'Could Not Add {device_name} for {owner_user_name}\n{err}')
-            try:
-                resp = service.updateUser(userid=owner_user_name, associatedDevices=associated_devices)
-            except Fault as err:
-                print(f'Error for {owner_user_name} \n {associated_devices} \n{err}')
+                print(f'Could Not Add {device_name} for {phone_owner_user_name} or Append it to Associated Devices\n{err}')
+                
+
+# Cleanup the objects we just created
+input('Press Enter to start cleanup: ')
+
+try:
+    resp = service.removeUser( userid = 'testUser')
+    print( '\nremoveUser response:' )
+    print( resp, '\n' )
+except Fault as err:
+    print( f'Zeep error: removeUser: { err }' )
+
+
+try:
+    resp = service.removeLine( pattern = '1234567890')
+    print( '\nremoveLine response:' )
+    print( resp, '\n' )
+except Fault as err:
+    print( f'Zeep error: removeLine: { err }' )
+
+
+def remove_phone(device_names):
+    for device in device_names:
+        try:
+            resp = service.removePhone( name = device)
+            print( '\nremovePhone response:' )
+            print( resp, '\n' )
+        except Fault as err:
+            print( f'Zeep error: removePhone: { err }' )
+
+remove_phone(['SEP123456789012', 'TCT1234567890', 'BOT1234567890', 'CSF1234567890'])
