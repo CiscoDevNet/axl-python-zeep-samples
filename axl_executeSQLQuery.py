@@ -167,11 +167,16 @@ input( 'Press Enter to continue...' )
 print( 'Directory Numbers belonging to testCallPickupGroup' )
 print( '==================================================')
 
+def get_column(tag, row):
+    element = list(filter(lambda x: x.tag == tag, row))
+    return element[0].text if len(element) > 0 else None
+
 for rowXml in resp[ 'return' ][ 'row' ]:
 
-    z = rowXml[ 0 ].text
-    print( z )
-
+    print(get_column('dnorpattern', rowXml))
+    # Or, more simply if you know which column you want
+    # z = rowXml[ 0 ].text
+    # print( z )
 
 # Cleanup the objects we just created
 try:
