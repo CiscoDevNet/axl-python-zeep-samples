@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:axlapi="http://www.cisco.com/AXL/API/12.5" attributeFormDefault="unqualified" elementFormDefault="unqualified" targetNamespace="http://www.cisco.com/AXL/API/12.5" version="12.5">
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:axlapi="http://www.cisco.com/AXL/API/14.0" attributeFormDefault="unqualified" elementFormDefault="unqualified" targetNamespace="http://www.cisco.com/AXL/API/14.0" version="14.0">
     <xsd:annotation>
         <xsd:documentation><![CDATA[
 
@@ -7687,6 +7687,24 @@ Copyright (c) 2006, 2013 Cisco Systems, Inc.
                     <xsd:documentation>This tag should only be used by Hosted Collaboration Solution Shared Architecture deployments.</xsd:documentation>
                 </xsd:annotation>
             </xsd:element>
+            <xsd:element maxOccurs="1" minOccurs="0" name="associatedHeadsets">
+                <xsd:annotation>
+                    <xsd:documentation>Contains headset that are associated to user.</xsd:documentation>
+                </xsd:annotation>
+                <xsd:complexType>
+                    <xsd:complexContent>
+                        <xsd:extension base="axlapi:XCommonMembersExtension">
+                            <xsd:sequence minOccurs="0">
+                                <xsd:element maxOccurs="15" minOccurs="0" name="headset" type="axlapi:String50">
+                                    <xsd:annotation>
+                                        <xsd:documentation>Name of headset.</xsd:documentation>
+                                    </xsd:annotation>
+                                </xsd:element>
+                            </xsd:sequence>
+                        </xsd:extension>
+                    </xsd:complexContent>
+                </xsd:complexType>
+            </xsd:element>
         </xsd:sequence>
     </xsd:complexType>
     <xsd:element name="addUser" type="axlapi:AddUserReq"/>
@@ -7990,6 +8008,58 @@ Copyright (c) 2006, 2013 Cisco Systems, Inc.
                             <xsd:documentation>This tag should only be used by Hosted Collaboration Solution Shared Architecture deployments.</xsd:documentation>
                         </xsd:annotation>
                     </xsd:element>
+                    <xsd:choice minOccurs="0">
+                        <xsd:sequence minOccurs="0">
+                            <xsd:element maxOccurs="1" minOccurs="0" name="removeAssociatedHeadsets">
+                                <xsd:complexType>
+                                    <xsd:complexContent>
+                                        <xsd:extension base="axlapi:XCommonMembersExtension">
+                                            <xsd:sequence minOccurs="0">
+                                                <xsd:element maxOccurs="15" minOccurs="0" name="headset" type="axlapi:String50">
+                                                    <xsd:annotation>
+                                                        <xsd:documentation>Name of headset.</xsd:documentation>
+                                                    </xsd:annotation>
+                                                </xsd:element>
+                                            </xsd:sequence>
+                                        </xsd:extension>
+                                    </xsd:complexContent>
+                                </xsd:complexType>
+                            </xsd:element>
+                            <xsd:element maxOccurs="1" minOccurs="0" name="addAssociatedHeadsets">
+                                <xsd:complexType>
+                                    <xsd:complexContent>
+                                        <xsd:extension base="axlapi:XCommonMembersExtension">
+                                            <xsd:sequence minOccurs="0">
+                                                <xsd:element maxOccurs="15" minOccurs="0" name="headset" type="axlapi:String50">
+                                                    <xsd:annotation>
+                                                        <xsd:documentation>Name of headset.</xsd:documentation>
+                                                    </xsd:annotation>
+                                                </xsd:element>
+                                            </xsd:sequence>
+                                        </xsd:extension>
+                                    </xsd:complexContent>
+                                </xsd:complexType>
+                            </xsd:element>
+                        </xsd:sequence>
+                        <xsd:element maxOccurs="1" minOccurs="0" name="associatedHeadsets">
+                            <xsd:annotation>
+                                <xsd:documentation>Contains headset that are associated to user.</xsd:documentation>
+                            </xsd:annotation>
+                            <xsd:complexType>
+                                <xsd:complexContent>
+                                    <xsd:extension base="axlapi:XCommonMembersExtension">
+                                        <xsd:sequence minOccurs="0">
+                                            <xsd:element maxOccurs="15" minOccurs="0" name="headset" type="axlapi:String50">
+                                                <xsd:annotation>
+                                                    <xsd:documentation>Name of headset.</xsd:documentation>
+                                                </xsd:annotation>
+                                            </xsd:element>
+                                        </xsd:sequence>
+                                    </xsd:extension>
+                                </xsd:complexContent>
+                            </xsd:complexType>
+                        </xsd:element>
+                    </xsd:choice>
                 </xsd:sequence>
             </xsd:extension>
         </xsd:complexContent>
@@ -8040,6 +8110,11 @@ Copyright (c) 2006, 2013 Cisco Systems, Inc.
                         <xsd:element minOccurs="0" name="lastName" type="xsd:string"/>
                         <xsd:element minOccurs="0" name="userid" type="xsd:string"/>
                         <xsd:element minOccurs="0" name="department" type="xsd:string"/>
+                        <xsd:element minOccurs="0" name="customerName" type="xsd:string">
+                            <xsd:annotation>
+                                <xsd:documentation>This tag should only be used by Hosted Collaboration Solution Shared Architecture deployments.</xsd:documentation>
+                            </xsd:annotation>
+                        </xsd:element>
                     </xsd:sequence>
                 </xsd:complexType>
             </xsd:element>
@@ -15501,7 +15576,7 @@ Copyright (c) 2006, 2013 Cisco Systems, Inc.
             </xsd:element>
             <xsd:element default="0" minOccurs="0" name="sigDigits" nillable="false">
                 <xsd:annotation>
-                    <xsd:documentation>The value of significantDigits must either from 0 to 32 or 99,Here 99 means ALL.enable attribute is Read-Only.If significantDigits is 0-32 then enable is true,if significantDigits is 99 then enable is false.</xsd:documentation>
+                    <xsd:documentation>The value of significantDigits must be between 0 to 32 or 99. In axl, 99 is corresponding to All (on gui) because for integer type database field "All" is not a valid value. Enable is a Read-Only attribute, so if value of significantDigits is between 0 to 32 then enable is true and if significantDigits is 99 then enable is false.</xsd:documentation>
                 </xsd:annotation>
                 <xsd:complexType>
                     <xsd:simpleContent>
@@ -15747,7 +15822,7 @@ Copyright (c) 2006, 2013 Cisco Systems, Inc.
                     </xsd:element>
                     <xsd:element default="0" minOccurs="0" name="sigDigits" nillable="false">
                         <xsd:annotation>
-                            <xsd:documentation>The value of significantDigits must either from 0 to 32 or 99,Here 99 means ALL.enable attribute is Read-Only.If significantDigits is 0-32 then enable is true,if significantDigits is 99 then enable is false.</xsd:documentation>
+                            <xsd:documentation>The value of significantDigits must be between 0 to 32 or 99. In axl, 99 is corresponding to All (on gui) because for integer type database field "All" is not a valid value. Enable is a Read-Only attribute, so if value of significantDigits is between 0 to 32 then enable is true and if significantDigits is 99 then enable is false.</xsd:documentation>
                         </xsd:annotation>
                         <xsd:complexType>
                             <xsd:simpleContent>
@@ -16991,7 +17066,7 @@ Copyright (c) 2006, 2013 Cisco Systems, Inc.
             <xsd:element default="false" maxOccurs="1" minOccurs="0" name="allowH235PassThrough" nillable="false" type="axlapi:boolean"/>
             <xsd:element default="0" minOccurs="0" name="sigDigits" nillable="false">
                 <xsd:annotation>
-                    <xsd:documentation>The value of significantDigits must either from 0 to 32 or 99,Here 99 means ALL.enable attribute is Read-Only.If significantDigits is 0-32 then enable is true,if significantDigits is 99 then enable is false.</xsd:documentation>
+                    <xsd:documentation>The value of significantDigits must be between 0 to 32 or 99. In axl, 99 is corresponding to All (on gui) because for integer type database field "All" is not a valid value. Enable is a Read-Only attribute, so if value of significantDigits is between 0 to 32 then enable is true and if significantDigits is 99 then enable is false.</xsd:documentation>
                 </xsd:annotation>
                 <xsd:complexType>
                     <xsd:simpleContent>
@@ -17169,7 +17244,7 @@ Copyright (c) 2006, 2013 Cisco Systems, Inc.
                     <xsd:element default="false" maxOccurs="1" minOccurs="0" name="allowH235PassThrough" nillable="false" type="axlapi:boolean"/>
                     <xsd:element default="0" minOccurs="0" name="sigDigits" nillable="false">
                         <xsd:annotation>
-                            <xsd:documentation>The value of significantDigits must either from 0 to 32 or 99,Here 99 means ALL.enable attribute is Read-Only.If significantDigits is 0-32 then enable is true,if significantDigits is 99 then enable is false.</xsd:documentation>
+                            <xsd:documentation>The value of significantDigits must be between 0 to 32 or 99. In axl, 99 is corresponding to All (on gui) because for integer type database field "All" is not a valid value. Enable is a Read-Only attribute, so if value of significantDigits is between 0 to 32 then enable is true and if significantDigits is 99 then enable is false.</xsd:documentation>
                         </xsd:annotation>
                         <xsd:complexType>
                             <xsd:simpleContent>
@@ -17790,7 +17865,7 @@ Copyright (c) 2006, 2013 Cisco Systems, Inc.
             </xsd:element>
             <xsd:element maxOccurs="1" minOccurs="0" name="ringSchedule">
                 <xsd:annotation>
-                    <xsd:documentation>This tag must be used for configuring RingSchedule of RD, this tag will get precendence over todaccess and accesslist tag</xsd:documentation>
+                    <xsd:documentation>This tag must be used for configuring RingSchedule of RD, this tag will get precendence over todaccess and accesslist tag. Passing a blank ringSchedule tag in updateRemoteDestination request will result in setting the time schedule to All the time.</xsd:documentation>
                 </xsd:annotation>
                 <xsd:complexType>
                     <xsd:complexContent>
@@ -17928,7 +18003,7 @@ Copyright (c) 2006, 2013 Cisco Systems, Inc.
                         </xsd:sequence>
                         <xsd:element maxOccurs="1" minOccurs="0" name="ringSchedule">
                             <xsd:annotation>
-                                <xsd:documentation>This tag must be used for configuring RingSchedule of RD, this tag will get precendence over todaccess and accesslist tag</xsd:documentation>
+                                <xsd:documentation>This tag must be used for configuring RingSchedule of RD, this tag will get precendence over todaccess and accesslist tag. Passing a blank ringSchedule tag in updateRemoteDestination request will result in setting the time schedule to All the time.</xsd:documentation>
                             </xsd:annotation>
                             <xsd:complexType>
                                 <xsd:complexContent>
@@ -18969,7 +19044,7 @@ Copyright (c) 2006, 2013 Cisco Systems, Inc.
             <xsd:element maxOccurs="1" minOccurs="1" name="setupNonIsdnPi" nillable="false" type="axlapi:boolean"/>
             <xsd:element minOccurs="1" name="sigDigits" nillable="false">
                 <xsd:annotation>
-                    <xsd:documentation>The value for sigDigits must be between 0 to 32. enable attribute is read only</xsd:documentation>
+                    <xsd:documentation>The value of significantDigits must be between 0 to 32 or 99. In axl, 99 is corresponding to All (on gui) because for integer type database field "All" is not a valid value. Enable is a Read-Only attribute, so if value of significantDigits is between 0 to 32 then enable is true and if significantDigits is 99 then enable is false.</xsd:documentation>
                 </xsd:annotation>
                 <xsd:complexType>
                     <xsd:simpleContent>
@@ -19120,7 +19195,7 @@ Copyright (c) 2006, 2013 Cisco Systems, Inc.
                     <xsd:element maxOccurs="1" minOccurs="0" name="setupNonIsdnPi" nillable="false" type="axlapi:boolean"/>
                     <xsd:element minOccurs="0" name="sigDigits" nillable="false">
                         <xsd:annotation>
-                            <xsd:documentation>The value for sigDigits must be between 0 to 32. enable attribute is read only</xsd:documentation>
+                            <xsd:documentation>The value of significantDigits must be between 0 to 32 or 99. In axl, 99 is corresponding to All (on gui) because for integer type database field "All" is not a valid value. Enable is a Read-Only attribute, so if value of significantDigits is between 0 to 32 then enable is true and if significantDigits is 99 then enable is false.</xsd:documentation>
                         </xsd:annotation>
                         <xsd:complexType>
                             <xsd:simpleContent>
@@ -19349,7 +19424,7 @@ Copyright (c) 2006, 2013 Cisco Systems, Inc.
             <xsd:element maxOccurs="1" minOccurs="1" name="setupNonIsdnPi" nillable="false" type="axlapi:boolean"/>
             <xsd:element minOccurs="1" name="sigDigits" nillable="false">
                 <xsd:annotation>
-                    <xsd:documentation>The value for sigDigits must be between 0 to 32. enable attribute is read only</xsd:documentation>
+                    <xsd:documentation>The value of significantDigits must be between 0 to 32 or 99. In axl, 99 is corresponding to All (on gui) because for integer type database field "All" is not a valid value. Enable is a Read-Only attribute, so if value of significantDigits is between 0 to 32 then enable is true and if significantDigits is 99 then enable is false.</xsd:documentation>
                 </xsd:annotation>
                 <xsd:complexType>
                     <xsd:simpleContent>
@@ -19510,7 +19585,7 @@ Copyright (c) 2006, 2013 Cisco Systems, Inc.
                     <xsd:element maxOccurs="1" minOccurs="0" name="setupNonIsdnPi" nillable="false" type="axlapi:boolean"/>
                     <xsd:element minOccurs="0" name="sigDigits" nillable="false">
                         <xsd:annotation>
-                            <xsd:documentation>The value for sigDigits must be between 0 to 32. enable attribute is read only</xsd:documentation>
+                            <xsd:documentation>The value of significantDigits must be between 0 to 32 or 99. In axl, 99 is corresponding to All (on gui) because for integer type database field "All" is not a valid value. Enable is a Read-Only attribute, so if value of significantDigits is between 0 to 32 then enable is true and if significantDigits is 99 then enable is false.</xsd:documentation>
                         </xsd:annotation>
                         <xsd:complexType>
                             <xsd:simpleContent>
@@ -20467,7 +20542,7 @@ Copyright (c) 2006, 2013 Cisco Systems, Inc.
             <xsd:element default="711ulaw" maxOccurs="1" minOccurs="0" name="tkSipCodec" nillable="false" type="axlapi:XSIPCodec"/>
             <xsd:element default="99" minOccurs="0" name="sigDigits" nillable="true">
                 <xsd:annotation>
-                    <xsd:documentation>The value of sigDigits must be either from 0 to 32 or 99. Here 99 means All. enable attribute is Read-Only. If sigDigits is 0-32 then enable is true, if sigDigits is 99 then enable is false.</xsd:documentation>
+                    <xsd:documentation>The value of significantDigits must be between 0 to 32 or 99. In axl, 99 is corresponding to All (on gui) because for integer type database field "All" is not a valid value. Enable is a Read-Only attribute, so if value of significantDigits is between 0 to 32 then enable is true and if significantDigits is 99 then enable is false.</xsd:documentation>
                 </xsd:annotation>
                 <xsd:complexType>
                     <xsd:simpleContent>
@@ -20718,7 +20793,7 @@ Copyright (c) 2006, 2013 Cisco Systems, Inc.
                     <xsd:element default="711ulaw" maxOccurs="1" minOccurs="0" name="tkSipCodec" nillable="false" type="axlapi:XSIPCodec"/>
                     <xsd:element default="99" minOccurs="0" name="sigDigits" nillable="true">
                         <xsd:annotation>
-                            <xsd:documentation>The value of sigDigits must be either from 0 to 32 or 99. Here 99 means All. enable attribute is Read-Only. If sigDigits is 0-32 then enable is true, if sigDigits is 99 then enable is false.</xsd:documentation>
+                            <xsd:documentation>The value of significantDigits must be between 0 to 32 or 99. In axl, 99 is corresponding to All (on gui) because for integer type database field "All" is not a valid value. Enable is a Read-Only attribute, so if value of significantDigits is between 0 to 32 then enable is true and if significantDigits is 99 then enable is false.</xsd:documentation>
                         </xsd:annotation>
                         <xsd:complexType>
                             <xsd:simpleContent>
@@ -25693,7 +25768,7 @@ Copyright (c) 2006, 2013 Cisco Systems, Inc.
         <xsd:sequence minOccurs="0">
             <xsd:element maxOccurs="1" minOccurs="1" name="name" nillable="false" type="xsd:string"/>
             <xsd:element maxOccurs="1" minOccurs="0" name="description" nillable="true" type="xsd:string"/>
-            <xsd:element maxOccurs="1" minOccurs="0" name="announcementFile" nillable="true" type="xsd:string"/>
+            <xsd:element maxOccurs="1" minOccurs="0" name="announcementFile" nillable="true" type="axlapi:XAnnouncementFile"/>
         </xsd:sequence>
     </xsd:complexType>
     <xsd:element name="addAnnouncement" type="axlapi:AddAnnouncementReq"/>
@@ -25721,7 +25796,7 @@ Copyright (c) 2006, 2013 Cisco Systems, Inc.
                 <xsd:sequence>
                     <xsd:element maxOccurs="1" minOccurs="0" name="newName" nillable="false" type="xsd:string"/>
                     <xsd:element maxOccurs="1" minOccurs="0" name="description" nillable="true" type="xsd:string"/>
-                    <xsd:element maxOccurs="1" minOccurs="0" name="announcementFile" nillable="true" type="xsd:string"/>
+                    <xsd:element maxOccurs="1" minOccurs="0" name="announcementFile" nillable="true" type="axlapi:XAnnouncementFile"/>
                 </xsd:sequence>
             </xsd:extension>
         </xsd:complexContent>
@@ -27802,6 +27877,7 @@ Copyright (c) 2006, 2013 Cisco Systems, Inc.
             <xsd:element maxOccurs="1" minOccurs="0" name="universalLineTemplate" nillable="false" type="axlapi:XFkType"/>
             <xsd:element default="false" maxOccurs="1" minOccurs="0" name="allowProvision" nillable="false" type="axlapi:boolean"/>
             <xsd:element default="10" maxOccurs="1" minOccurs="0" name="limitProvision" nillable="false" type="axlapi:XInteger"/>
+            <xsd:element default="false" maxOccurs="1" minOccurs="0" name="allowPhoneReassign" nillable="false" type="axlapi:boolean"/>
             <xsd:element maxOccurs="1" minOccurs="0" name="defaultUserProfile" nillable="false" type="axlapi:XFkType"/>
             <xsd:element default="true" maxOccurs="1" minOccurs="0" name="enableMra" nillable="false" type="axlapi:boolean"/>
             <xsd:element default="IM &amp; Presence, Voice and Video calls" maxOccurs="1" minOccurs="0" name="mraPolicy_Desktop" nillable="false" type="axlapi:XMRAPolicy"/>
@@ -27840,6 +27916,7 @@ Copyright (c) 2006, 2013 Cisco Systems, Inc.
                     <xsd:element maxOccurs="1" minOccurs="0" name="universalLineTemplate" nillable="false" type="axlapi:XFkType"/>
                     <xsd:element default="false" maxOccurs="1" minOccurs="0" name="allowProvision" nillable="false" type="axlapi:boolean"/>
                     <xsd:element default="10" maxOccurs="1" minOccurs="0" name="limitProvision" nillable="false" type="axlapi:XInteger"/>
+                    <xsd:element default="false" maxOccurs="1" minOccurs="0" name="allowPhoneReassign" nillable="false" type="axlapi:boolean"/>
                     <xsd:element maxOccurs="1" minOccurs="0" name="defaultUserProfile" nillable="false" type="axlapi:XFkType"/>
                     <xsd:element default="true" maxOccurs="1" minOccurs="0" name="enableMra" nillable="false" type="axlapi:boolean"/>
                     <xsd:element default="IM &amp; Presence, Voice and Video calls" maxOccurs="1" minOccurs="0" name="mraPolicy_Desktop" nillable="false" type="axlapi:XMRAPolicy"/>
@@ -29378,6 +29455,7 @@ Copyright (c) 2006, 2013 Cisco Systems, Inc.
             <xsd:element maxOccurs="1" minOccurs="0" name="endpointConnection" nillable="true" type="axlapi:XEndpointConnection"/>
             <xsd:element maxOccurs="1" minOccurs="0" name="portOrSsid" nillable="false" type="xsd:string"/>
             <xsd:element maxOccurs="1" minOccurs="0" name="lastSeen" nillable="false" type="axlapi:XInteger"/>
+            <xsd:element maxOccurs="1" minOccurs="0" name="risStatus" nillable="true" type="axlapi:XRisStatus"/>
         </xsd:sequence>
     </xsd:complexType>
     <xsd:element name="getRegistrationDynamic" type="axlapi:GetRegistrationDynamicReq"/>
@@ -30172,28 +30250,36 @@ Copyright (c) 2006, 2013 Cisco Systems, Inc.
     </xsd:complexType>
     <xsd:complexType name="XCiscoCloudOnboarding">
         <xsd:sequence minOccurs="0">
-            <xsd:element maxOccurs="1" minOccurs="0" name="voucherExists" type="axlapi:boolean"/>
-            <xsd:element maxOccurs="1" minOccurs="0" name="enablePushNotifications" type="axlapi:boolean"/>
+            <xsd:element maxOccurs="1" minOccurs="0" name="voucherExists" type="axlapi:boolean">
+                <xsd:annotation>
+                    <xsd:documentation>This value does not exist in the database. This field is used to generate / remove. During update, if the value in the database goes from false to true, then voucher is generated. Conversely, if value goes from true to false, the voucher is removed. During generation of voucher, the population of other fields happens after the voucher creation. Note that this simulates clicking the Create Voucher button. During removal of voucher, the fields will be populated then the voucher will be removed. Voucher removal will only happen in the Cisco Cloud un-boarded state.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+            <xsd:element maxOccurs="1" minOccurs="0" name="enablePushNotifications" type="axlapi:boolean">
+                <xsd:annotation>
+                    <xsd:documentation>Successfully setting the values of one or both of enableGdsCommunication and enablePushNotifications to true finishes the Cisco Cloud Onboarding process. Setting them both to false moves Cisco Cloud Onboarding to un-boarded state.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
             <xsd:element maxOccurs="1" minOccurs="0" name="enableHttpProxy" type="axlapi:boolean"/>
             <xsd:element maxOccurs="1" minOccurs="0" name="httpProxyAddress" type="xsd:string"/>
             <xsd:element maxOccurs="1" minOccurs="0" name="proxyUsername" type="xsd:string"/>
             <xsd:element maxOccurs="1" minOccurs="0" name="proxyPassword" type="xsd:string"/>
             <xsd:element maxOccurs="1" minOccurs="0" name="enableTrustCACertificate" type="axlapi:boolean"/>
-            <xsd:element maxOccurs="1" minOccurs="0" name="allowAnalyticsCollection" type="axlapi:boolean"/>
+            <xsd:element maxOccurs="1" minOccurs="0" name="allowAnalyticsCollection" type="axlapi:boolean">
+                <xsd:annotation>
+                    <xsd:documentation>During updates, the value of this field is ignored and the value of enableTroubleShooting is used instead, if any.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
             <xsd:element maxOccurs="1" minOccurs="0" name="enableTroubleshooting" type="axlapi:boolean"/>
             <xsd:element maxOccurs="1" minOccurs="0" name="alarmSendEncryptedData" type="axlapi:boolean"/>
             <xsd:element maxOccurs="1" minOccurs="0" name="orgId" type="xsd:string"/>
-            <xsd:element maxOccurs="1" minOccurs="0" name="alarmPushIntervalSecs" type="axlapi:XInteger"/>
-            <xsd:element maxOccurs="1" minOccurs="0" name="alarmEncryptKey" type="xsd:string"/>
             <xsd:element maxOccurs="1" minOccurs="0" name="serviceAddress" type="xsd:string"/>
-            <xsd:element maxOccurs="1" minOccurs="0" name="onboardingRegistrationStatus" nillable="false" type="axlapi:XOnboardingRegistrationStatus"/>
-            <xsd:element maxOccurs="1" minOccurs="0" name="email" type="xsd:string"/>
-            <xsd:element maxOccurs="1" minOccurs="0" name="partnerEmail" type="xsd:string"/>
             <xsd:element maxOccurs="1" minOccurs="0" name="orgName" type="xsd:string"/>
-            <xsd:element maxOccurs="1" minOccurs="0" name="customerOneTimePassword" type="xsd:string"/>
-            <xsd:element maxOccurs="1" minOccurs="0" name="alarmSeverity" nillable="false" type="axlapi:XAlarmSeverity"/>
-            <xsd:element maxOccurs="1" minOccurs="1" name="alarmPushNowToggle" nillable="false" type="axlapi:XInteger"/>
-            <xsd:element maxOccurs="1" minOccurs="0" name="enableGDSCommunication" type="axlapi:boolean"/>
+            <xsd:element maxOccurs="1" minOccurs="0" name="enableGDSCommunication" type="axlapi:boolean">
+                <xsd:annotation>
+                    <xsd:documentation>Successfully setting the values of one or both of enableGdsCommunication and enablePushNotifications to true finishes the Cisco Cloud Onboarding process. Setting them both to false moves Cisco Cloud Onboarding to un-boarded state.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
             <xsd:element maxOccurs="1" minOccurs="0" name="mraActivationDomain" type="xsd:string"/>
         </xsd:sequence>
     </xsd:complexType>
@@ -30208,28 +30294,36 @@ Copyright (c) 2006, 2013 Cisco Systems, Inc.
                     <xsd:choice>
                         <xsd:element name="uuid" type="axlapi:XUUID"/>
                     </xsd:choice>
-                    <xsd:element maxOccurs="1" minOccurs="0" name="voucherExists" type="axlapi:boolean"/>
-                    <xsd:element maxOccurs="1" minOccurs="0" name="enablePushNotifications" type="axlapi:boolean"/>
+                    <xsd:element maxOccurs="1" minOccurs="0" name="voucherExists" type="axlapi:boolean">
+                        <xsd:annotation>
+                            <xsd:documentation>This value does not exist in the database. This field is used to generate / remove. During update, if the value in the database goes from false to true, then voucher is generated. Conversely, if value goes from true to false, the voucher is removed. During generation of voucher, the population of other fields happens after the voucher creation. Note that this simulates clicking the Create Voucher button. During removal of voucher, the fields will be populated then the voucher will be removed. Voucher removal will only happen in the Cisco Cloud un-boarded state.</xsd:documentation>
+                        </xsd:annotation>
+                    </xsd:element>
+                    <xsd:element maxOccurs="1" minOccurs="0" name="enablePushNotifications" type="axlapi:boolean">
+                        <xsd:annotation>
+                            <xsd:documentation>Successfully setting the values of one or both of enableGdsCommunication and enablePushNotifications to true finishes the Cisco Cloud Onboarding process. Setting them both to false moves Cisco Cloud Onboarding to un-boarded state.</xsd:documentation>
+                        </xsd:annotation>
+                    </xsd:element>
                     <xsd:element maxOccurs="1" minOccurs="0" name="enableHttpProxy" type="axlapi:boolean"/>
                     <xsd:element maxOccurs="1" minOccurs="0" name="httpProxyAddress" type="xsd:string"/>
                     <xsd:element maxOccurs="1" minOccurs="0" name="proxyUsername" type="xsd:string"/>
                     <xsd:element maxOccurs="1" minOccurs="0" name="proxyPassword" type="xsd:string"/>
                     <xsd:element maxOccurs="1" minOccurs="0" name="enableTrustCACertificate" type="axlapi:boolean"/>
-                    <xsd:element maxOccurs="1" minOccurs="0" name="allowAnalyticsCollection" type="axlapi:boolean"/>
+                    <xsd:element maxOccurs="1" minOccurs="0" name="allowAnalyticsCollection" type="axlapi:boolean">
+                        <xsd:annotation>
+                            <xsd:documentation>During updates, the value of this field is ignored and the value of enableTroubleShooting is used instead, if any.</xsd:documentation>
+                        </xsd:annotation>
+                    </xsd:element>
                     <xsd:element maxOccurs="1" minOccurs="0" name="enableTroubleshooting" type="axlapi:boolean"/>
                     <xsd:element maxOccurs="1" minOccurs="0" name="alarmSendEncryptedData" type="axlapi:boolean"/>
                     <xsd:element maxOccurs="1" minOccurs="0" name="orgId" type="xsd:string"/>
-                    <xsd:element maxOccurs="1" minOccurs="0" name="alarmPushIntervalSecs" type="axlapi:XInteger"/>
-                    <xsd:element maxOccurs="1" minOccurs="0" name="alarmEncryptKey" type="xsd:string"/>
                     <xsd:element maxOccurs="1" minOccurs="0" name="serviceAddress" type="xsd:string"/>
-                    <xsd:element maxOccurs="1" minOccurs="0" name="onboardingRegistrationStatus" nillable="false" type="axlapi:XOnboardingRegistrationStatus"/>
-                    <xsd:element maxOccurs="1" minOccurs="0" name="email" type="xsd:string"/>
-                    <xsd:element maxOccurs="1" minOccurs="0" name="partnerEmail" type="xsd:string"/>
                     <xsd:element maxOccurs="1" minOccurs="0" name="orgName" type="xsd:string"/>
-                    <xsd:element maxOccurs="1" minOccurs="0" name="customerOneTimePassword" type="xsd:string"/>
-                    <xsd:element maxOccurs="1" minOccurs="0" name="alarmSeverity" nillable="false" type="axlapi:XAlarmSeverity"/>
-                    <xsd:element maxOccurs="1" minOccurs="0" name="alarmPushNowToggle" nillable="false" type="axlapi:XInteger"/>
-                    <xsd:element maxOccurs="1" minOccurs="0" name="enableGDSCommunication" type="axlapi:boolean"/>
+                    <xsd:element maxOccurs="1" minOccurs="0" name="enableGDSCommunication" type="axlapi:boolean">
+                        <xsd:annotation>
+                            <xsd:documentation>Successfully setting the values of one or both of enableGdsCommunication and enablePushNotifications to true finishes the Cisco Cloud Onboarding process. Setting them both to false moves Cisco Cloud Onboarding to un-boarded state.</xsd:documentation>
+                        </xsd:annotation>
+                    </xsd:element>
                     <xsd:element maxOccurs="1" minOccurs="0" name="mraActivationDomain" type="xsd:string"/>
                 </xsd:sequence>
             </xsd:extension>
@@ -31345,6 +31439,11 @@ Copyright (c) 2006, 2013 Cisco Systems, Inc.
             <xsd:element maxOccurs="1" minOccurs="0" name="userIdentity" type="xsd:string">
                 <xsd:annotation>
                     <xsd:documentation>Value should be of of the format user@domain</xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+            <xsd:element maxOccurs="1" minOccurs="0" name="customerName" type="axlapi:XFkType">
+                <xsd:annotation>
+                    <xsd:documentation>This tag should only be used by Hosted Collaboration Solution Shared Architecture deployments.</xsd:documentation>
                 </xsd:annotation>
             </xsd:element>
         </xsd:sequence>
@@ -32803,7 +32902,7 @@ Copyright (c) 2006, 2013 Cisco Systems, Inc.
             </xsd:element>
             <xsd:element minOccurs="0" name="sigDigits">
                 <xsd:annotation>
-                    <xsd:documentation>The value of significantDigits must either from 0 to 32 or 99,Here 99 means ALL.enable attribute is Read-Only.If significantDigits is 0-32 then enable is true,if significantDigits is 99 then enable is false.</xsd:documentation>
+                    <xsd:documentation>The value of significantDigits must be between 0 to 32 or 99. In axl, 99 is corresponding to All (on gui) because for integer type database field "All" is not a valid value. Enable is a Read-Only attribute, so if value of significantDigits is between 0 to 32 then enable is true and if significantDigits is 99 then enable is false.</xsd:documentation>
                 </xsd:annotation>
                 <xsd:complexType>
                     <xsd:simpleContent>
@@ -33403,7 +33502,7 @@ Copyright (c) 2006, 2013 Cisco Systems, Inc.
             <xsd:element maxOccurs="1" minOccurs="0" name="allowH235PassThrough" type="axlapi:boolean"/>
             <xsd:element minOccurs="0" name="sigDigits">
                 <xsd:annotation>
-                    <xsd:documentation>The value of significantDigits must either from 0 to 32 or 99,Here 99 means ALL.enable attribute is Read-Only.If significantDigits is 0-32 then enable is true,if significantDigits is 99 then enable is false.</xsd:documentation>
+                    <xsd:documentation>The value of significantDigits must be between 0 to 32 or 99. In axl, 99 is corresponding to All (on gui) because for integer type database field "All" is not a valid value. Enable is a Read-Only attribute, so if value of significantDigits is between 0 to 32 then enable is true and if significantDigits is 99 then enable is false.</xsd:documentation>
                 </xsd:annotation>
                 <xsd:complexType>
                     <xsd:simpleContent>
@@ -33962,7 +34061,7 @@ Copyright (c) 2006, 2013 Cisco Systems, Inc.
             <xsd:element maxOccurs="1" minOccurs="0" name="setupNonIsdnPi" type="axlapi:boolean"/>
             <xsd:element minOccurs="0" name="sigDigits">
                 <xsd:annotation>
-                    <xsd:documentation>The value for sigDigits must be between 0 to 32. enable attribute is read only</xsd:documentation>
+                    <xsd:documentation>The value of significantDigits must be between 0 to 32 or 99. In axl, 99 is corresponding to All (on gui) because for integer type database field "All" is not a valid value. Enable is a Read-Only attribute, so if value of significantDigits is between 0 to 32 then enable is true and if significantDigits is 99 then enable is false.</xsd:documentation>
                 </xsd:annotation>
                 <xsd:complexType>
                     <xsd:simpleContent>
@@ -34116,7 +34215,7 @@ Copyright (c) 2006, 2013 Cisco Systems, Inc.
             <xsd:element maxOccurs="1" minOccurs="0" name="setupNonIsdnPi" type="axlapi:boolean"/>
             <xsd:element minOccurs="0" name="sigDigits">
                 <xsd:annotation>
-                    <xsd:documentation>The value for sigDigits must be between 0 to 32. enable attribute is read only</xsd:documentation>
+                    <xsd:documentation>The value of significantDigits must be between 0 to 32 or 99. In axl, 99 is corresponding to All (on gui) because for integer type database field "All" is not a valid value. Enable is a Read-Only attribute, so if value of significantDigits is between 0 to 32 then enable is true and if significantDigits is 99 then enable is false.</xsd:documentation>
                 </xsd:annotation>
                 <xsd:complexType>
                     <xsd:simpleContent>
@@ -34433,7 +34532,7 @@ Copyright (c) 2006, 2013 Cisco Systems, Inc.
             <xsd:element maxOccurs="1" minOccurs="0" name="tkSipCodec" type="axlapi:XSIPCodec"/>
             <xsd:element minOccurs="0" name="sigDigits">
                 <xsd:annotation>
-                    <xsd:documentation>The value of sigDigits must be either from 0 to 32 or 99. Here 99 means All. enable attribute is Read-Only. If sigDigits is 0-32 then enable is true, if sigDigits is 99 then enable is false.</xsd:documentation>
+                    <xsd:documentation>The value of significantDigits must be between 0 to 32 or 99. In axl, 99 is corresponding to All (on gui) because for integer type database field "All" is not a valid value. Enable is a Read-Only attribute, so if value of significantDigits is between 0 to 32 then enable is true and if significantDigits is 99 then enable is false.</xsd:documentation>
                 </xsd:annotation>
                 <xsd:complexType>
                     <xsd:simpleContent>
@@ -35048,7 +35147,7 @@ Copyright (c) 2006, 2013 Cisco Systems, Inc.
         <xsd:sequence minOccurs="0">
             <xsd:element maxOccurs="1" minOccurs="0" name="name" type="xsd:string"/>
             <xsd:element maxOccurs="1" minOccurs="0" name="description" type="xsd:string"/>
-            <xsd:element maxOccurs="1" minOccurs="0" name="announcementFile" type="xsd:string"/>
+            <xsd:element maxOccurs="1" minOccurs="0" name="announcementFile" type="axlapi:XAnnouncementFile"/>
         </xsd:sequence>
         <xsd:attribute name="uuid" type="axlapi:XUUID"/>
     </xsd:complexType>
@@ -35319,6 +35418,7 @@ Copyright (c) 2006, 2013 Cisco Systems, Inc.
             <xsd:element maxOccurs="1" minOccurs="0" name="description" type="axlapi:String255"/>
             <xsd:element maxOccurs="1" minOccurs="0" name="allowProvision" type="axlapi:boolean"/>
             <xsd:element maxOccurs="1" minOccurs="0" name="limitProvision" type="axlapi:XInteger"/>
+            <xsd:element maxOccurs="1" minOccurs="0" name="allowPhoneReassign" type="axlapi:boolean"/>
             <xsd:element maxOccurs="1" minOccurs="0" name="defaultUserProfile" type="axlapi:XFkType"/>
             <xsd:element maxOccurs="1" minOccurs="0" name="allowProvisionEMMaxLoginTime" type="axlapi:boolean"/>
         </xsd:sequence>
@@ -35568,7 +35668,9 @@ Copyright (c) 2006, 2013 Cisco Systems, Inc.
             <xsd:element maxOccurs="1" minOccurs="0" name="locationDetails" type="xsd:string"/>
             <xsd:element maxOccurs="1" minOccurs="0" name="endpointConnection" type="axlapi:XEndpointConnection"/>
             <xsd:element maxOccurs="1" minOccurs="0" name="portOrSsid" type="xsd:string"/>
-            <xsd:element maxOccurs="1" minOccurs="0" name="lastSeen" type="axlapi:XInteger"/>
+            <!-- <xsd:element maxOccurs="1" minOccurs="0" name="lastSeen" type="axlapi:XInteger"/> -->
+            <xsd:element maxOccurs="1" minOccurs="0" name="lastSeen" type="xsd:string"/>
+            <xsd:element maxOccurs="1" minOccurs="0" name="risStatus" type="axlapi:XRisStatus"/>
         </xsd:sequence>
         <xsd:attribute name="uuid" type="axlapi:XUUID"/>
     </xsd:complexType>
@@ -35701,32 +35803,80 @@ Copyright (c) 2006, 2013 Cisco Systems, Inc.
     </xsd:complexType>
     <xsd:complexType name="LCiscoCloudOnboarding">
         <xsd:sequence minOccurs="0">
-            <xsd:element maxOccurs="1" minOccurs="0" name="voucherExists" type="axlapi:boolean"/>
-            <xsd:element maxOccurs="1" minOccurs="0" name="enablePushNotifications" type="axlapi:boolean"/>
+            <xsd:element maxOccurs="1" minOccurs="0" name="voucherExists" type="axlapi:boolean">
+                <xsd:annotation>
+                    <xsd:documentation>This value does not exist in the database. This field is used to generate / remove. During update, if the value in the database goes from false to true, then voucher is generated. Conversely, if value goes from true to false, the voucher is removed. During generation of voucher, the population of other fields happens after the voucher creation. Note that this simulates clicking the Create Voucher button. During removal of voucher, the fields will be populated then the voucher will be removed. Voucher removal will only happen in the Cisco Cloud un-boarded state.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+            <xsd:element maxOccurs="1" minOccurs="0" name="enablePushNotifications" type="axlapi:boolean">
+                <xsd:annotation>
+                    <xsd:documentation>Successfully setting the values of one or both of enableGdsCommunication and enablePushNotifications to true finishes the Cisco Cloud Onboarding process. Setting them both to false moves Cisco Cloud Onboarding to un-boarded state.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
             <xsd:element maxOccurs="1" minOccurs="0" name="enableHttpProxy" type="axlapi:boolean"/>
             <xsd:element maxOccurs="1" minOccurs="0" name="httpProxyAddress" type="xsd:string"/>
             <xsd:element maxOccurs="1" minOccurs="0" name="proxyUsername" type="xsd:string"/>
             <xsd:element maxOccurs="1" minOccurs="0" name="proxyPassword" type="xsd:string"/>
             <xsd:element maxOccurs="1" minOccurs="0" name="enableTrustCACertificate" type="axlapi:boolean"/>
-            <xsd:element maxOccurs="1" minOccurs="0" name="allowAnalyticsCollection" type="axlapi:boolean"/>
+            <xsd:element maxOccurs="1" minOccurs="0" name="allowAnalyticsCollection" type="axlapi:boolean">
+                <xsd:annotation>
+                    <xsd:documentation>During updates, the value of this field is ignored and the value of enableTroubleShooting is used instead, if any.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
             <xsd:element maxOccurs="1" minOccurs="0" name="enableTroubleshooting" type="axlapi:boolean"/>
             <xsd:element maxOccurs="1" minOccurs="0" name="alarmSendEncryptedData" type="axlapi:boolean"/>
             <xsd:element maxOccurs="1" minOccurs="0" name="orgId" type="xsd:string"/>
-            <xsd:element maxOccurs="1" minOccurs="0" name="alarmPushIntervalSecs" type="axlapi:XInteger"/>
-            <xsd:element maxOccurs="1" minOccurs="0" name="alarmEncryptKey" type="xsd:string"/>
+            <xsd:element maxOccurs="1" minOccurs="0" name="alarmPushIntervalSecs" type="axlapi:XInteger">
+                <xsd:annotation>
+                    <xsd:documentation>Currently read-only. For possible future use.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+            <xsd:element maxOccurs="1" minOccurs="0" name="alarmEncryptKey" type="xsd:string">
+                <xsd:annotation>
+                    <xsd:documentation>This is a readonly field. During update, the value of this field is internally generated when the value of alarmSendEncryptedData in database changes from false to true ; or deleted when the value changes from true to false.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
             <xsd:element maxOccurs="1" minOccurs="0" name="serviceAddress" type="xsd:string"/>
-            <xsd:element maxOccurs="1" minOccurs="0" name="onboardingRegistrationStatus" type="axlapi:XOnboardingRegistrationStatus"/>
-            <xsd:element maxOccurs="1" minOccurs="0" name="email" type="xsd:string"/>
-            <xsd:element maxOccurs="1" minOccurs="0" name="partnerEmail" type="xsd:string"/>
+            <xsd:element maxOccurs="1" minOccurs="0" name="onboardingRegistrationStatus" type="axlapi:XOnboardingRegistrationStatus">
+                <xsd:annotation>
+                    <xsd:documentation>This is a readonly field. It is set during update automatically to the correct value that reflects the status of the system.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+            <xsd:element maxOccurs="1" minOccurs="0" name="email" type="xsd:string">
+                <xsd:annotation>
+                    <xsd:documentation>Currently read-only. For possible future use.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+            <xsd:element maxOccurs="1" minOccurs="0" name="partnerEmail" type="xsd:string">
+                <xsd:annotation>
+                    <xsd:documentation>Currently read-only. For possible future use.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
             <xsd:element maxOccurs="1" minOccurs="0" name="orgName" type="xsd:string"/>
-            <xsd:element maxOccurs="1" minOccurs="0" name="customerOneTimePassword" type="xsd:string"/>
-            <xsd:element maxOccurs="1" minOccurs="0" name="alarmSeverity" type="axlapi:XAlarmSeverity"/>
-            <xsd:element maxOccurs="1" minOccurs="0" name="alarmPushNowToggle" type="axlapi:XInteger"/>
-            <xsd:element maxOccurs="1" minOccurs="0" name="enableGDSCommunication" type="axlapi:boolean"/>
+            <xsd:element maxOccurs="1" minOccurs="0" name="customerOneTimePassword" type="xsd:string">
+                <xsd:annotation>
+                    <xsd:documentation>Currently read-only. For possible future use.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+            <xsd:element maxOccurs="1" minOccurs="0" name="alarmSeverity" type="axlapi:XAlarmSeverity">
+                <xsd:annotation>
+                    <xsd:documentation>Currently read-only. For possible future use.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+            <xsd:element maxOccurs="1" minOccurs="0" name="alarmPushNowToggle" type="axlapi:XInteger">
+                <xsd:annotation>
+                    <xsd:documentation>Currently read-only. For possible future use.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+            <xsd:element maxOccurs="1" minOccurs="0" name="enableGDSCommunication" type="axlapi:boolean">
+                <xsd:annotation>
+                    <xsd:documentation>Successfully setting the values of one or both of enableGdsCommunication and enablePushNotifications to true finishes the Cisco Cloud Onboarding process. Setting them both to false moves Cisco Cloud Onboarding to un-boarded state.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
             <xsd:element maxOccurs="1" minOccurs="0" name="mraActivationDomain" type="xsd:string"/>
             <xsd:element maxOccurs="1" minOccurs="0" name="errorStatus">
                 <xsd:annotation>
-                    <xsd:documentation>Read-only listing of any error statuses that may affect onboarding configuration</xsd:documentation>
+                    <xsd:documentation>Read-only listing of any statuses that may affect onboarding configuration. Some of these statuses are common with GUI screens.</xsd:documentation>
                 </xsd:annotation>
                 <xsd:complexType>
                     <xsd:sequence minOccurs="0">
@@ -39127,6 +39277,20 @@ Copyright (c) 2006, 2013 Cisco Systems, Inc.
                     <xsd:documentation>This tag should only be used by Hosted Collaboration Solution Shared Architecture deployments.</xsd:documentation>
                 </xsd:annotation>
             </xsd:element>
+            <xsd:element maxOccurs="1" minOccurs="0" name="associatedHeadsets">
+                <xsd:annotation>
+                    <xsd:documentation>Contains headset that are associated to user.</xsd:documentation>
+                </xsd:annotation>
+                <xsd:complexType>
+                    <xsd:sequence minOccurs="0">
+                        <xsd:element maxOccurs="15" minOccurs="0" name="headset" type="axlapi:String50">
+                            <xsd:annotation>
+                                <xsd:documentation>Name of headset.</xsd:documentation>
+                            </xsd:annotation>
+                        </xsd:element>
+                    </xsd:sequence>
+                </xsd:complexType>
+            </xsd:element>
         </xsd:sequence>
         <xsd:attribute name="uuid" type="axlapi:XUUID"/>
     </xsd:complexType>
@@ -41006,7 +41170,7 @@ Copyright (c) 2006, 2013 Cisco Systems, Inc.
             </xsd:element>
             <xsd:element minOccurs="0" name="sigDigits">
                 <xsd:annotation>
-                    <xsd:documentation>The value of significantDigits must either from 0 to 32 or 99,Here 99 means ALL.enable attribute is Read-Only.If significantDigits is 0-32 then enable is true,if significantDigits is 99 then enable is false.</xsd:documentation>
+                    <xsd:documentation>The value of significantDigits must be between 0 to 32 or 99. In axl, 99 is corresponding to All (on gui) because for integer type database field "All" is not a valid value. Enable is a Read-Only attribute, so if value of significantDigits is between 0 to 32 then enable is true and if significantDigits is 99 then enable is false.</xsd:documentation>
                 </xsd:annotation>
                 <xsd:complexType>
                     <xsd:simpleContent>
@@ -41707,7 +41871,7 @@ Copyright (c) 2006, 2013 Cisco Systems, Inc.
             <xsd:element maxOccurs="1" minOccurs="0" name="allowH235PassThrough" type="axlapi:boolean"/>
             <xsd:element minOccurs="0" name="sigDigits">
                 <xsd:annotation>
-                    <xsd:documentation>The value of significantDigits must either from 0 to 32 or 99,Here 99 means ALL.enable attribute is Read-Only.If significantDigits is 0-32 then enable is true,if significantDigits is 99 then enable is false.</xsd:documentation>
+                    <xsd:documentation>The value of significantDigits must be between 0 to 32 or 99. In axl, 99 is corresponding to All (on gui) because for integer type database field "All" is not a valid value. Enable is a Read-Only attribute, so if value of significantDigits is between 0 to 32 then enable is true and if significantDigits is 99 then enable is false.</xsd:documentation>
                 </xsd:annotation>
                 <xsd:complexType>
                     <xsd:simpleContent>
@@ -42094,7 +42258,7 @@ Copyright (c) 2006, 2013 Cisco Systems, Inc.
             </xsd:element>
             <xsd:element maxOccurs="1" minOccurs="0" name="ringSchedule">
                 <xsd:annotation>
-                    <xsd:documentation>This tag must be used for configuring RingSchedule of RD, this tag will get precendence over todaccess and accesslist tag</xsd:documentation>
+                    <xsd:documentation>This tag must be used for configuring RingSchedule of RD, this tag will get precendence over todaccess and accesslist tag. Passing a blank ringSchedule tag in updateRemoteDestination request will result in setting the time schedule to All the time.</xsd:documentation>
                 </xsd:annotation>
                 <xsd:complexType>
                     <xsd:sequence minOccurs="0">
@@ -42445,7 +42609,7 @@ Copyright (c) 2006, 2013 Cisco Systems, Inc.
             <xsd:element maxOccurs="1" minOccurs="0" name="setupNonIsdnPi" type="axlapi:boolean"/>
             <xsd:element minOccurs="0" name="sigDigits">
                 <xsd:annotation>
-                    <xsd:documentation>The value for sigDigits must be between 0 to 32. enable attribute is read only</xsd:documentation>
+                    <xsd:documentation>The value of significantDigits must be between 0 to 32 or 99. In axl, 99 is corresponding to All (on gui) because for integer type database field "All" is not a valid value. Enable is a Read-Only attribute, so if value of significantDigits is between 0 to 32 then enable is true and if significantDigits is 99 then enable is false.</xsd:documentation>
                 </xsd:annotation>
                 <xsd:complexType>
                     <xsd:simpleContent>
@@ -42605,7 +42769,7 @@ Copyright (c) 2006, 2013 Cisco Systems, Inc.
             <xsd:element maxOccurs="1" minOccurs="0" name="setupNonIsdnPi" type="axlapi:boolean"/>
             <xsd:element minOccurs="0" name="sigDigits">
                 <xsd:annotation>
-                    <xsd:documentation>The value for sigDigits must be between 0 to 32. enable attribute is read only</xsd:documentation>
+                    <xsd:documentation>The value of significantDigits must be between 0 to 32 or 99. In axl, 99 is corresponding to All (on gui) because for integer type database field "All" is not a valid value. Enable is a Read-Only attribute, so if value of significantDigits is between 0 to 32 then enable is true and if significantDigits is 99 then enable is false.</xsd:documentation>
                 </xsd:annotation>
                 <xsd:complexType>
                     <xsd:simpleContent>
@@ -42962,7 +43126,7 @@ Copyright (c) 2006, 2013 Cisco Systems, Inc.
             <xsd:element maxOccurs="1" minOccurs="0" name="tkSipCodec" type="axlapi:XSIPCodec"/>
             <xsd:element minOccurs="0" name="sigDigits">
                 <xsd:annotation>
-                    <xsd:documentation>The value of sigDigits must be either from 0 to 32 or 99. Here 99 means All. enable attribute is Read-Only. If sigDigits is 0-32 then enable is true, if sigDigits is 99 then enable is false.</xsd:documentation>
+                    <xsd:documentation>The value of significantDigits must be between 0 to 32 or 99. In axl, 99 is corresponding to All (on gui) because for integer type database field "All" is not a valid value. Enable is a Read-Only attribute, so if value of significantDigits is between 0 to 32 then enable is true and if significantDigits is 99 then enable is false.</xsd:documentation>
                 </xsd:annotation>
                 <xsd:complexType>
                     <xsd:simpleContent>
@@ -43807,7 +43971,7 @@ Copyright (c) 2006, 2013 Cisco Systems, Inc.
         <xsd:sequence minOccurs="0">
             <xsd:element maxOccurs="1" minOccurs="0" name="name" type="xsd:string"/>
             <xsd:element maxOccurs="1" minOccurs="0" name="description" type="xsd:string"/>
-            <xsd:element maxOccurs="1" minOccurs="0" name="announcementFile" type="xsd:string"/>
+            <xsd:element maxOccurs="1" minOccurs="0" name="announcementFile" type="axlapi:XAnnouncementFile"/>
         </xsd:sequence>
         <xsd:attribute name="uuid" type="axlapi:XUUID"/>
     </xsd:complexType>
@@ -44173,6 +44337,7 @@ Copyright (c) 2006, 2013 Cisco Systems, Inc.
             <xsd:element maxOccurs="1" minOccurs="0" name="universalLineTemplate" type="axlapi:XFkType"/>
             <xsd:element maxOccurs="1" minOccurs="0" name="allowProvision" type="axlapi:boolean"/>
             <xsd:element maxOccurs="1" minOccurs="0" name="limitProvision" type="axlapi:XInteger"/>
+            <xsd:element maxOccurs="1" minOccurs="0" name="allowPhoneReassign" type="axlapi:boolean"/>
             <xsd:element maxOccurs="1" minOccurs="0" name="defaultUserProfile" type="axlapi:XFkType"/>
             <xsd:element maxOccurs="1" minOccurs="0" name="enableMra" type="axlapi:boolean"/>
             <xsd:element maxOccurs="1" minOccurs="0" name="mraPolicy_Desktop" type="axlapi:XMRAPolicy"/>
@@ -44455,6 +44620,7 @@ Copyright (c) 2006, 2013 Cisco Systems, Inc.
             <xsd:element maxOccurs="1" minOccurs="0" name="endpointConnection" type="axlapi:XEndpointConnection"/>
             <xsd:element maxOccurs="1" minOccurs="0" name="portOrSsid" type="xsd:string"/>
             <xsd:element maxOccurs="1" minOccurs="0" name="lastSeen" type="axlapi:XInteger"/>
+            <xsd:element maxOccurs="1" minOccurs="0" name="risStatus" type="axlapi:XRisStatus"/>
         </xsd:sequence>
         <xsd:attribute name="uuid" type="axlapi:XUUID"/>
     </xsd:complexType>
@@ -44595,32 +44761,80 @@ Copyright (c) 2006, 2013 Cisco Systems, Inc.
     </xsd:complexType>
     <xsd:complexType name="RCiscoCloudOnboarding">
         <xsd:sequence minOccurs="0">
-            <xsd:element maxOccurs="1" minOccurs="0" name="voucherExists" type="axlapi:boolean"/>
-            <xsd:element maxOccurs="1" minOccurs="0" name="enablePushNotifications" type="axlapi:boolean"/>
+            <xsd:element maxOccurs="1" minOccurs="0" name="voucherExists" type="axlapi:boolean">
+                <xsd:annotation>
+                    <xsd:documentation>This value does not exist in the database. This field is used to generate / remove. During update, if the value in the database goes from false to true, then voucher is generated. Conversely, if value goes from true to false, the voucher is removed. During generation of voucher, the population of other fields happens after the voucher creation. Note that this simulates clicking the Create Voucher button. During removal of voucher, the fields will be populated then the voucher will be removed. Voucher removal will only happen in the Cisco Cloud un-boarded state.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+            <xsd:element maxOccurs="1" minOccurs="0" name="enablePushNotifications" type="axlapi:boolean">
+                <xsd:annotation>
+                    <xsd:documentation>Successfully setting the values of one or both of enableGdsCommunication and enablePushNotifications to true finishes the Cisco Cloud Onboarding process. Setting them both to false moves Cisco Cloud Onboarding to un-boarded state.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
             <xsd:element maxOccurs="1" minOccurs="0" name="enableHttpProxy" type="axlapi:boolean"/>
             <xsd:element maxOccurs="1" minOccurs="0" name="httpProxyAddress" type="xsd:string"/>
             <xsd:element maxOccurs="1" minOccurs="0" name="proxyUsername" type="xsd:string"/>
             <xsd:element maxOccurs="1" minOccurs="0" name="proxyPassword" type="xsd:string"/>
             <xsd:element maxOccurs="1" minOccurs="0" name="enableTrustCACertificate" type="axlapi:boolean"/>
-            <xsd:element maxOccurs="1" minOccurs="0" name="allowAnalyticsCollection" type="axlapi:boolean"/>
+            <xsd:element maxOccurs="1" minOccurs="0" name="allowAnalyticsCollection" type="axlapi:boolean">
+                <xsd:annotation>
+                    <xsd:documentation>During updates, the value of this field is ignored and the value of enableTroubleShooting is used instead, if any.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
             <xsd:element maxOccurs="1" minOccurs="0" name="enableTroubleshooting" type="axlapi:boolean"/>
             <xsd:element maxOccurs="1" minOccurs="0" name="alarmSendEncryptedData" type="axlapi:boolean"/>
             <xsd:element maxOccurs="1" minOccurs="0" name="orgId" type="xsd:string"/>
-            <xsd:element maxOccurs="1" minOccurs="0" name="alarmPushIntervalSecs" type="axlapi:XInteger"/>
-            <xsd:element maxOccurs="1" minOccurs="0" name="alarmEncryptKey" type="xsd:string"/>
+            <xsd:element maxOccurs="1" minOccurs="0" name="alarmPushIntervalSecs" type="axlapi:XInteger">
+                <xsd:annotation>
+                    <xsd:documentation>Currently read-only. For possible future use.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+            <xsd:element maxOccurs="1" minOccurs="0" name="alarmEncryptKey" type="xsd:string">
+                <xsd:annotation>
+                    <xsd:documentation>This is a readonly field. During update, the value of this field is internally generated when the value of alarmSendEncryptedData in database changes from false to true ; or deleted when the value changes from true to false.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
             <xsd:element maxOccurs="1" minOccurs="0" name="serviceAddress" type="xsd:string"/>
-            <xsd:element maxOccurs="1" minOccurs="0" name="onboardingRegistrationStatus" type="axlapi:XOnboardingRegistrationStatus"/>
-            <xsd:element maxOccurs="1" minOccurs="0" name="email" type="xsd:string"/>
-            <xsd:element maxOccurs="1" minOccurs="0" name="partnerEmail" type="xsd:string"/>
+            <xsd:element maxOccurs="1" minOccurs="0" name="onboardingRegistrationStatus" type="axlapi:XOnboardingRegistrationStatus">
+                <xsd:annotation>
+                    <xsd:documentation>This is a readonly field. It is set during update automatically to the correct value that reflects the status of the system.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+            <xsd:element maxOccurs="1" minOccurs="0" name="email" type="xsd:string">
+                <xsd:annotation>
+                    <xsd:documentation>Currently read-only. For possible future use.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+            <xsd:element maxOccurs="1" minOccurs="0" name="partnerEmail" type="xsd:string">
+                <xsd:annotation>
+                    <xsd:documentation>Currently read-only. For possible future use.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
             <xsd:element maxOccurs="1" minOccurs="0" name="orgName" type="xsd:string"/>
-            <xsd:element maxOccurs="1" minOccurs="0" name="customerOneTimePassword" type="xsd:string"/>
-            <xsd:element maxOccurs="1" minOccurs="0" name="alarmSeverity" type="axlapi:XAlarmSeverity"/>
-            <xsd:element maxOccurs="1" minOccurs="0" name="alarmPushNowToggle" type="axlapi:XInteger"/>
-            <xsd:element maxOccurs="1" minOccurs="0" name="enableGDSCommunication" type="axlapi:boolean"/>
+            <xsd:element maxOccurs="1" minOccurs="0" name="customerOneTimePassword" type="xsd:string">
+                <xsd:annotation>
+                    <xsd:documentation>Currently read-only. For possible future use.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+            <xsd:element maxOccurs="1" minOccurs="0" name="alarmSeverity" type="axlapi:XAlarmSeverity">
+                <xsd:annotation>
+                    <xsd:documentation>Currently read-only. For possible future use.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+            <xsd:element maxOccurs="1" minOccurs="0" name="alarmPushNowToggle" type="axlapi:XInteger">
+                <xsd:annotation>
+                    <xsd:documentation>Currently read-only. For possible future use.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+            <xsd:element maxOccurs="1" minOccurs="0" name="enableGDSCommunication" type="axlapi:boolean">
+                <xsd:annotation>
+                    <xsd:documentation>Successfully setting the values of one or both of enableGdsCommunication and enablePushNotifications to true finishes the Cisco Cloud Onboarding process. Setting them both to false moves Cisco Cloud Onboarding to un-boarded state.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
             <xsd:element maxOccurs="1" minOccurs="0" name="mraActivationDomain" type="xsd:string"/>
             <xsd:element maxOccurs="1" minOccurs="0" name="errorStatus">
                 <xsd:annotation>
-                    <xsd:documentation>Read-only listing of any error statuses that may affect onboarding configuration</xsd:documentation>
+                    <xsd:documentation>Read-only listing of any statuses that may affect onboarding configuration. Some of these statuses are common with GUI screens.</xsd:documentation>
                 </xsd:annotation>
                 <xsd:complexType>
                     <xsd:sequence minOccurs="0">
@@ -45664,210 +45878,6 @@ Copyright (c) 2006, 2013 Cisco Systems, Inc.
             </xsd:extension>
         </xsd:complexContent>
     </xsd:complexType>
-    <xsd:complexType name="OXBLFDirectedCallPark">
-        <xsd:sequence minOccurs="0">
-            <xsd:choice minOccurs="0">
-                <xsd:element maxOccurs="1" minOccurs="0" name="directedCallParkId" type="axlapi:XUUID">
-                    <xsd:annotation>
-                        <xsd:documentation>Only the uuid attribute is read</xsd:documentation>
-                    </xsd:annotation>
-                </xsd:element>
-                <xsd:element maxOccurs="1" minOccurs="0" name="directedCallParkDnAndPartition">
-                    <xsd:complexType>
-                        <xsd:sequence minOccurs="0">
-                            <xsd:element maxOccurs="1" minOccurs="0" name="dnPattern" type="axlapi:String255"/>
-                            <xsd:element maxOccurs="1" minOccurs="0" name="routePartitionName" type="axlapi:OXFkType"/>
-                        </xsd:sequence>
-                    </xsd:complexType>
-                </xsd:element>
-            </xsd:choice>
-        </xsd:sequence>
-    </xsd:complexType>
-    <xsd:complexType name="ORBLFDirectedCallPark">
-        <xsd:sequence minOccurs="0">
-            <xsd:choice minOccurs="0">
-                <xsd:element maxOccurs="1" minOccurs="0" name="directedCallParkId" type="axlapi:XUUID">
-                    <xsd:annotation>
-                        <xsd:documentation>Only the uuid attribute is read</xsd:documentation>
-                    </xsd:annotation>
-                </xsd:element>
-                <xsd:element maxOccurs="1" minOccurs="0" name="directedCallParkDnAndPartition">
-                    <xsd:complexType>
-                        <xsd:sequence minOccurs="0">
-                            <xsd:element maxOccurs="1" minOccurs="0" name="dnPattern" type="axlapi:String255"/>
-                            <xsd:element maxOccurs="1" minOccurs="0" name="routePartitionName" type="axlapi:ORFkType"/>
-                        </xsd:sequence>
-                    </xsd:complexType>
-                </xsd:element>
-            </xsd:choice>
-        </xsd:sequence>
-    </xsd:complexType>
-    <xsd:complexType name="OXCallForwardOnFailure">
-        <xsd:sequence minOccurs="0">
-            <xsd:element maxOccurs="1" minOccurs="0" name="callingSearchSpaceName" type="axlapi:OXFkType"/>
-        </xsd:sequence>
-    </xsd:complexType>
-    <xsd:complexType name="ORCallForwardOnFailure">
-        <xsd:sequence minOccurs="0">
-            <xsd:element maxOccurs="1" minOccurs="0" name="callingSearchSpaceName" type="axlapi:ORFkType"/>
-        </xsd:sequence>
-    </xsd:complexType>
-    <xsd:complexType name="OXDirn">
-        <xsd:sequence minOccurs="0">
-            <xsd:element maxOccurs="1" minOccurs="0" name="routePartitionName" type="axlapi:OXFkType"/>
-        </xsd:sequence>
-        <xsd:attribute name="uuid" type="axlapi:XUUID"/>
-    </xsd:complexType>
-    <xsd:complexType name="ORDirn">
-        <xsd:sequence minOccurs="0">
-            <xsd:element maxOccurs="1" minOccurs="0" name="routePartitionName" type="axlapi:ORFkType"/>
-        </xsd:sequence>
-        <xsd:attribute name="uuid" type="axlapi:XUUID"/>
-    </xsd:complexType>
-    <xsd:complexType name="OXEnduserMember">
-        <xsd:sequence minOccurs="0"/>
-    </xsd:complexType>
-    <xsd:complexType name="OREnduserMember">
-        <xsd:sequence minOccurs="0"/>
-    </xsd:complexType>
-    <xsd:complexType name="OXCallForwardNoAnswer">
-        <xsd:sequence minOccurs="0">
-            <xsd:element maxOccurs="1" minOccurs="0" name="callingSearchSpaceName" type="axlapi:OXFkType"/>
-        </xsd:sequence>
-    </xsd:complexType>
-    <xsd:complexType name="ORCallForwardNoAnswer">
-        <xsd:sequence minOccurs="0">
-            <xsd:element maxOccurs="1" minOccurs="0" name="callingSearchSpaceName" type="axlapi:ORFkType"/>
-        </xsd:sequence>
-    </xsd:complexType>
-    <xsd:complexType name="OXSpeeddial">
-        <xsd:sequence minOccurs="0"/>
-    </xsd:complexType>
-    <xsd:complexType name="ORSpeeddial">
-        <xsd:sequence minOccurs="0"/>
-    </xsd:complexType>
-    <xsd:complexType name="OXDirectoryUri">
-        <xsd:sequence minOccurs="0">
-            <xsd:element maxOccurs="1" minOccurs="0" name="partition" type="axlapi:OXFkType"/>
-        </xsd:sequence>
-        <xsd:attribute name="uuid" type="axlapi:XUUID"/>
-    </xsd:complexType>
-    <xsd:complexType name="ORDirectoryUri">
-        <xsd:sequence minOccurs="0">
-            <xsd:element maxOccurs="1" minOccurs="0" name="partition" type="axlapi:ORFkType"/>
-        </xsd:sequence>
-        <xsd:attribute name="uuid" type="axlapi:XUUID"/>
-    </xsd:complexType>
-    <xsd:complexType name="OXCallForwardAll">
-        <xsd:sequence minOccurs="0">
-            <xsd:element maxOccurs="1" minOccurs="0" name="callingSearchSpaceName" type="axlapi:OXFkType"/>
-            <xsd:element maxOccurs="1" minOccurs="0" name="secondaryCallingSearchSpaceName" type="axlapi:OXFkType"/>
-        </xsd:sequence>
-    </xsd:complexType>
-    <xsd:complexType name="ORCallForwardAll">
-        <xsd:sequence minOccurs="0">
-            <xsd:element maxOccurs="1" minOccurs="0" name="callingSearchSpaceName" type="axlapi:ORFkType"/>
-            <xsd:element maxOccurs="1" minOccurs="0" name="secondaryCallingSearchSpaceName" type="axlapi:ORFkType"/>
-        </xsd:sequence>
-    </xsd:complexType>
-    <xsd:complexType name="OXCallForwardAlternateParty">
-        <xsd:sequence minOccurs="0">
-            <xsd:element maxOccurs="1" minOccurs="0" name="callingSearchSpaceName" type="axlapi:OXFkType"/>
-        </xsd:sequence>
-    </xsd:complexType>
-    <xsd:complexType name="ORCallForwardAlternateParty">
-        <xsd:sequence minOccurs="0">
-            <xsd:element maxOccurs="1" minOccurs="0" name="callingSearchSpaceName" type="axlapi:ORFkType"/>
-        </xsd:sequence>
-    </xsd:complexType>
-    <xsd:complexType name="OXSubscribedService">
-        <xsd:sequence minOccurs="0">
-            <xsd:element maxOccurs="1" minOccurs="0" name="telecasterServiceName" type="axlapi:OXFkType"/>
-        </xsd:sequence>
-        <xsd:attribute name="uuid" type="axlapi:XUUID"/>
-    </xsd:complexType>
-    <xsd:complexType name="ORSubscribedService">
-        <xsd:sequence minOccurs="0">
-            <xsd:element maxOccurs="1" minOccurs="0" name="telecasterServiceName" type="axlapi:ORFkType"/>
-        </xsd:sequence>
-        <xsd:attribute name="uuid" type="axlapi:XUUID"/>
-    </xsd:complexType>
-    <xsd:complexType name="OXCallForwardNotRegistered">
-        <xsd:sequence minOccurs="0">
-            <xsd:element maxOccurs="1" minOccurs="0" name="callingSearchSpaceName" type="axlapi:OXFkType"/>
-        </xsd:sequence>
-    </xsd:complexType>
-    <xsd:complexType name="ORCallForwardNotRegistered">
-        <xsd:sequence minOccurs="0">
-            <xsd:element maxOccurs="1" minOccurs="0" name="callingSearchSpaceName" type="axlapi:ORFkType"/>
-        </xsd:sequence>
-    </xsd:complexType>
-    <xsd:complexType name="OXCallForwardNoCoverageInt">
-        <xsd:sequence minOccurs="0">
-            <xsd:element maxOccurs="1" minOccurs="0" name="callingSearchSpaceName" type="axlapi:OXFkType"/>
-        </xsd:sequence>
-    </xsd:complexType>
-    <xsd:complexType name="ORCallForwardNoCoverageInt">
-        <xsd:sequence minOccurs="0">
-            <xsd:element maxOccurs="1" minOccurs="0" name="callingSearchSpaceName" type="axlapi:ORFkType"/>
-        </xsd:sequence>
-    </xsd:complexType>
-    <xsd:complexType name="OXAddOnModule">
-        <xsd:sequence minOccurs="0">
-            <xsd:element maxOccurs="1" minOccurs="0" name="model" type="axlapi:OXFkTypeProduct_Protocol">
-                <xsd:annotation>
-                    <xsd:documentation>Model ID string.</xsd:documentation>
-                </xsd:annotation>
-            </xsd:element>
-        </xsd:sequence>
-        <xsd:attribute name="uuid" type="axlapi:XUUID"/>
-    </xsd:complexType>
-    <xsd:complexType name="ORAddOnModule">
-        <xsd:sequence minOccurs="0">
-            <xsd:element maxOccurs="1" minOccurs="0" name="model" type="axlapi:ORFkType">
-                <xsd:annotation>
-                    <xsd:documentation>Model ID string.</xsd:documentation>
-                </xsd:annotation>
-            </xsd:element>
-        </xsd:sequence>
-        <xsd:attribute name="uuid" type="axlapi:XUUID"/>
-    </xsd:complexType>
-    <xsd:complexType name="OXCallForwardBusy">
-        <xsd:sequence minOccurs="0">
-            <xsd:element maxOccurs="1" minOccurs="0" name="callingSearchSpaceName" type="axlapi:OXFkType"/>
-        </xsd:sequence>
-    </xsd:complexType>
-    <xsd:complexType name="ORCallForwardBusy">
-        <xsd:sequence minOccurs="0">
-            <xsd:element maxOccurs="1" minOccurs="0" name="callingSearchSpaceName" type="axlapi:ORFkType"/>
-        </xsd:sequence>
-    </xsd:complexType>
-    <xsd:complexType name="OXCallForwardNoAnswerInt">
-        <xsd:sequence minOccurs="0">
-            <xsd:element maxOccurs="1" minOccurs="0" name="callingSearchSpaceName" type="axlapi:OXFkType"/>
-        </xsd:sequence>
-    </xsd:complexType>
-    <xsd:complexType name="ORCallForwardNoAnswerInt">
-        <xsd:sequence minOccurs="0">
-            <xsd:element maxOccurs="1" minOccurs="0" name="callingSearchSpaceName" type="axlapi:ORFkType"/>
-        </xsd:sequence>
-    </xsd:complexType>
-    <xsd:complexType name="OXCallForwardNotRegisteredInt">
-        <xsd:sequence minOccurs="0">
-            <xsd:element maxOccurs="1" minOccurs="0" name="callingSearchSpaceName" type="axlapi:OXFkType"/>
-        </xsd:sequence>
-    </xsd:complexType>
-    <xsd:complexType name="ORCallForwardNotRegisteredInt">
-        <xsd:sequence minOccurs="0">
-            <xsd:element maxOccurs="1" minOccurs="0" name="callingSearchSpaceName" type="axlapi:ORFkType"/>
-        </xsd:sequence>
-    </xsd:complexType>
-    <xsd:complexType name="OXNumplanIdentifier">
-        <xsd:sequence minOccurs="0"/>
-    </xsd:complexType>
-    <xsd:complexType name="ORNumplanIdentifier">
-        <xsd:sequence minOccurs="0"/>
-    </xsd:complexType>
     <xsd:complexType name="OXCallForwardBusyInt">
         <xsd:sequence minOccurs="0">
             <xsd:element maxOccurs="1" minOccurs="0" name="callingSearchSpaceName" type="axlapi:OXFkType"/>
@@ -45903,6 +45913,44 @@ Copyright (c) 2006, 2013 Cisco Systems, Inc.
                     </xsd:element>
                     <xsd:element maxOccurs="1" minOccurs="0" name="routePartition" type="xsd:string"/>
                 </xsd:sequence>
+            </xsd:choice>
+        </xsd:sequence>
+    </xsd:complexType>
+    <xsd:complexType name="OXBLFDirectedCallPark">
+        <xsd:sequence minOccurs="0">
+            <xsd:choice minOccurs="0">
+                <xsd:element maxOccurs="1" minOccurs="0" name="directedCallParkId" type="axlapi:XUUID">
+                    <xsd:annotation>
+                        <xsd:documentation>Only the uuid attribute is read</xsd:documentation>
+                    </xsd:annotation>
+                </xsd:element>
+                <xsd:element maxOccurs="1" minOccurs="0" name="directedCallParkDnAndPartition">
+                    <xsd:complexType>
+                        <xsd:sequence minOccurs="0">
+                            <xsd:element maxOccurs="1" minOccurs="0" name="dnPattern" type="axlapi:String255"/>
+                            <xsd:element maxOccurs="1" minOccurs="0" name="routePartitionName" type="axlapi:OXFkType"/>
+                        </xsd:sequence>
+                    </xsd:complexType>
+                </xsd:element>
+            </xsd:choice>
+        </xsd:sequence>
+    </xsd:complexType>
+    <xsd:complexType name="ORBLFDirectedCallPark">
+        <xsd:sequence minOccurs="0">
+            <xsd:choice minOccurs="0">
+                <xsd:element maxOccurs="1" minOccurs="0" name="directedCallParkId" type="axlapi:XUUID">
+                    <xsd:annotation>
+                        <xsd:documentation>Only the uuid attribute is read</xsd:documentation>
+                    </xsd:annotation>
+                </xsd:element>
+                <xsd:element maxOccurs="1" minOccurs="0" name="directedCallParkDnAndPartition">
+                    <xsd:complexType>
+                        <xsd:sequence minOccurs="0">
+                            <xsd:element maxOccurs="1" minOccurs="0" name="dnPattern" type="axlapi:String255"/>
+                            <xsd:element maxOccurs="1" minOccurs="0" name="routePartitionName" type="axlapi:ORFkType"/>
+                        </xsd:sequence>
+                    </xsd:complexType>
+                </xsd:element>
             </xsd:choice>
         </xsd:sequence>
     </xsd:complexType>
@@ -45990,12 +46038,178 @@ Copyright (c) 2006, 2013 Cisco Systems, Inc.
         <xsd:attribute name="ctiid" type="xsd:nonNegativeInteger"/>
         <xsd:attribute name="uuid" type="axlapi:XUUID"/>
     </xsd:complexType>
+    <xsd:complexType name="OXSpeeddial">
+        <xsd:sequence minOccurs="0"/>
+    </xsd:complexType>
+    <xsd:complexType name="ORSpeeddial">
+        <xsd:sequence minOccurs="0"/>
+    </xsd:complexType>
     <xsd:complexType name="OXCallForwardNoCoverage">
         <xsd:sequence minOccurs="0">
             <xsd:element maxOccurs="1" minOccurs="0" name="callingSearchSpaceName" type="axlapi:OXFkType"/>
         </xsd:sequence>
     </xsd:complexType>
     <xsd:complexType name="ORCallForwardNoCoverage">
+        <xsd:sequence minOccurs="0">
+            <xsd:element maxOccurs="1" minOccurs="0" name="callingSearchSpaceName" type="axlapi:ORFkType"/>
+        </xsd:sequence>
+    </xsd:complexType>
+    <xsd:complexType name="OXCallForwardAlternateParty">
+        <xsd:sequence minOccurs="0">
+            <xsd:element maxOccurs="1" minOccurs="0" name="callingSearchSpaceName" type="axlapi:OXFkType"/>
+        </xsd:sequence>
+    </xsd:complexType>
+    <xsd:complexType name="ORCallForwardAlternateParty">
+        <xsd:sequence minOccurs="0">
+            <xsd:element maxOccurs="1" minOccurs="0" name="callingSearchSpaceName" type="axlapi:ORFkType"/>
+        </xsd:sequence>
+    </xsd:complexType>
+    <xsd:complexType name="OXDirn">
+        <xsd:sequence minOccurs="0">
+            <xsd:element maxOccurs="1" minOccurs="0" name="routePartitionName" type="axlapi:OXFkType"/>
+        </xsd:sequence>
+        <xsd:attribute name="uuid" type="axlapi:XUUID"/>
+    </xsd:complexType>
+    <xsd:complexType name="ORDirn">
+        <xsd:sequence minOccurs="0">
+            <xsd:element maxOccurs="1" minOccurs="0" name="routePartitionName" type="axlapi:ORFkType"/>
+        </xsd:sequence>
+        <xsd:attribute name="uuid" type="axlapi:XUUID"/>
+    </xsd:complexType>
+    <xsd:complexType name="OXCallForwardOnFailure">
+        <xsd:sequence minOccurs="0">
+            <xsd:element maxOccurs="1" minOccurs="0" name="callingSearchSpaceName" type="axlapi:OXFkType"/>
+        </xsd:sequence>
+    </xsd:complexType>
+    <xsd:complexType name="ORCallForwardOnFailure">
+        <xsd:sequence minOccurs="0">
+            <xsd:element maxOccurs="1" minOccurs="0" name="callingSearchSpaceName" type="axlapi:ORFkType"/>
+        </xsd:sequence>
+    </xsd:complexType>
+    <xsd:complexType name="OXDirectoryUri">
+        <xsd:sequence minOccurs="0">
+            <xsd:element maxOccurs="1" minOccurs="0" name="partition" type="axlapi:OXFkType"/>
+        </xsd:sequence>
+        <xsd:attribute name="uuid" type="axlapi:XUUID"/>
+    </xsd:complexType>
+    <xsd:complexType name="ORDirectoryUri">
+        <xsd:sequence minOccurs="0">
+            <xsd:element maxOccurs="1" minOccurs="0" name="partition" type="axlapi:ORFkType"/>
+        </xsd:sequence>
+        <xsd:attribute name="uuid" type="axlapi:XUUID"/>
+    </xsd:complexType>
+    <xsd:complexType name="OXCallForwardBusy">
+        <xsd:sequence minOccurs="0">
+            <xsd:element maxOccurs="1" minOccurs="0" name="callingSearchSpaceName" type="axlapi:OXFkType"/>
+        </xsd:sequence>
+    </xsd:complexType>
+    <xsd:complexType name="ORCallForwardBusy">
+        <xsd:sequence minOccurs="0">
+            <xsd:element maxOccurs="1" minOccurs="0" name="callingSearchSpaceName" type="axlapi:ORFkType"/>
+        </xsd:sequence>
+    </xsd:complexType>
+    <xsd:complexType name="OXEnduserMember">
+        <xsd:sequence minOccurs="0"/>
+    </xsd:complexType>
+    <xsd:complexType name="OREnduserMember">
+        <xsd:sequence minOccurs="0"/>
+    </xsd:complexType>
+    <xsd:complexType name="OXCallForwardNotRegistered">
+        <xsd:sequence minOccurs="0">
+            <xsd:element maxOccurs="1" minOccurs="0" name="callingSearchSpaceName" type="axlapi:OXFkType"/>
+        </xsd:sequence>
+    </xsd:complexType>
+    <xsd:complexType name="ORCallForwardNotRegistered">
+        <xsd:sequence minOccurs="0">
+            <xsd:element maxOccurs="1" minOccurs="0" name="callingSearchSpaceName" type="axlapi:ORFkType"/>
+        </xsd:sequence>
+    </xsd:complexType>
+    <xsd:complexType name="OXAddOnModule">
+        <xsd:sequence minOccurs="0">
+            <xsd:element maxOccurs="1" minOccurs="0" name="model" type="axlapi:OXFkTypeProduct_Protocol">
+                <xsd:annotation>
+                    <xsd:documentation>Model ID string.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+        </xsd:sequence>
+        <xsd:attribute name="uuid" type="axlapi:XUUID"/>
+    </xsd:complexType>
+    <xsd:complexType name="ORAddOnModule">
+        <xsd:sequence minOccurs="0">
+            <xsd:element maxOccurs="1" minOccurs="0" name="model" type="axlapi:ORFkType">
+                <xsd:annotation>
+                    <xsd:documentation>Model ID string.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+        </xsd:sequence>
+        <xsd:attribute name="uuid" type="axlapi:XUUID"/>
+    </xsd:complexType>
+    <xsd:complexType name="OXCallForwardAll">
+        <xsd:sequence minOccurs="0">
+            <xsd:element maxOccurs="1" minOccurs="0" name="callingSearchSpaceName" type="axlapi:OXFkType"/>
+            <xsd:element maxOccurs="1" minOccurs="0" name="secondaryCallingSearchSpaceName" type="axlapi:OXFkType"/>
+        </xsd:sequence>
+    </xsd:complexType>
+    <xsd:complexType name="ORCallForwardAll">
+        <xsd:sequence minOccurs="0">
+            <xsd:element maxOccurs="1" minOccurs="0" name="callingSearchSpaceName" type="axlapi:ORFkType"/>
+            <xsd:element maxOccurs="1" minOccurs="0" name="secondaryCallingSearchSpaceName" type="axlapi:ORFkType"/>
+        </xsd:sequence>
+    </xsd:complexType>
+    <xsd:complexType name="OXCallForwardNotRegisteredInt">
+        <xsd:sequence minOccurs="0">
+            <xsd:element maxOccurs="1" minOccurs="0" name="callingSearchSpaceName" type="axlapi:OXFkType"/>
+        </xsd:sequence>
+    </xsd:complexType>
+    <xsd:complexType name="ORCallForwardNotRegisteredInt">
+        <xsd:sequence minOccurs="0">
+            <xsd:element maxOccurs="1" minOccurs="0" name="callingSearchSpaceName" type="axlapi:ORFkType"/>
+        </xsd:sequence>
+    </xsd:complexType>
+    <xsd:complexType name="OXCallForwardNoCoverageInt">
+        <xsd:sequence minOccurs="0">
+            <xsd:element maxOccurs="1" minOccurs="0" name="callingSearchSpaceName" type="axlapi:OXFkType"/>
+        </xsd:sequence>
+    </xsd:complexType>
+    <xsd:complexType name="ORCallForwardNoCoverageInt">
+        <xsd:sequence minOccurs="0">
+            <xsd:element maxOccurs="1" minOccurs="0" name="callingSearchSpaceName" type="axlapi:ORFkType"/>
+        </xsd:sequence>
+    </xsd:complexType>
+    <xsd:complexType name="OXSubscribedService">
+        <xsd:sequence minOccurs="0">
+            <xsd:element maxOccurs="1" minOccurs="0" name="telecasterServiceName" type="axlapi:OXFkType"/>
+        </xsd:sequence>
+        <xsd:attribute name="uuid" type="axlapi:XUUID"/>
+    </xsd:complexType>
+    <xsd:complexType name="ORSubscribedService">
+        <xsd:sequence minOccurs="0">
+            <xsd:element maxOccurs="1" minOccurs="0" name="telecasterServiceName" type="axlapi:ORFkType"/>
+        </xsd:sequence>
+        <xsd:attribute name="uuid" type="axlapi:XUUID"/>
+    </xsd:complexType>
+    <xsd:complexType name="OXNumplanIdentifier">
+        <xsd:sequence minOccurs="0"/>
+    </xsd:complexType>
+    <xsd:complexType name="ORNumplanIdentifier">
+        <xsd:sequence minOccurs="0"/>
+    </xsd:complexType>
+    <xsd:complexType name="OXCallForwardNoAnswer">
+        <xsd:sequence minOccurs="0">
+            <xsd:element maxOccurs="1" minOccurs="0" name="callingSearchSpaceName" type="axlapi:OXFkType"/>
+        </xsd:sequence>
+    </xsd:complexType>
+    <xsd:complexType name="ORCallForwardNoAnswer">
+        <xsd:sequence minOccurs="0">
+            <xsd:element maxOccurs="1" minOccurs="0" name="callingSearchSpaceName" type="axlapi:ORFkType"/>
+        </xsd:sequence>
+    </xsd:complexType>
+    <xsd:complexType name="OXCallForwardNoAnswerInt">
+        <xsd:sequence minOccurs="0">
+            <xsd:element maxOccurs="1" minOccurs="0" name="callingSearchSpaceName" type="axlapi:OXFkType"/>
+        </xsd:sequence>
+    </xsd:complexType>
+    <xsd:complexType name="ORCallForwardNoAnswerInt">
         <xsd:sequence minOccurs="0">
             <xsd:element maxOccurs="1" minOccurs="0" name="callingSearchSpaceName" type="axlapi:ORFkType"/>
         </xsd:sequence>
@@ -52587,11 +52801,26 @@ Copyright (c) 2006, 2013 Cisco Systems, Inc.
                 <xsd:annotation>
                         <xsd:documentation>This allows to change or modify the transport settings</xsd:documentation>
                 </xsd:annotation>
-			<xsd:sequence>
+		<xsd:sequence>
                         <xsd:element minOccurs="1" name="transportMode" type="axlapi:String255"/>
 			<xsd:element minOccurs="1" name="url" type="axlapi:String255"/>
 			<xsd:element minOccurs="1" name="httpHost" type="axlapi:String255"/>
 			<xsd:element minOccurs="1" name="httpPort" type="axlapi:String255"/>
+                        <xsd:element minOccurs="0" name="enableProxyAuthentication" type="axlapi:String255">
+				<xsd:annotation>
+					<xsd:documentation>This tag is required to be set to true for authentication based proxy server configuration</xsd:documentation>
+				</xsd:annotation>
+			</xsd:element>
+                        <xsd:element minOccurs="0" name="proxyUserName" type="axlapi:String255">
+                                <xsd:annotation>
+                                        <xsd:documentation>This tag is required to be set when enableProxyAuthentication tag is true</xsd:documentation>
+                                </xsd:annotation>
+                        </xsd:element>
+                        <xsd:element minOccurs="0" name="proxyPassword" type="axlapi:String255">
+                                <xsd:annotation>
+                                        <xsd:documentation>This tag is required to be set when enableProxyAuthentication tag is true</xsd:documentation>
+                                </xsd:annotation>
+                        </xsd:element>
                 </xsd:sequence>
         </xsd:complexType>
     <xsd:element name="doUpdateTransportSettings" type="axlapi:DoUpdateTransportSettingsReq"/>
@@ -52645,6 +52874,9 @@ Copyright (c) 2006, 2013 Cisco Systems, Inc.
                         <xsd:element minOccurs="0" name="transportGatewayUrl" nillable="false" type="axlapi:String255"/>
                         <xsd:element minOccurs="0" name="httpHost" nillable="false" type="axlapi:String255"/>
                         <xsd:element minOccurs="0" name="httpPort" nillable="false" type="axlapi:String255"/>
+                        <xsd:element minOccurs="0" name="proxyAuthenticationEnabled" nillable="false" type="axlapi:String255"/>
+                        <xsd:element minOccurs="0" name="proxyUserName" nillable="false" type="axlapi:String255"/>
+                        <xsd:element minOccurs="0" name="proxyPassword" nillable="false" type="axlapi:String255"/>
                 </xsd:sequence>
         </xsd:complexType>
     <xsd:simpleType name="XASN1RoseOidEncoding">
@@ -52674,6 +52906,126 @@ Copyright (c) 2006, 2013 Cisco Systems, Inc.
 			<xsd:enumeration value="Notice"/>
 			<xsd:enumeration value="Informational"/>
 			<xsd:enumeration value="Debug"/>
+		</xsd:restriction>
+            </xsd:simpleType>
+            <xsd:simpleType>
+                <xsd:restriction base="xsd:string"/>
+            </xsd:simpleType>
+        </xsd:union>
+    </xsd:simpleType>
+    <xsd:simpleType name="XAnnouncementFile">
+        <xsd:union>
+            <xsd:simpleType>
+                <xsd:restriction base="xsd:string">
+			<xsd:enumeration value="Busy Tone"/>
+			<xsd:enumeration value="AlertingTone"/>
+			<xsd:enumeration value="ReorderTone"/>
+			<xsd:enumeration value="RecordingWarning"/>
+			<xsd:enumeration value="Tone-on-Hold"/>
+			<xsd:enumeration value="MonitoringWarning"/>
+			<xsd:enumeration value="Barge-In"/>
+			<xsd:enumeration value="WrongPin"/>
+			<xsd:enumeration value="UnauthorizedCaller"/>
+			<xsd:enumeration value="WrongTargetDN"/>
+			<xsd:enumeration value="MobileConnectOn"/>
+			<xsd:enumeration value="MobileConnectOff"/>
+			<xsd:enumeration value="UnknownCaller"/>
+			<xsd:enumeration value="MLPP-PALA"/>
+			<xsd:enumeration value="MLPP-ICA"/>
+			<xsd:enumeration value="VCA"/>
+			<xsd:enumeration value="MLPP-BPA"/>
+			<xsd:enumeration value="MLPP-BNEA"/>
+			<xsd:enumeration value="MLPP-UPA"/>
+			<xsd:enumeration value="CallDisallowed"/>
+			<xsd:enumeration value="900CallsBlocked"/>
+			<xsd:enumeration value="IntlCallsBlocked"/>
+			<xsd:enumeration value="TollCallsBlocked"/>
+			<xsd:enumeration value="DirAsstBlocked"/>
+			<xsd:enumeration value="Silence-5sec"/>
+			<xsd:enumeration value="OneMoment"/>
+			<xsd:enumeration value="ShortTone"/>
+			<xsd:enumeration value="Welcome Greeting Sample"/>
+			<xsd:enumeration value="Wait In Queue Sample"/>
+			<xsd:enumeration value="Mobility_VMA"/>
+			<xsd:enumeration value="MLPP-Precedence_RingBack"/>
+			<xsd:enumeration value="MLPP-Preemption_tone"/>
+			<xsd:enumeration value="Non-secure_Warning"/>
+			<xsd:enumeration value="Secure_Warning"/>
+			<xsd:enumeration value="Enter_CMC"/>
+			<xsd:enumeration value="Enter_FAC"/>
+			<xsd:enumeration value="ZipTone"/>
+			<xsd:enumeration value="EnterCfbTone"/>
+			<xsd:enumeration value="ExitCfbTone"/>
+			<xsd:enumeration value="ConferenceNowGreeting"/>
+			<xsd:enumeration value="ConferenceNowNumberInvalid"/>
+			<xsd:enumeration value="ConferenceNowNumberFailure"/>
+			<xsd:enumeration value="ConferenceNowEnterPin"/>
+			<xsd:enumeration value="ConferenceNowInvalidPin"/>
+			<xsd:enumeration value="ConferenceNowFailedPin"/>
+			<xsd:enumeration value="ConferenceNowCFBFailed"/>
+			<xsd:enumeration value="ConferenceNowEnterAccessCode"/>
+			<xsd:enumeration value="ConferenceNowAccessCodeInvalid"/>
+			<xsd:enumeration value="ConferenceNowAccessCodeFailed"/>
+			<xsd:enumeration value="Welcome"/>
+			<xsd:enumeration value="Press1"/>
+			<xsd:enumeration value="Press2"/>
+			<xsd:enumeration value="Press3"/>
+			<xsd:enumeration value="Press4"/>
+			<xsd:enumeration value="Press5"/>
+			<xsd:enumeration value="Press6"/>
+			<xsd:enumeration value="Press7"/>
+			<xsd:enumeration value="Press8"/>
+			<xsd:enumeration value="Press9"/>
+			<xsd:enumeration value="Language"/>
+			<xsd:enumeration value="EnterRemote"/>
+			<xsd:enumeration value="ReenterRemoteUnknown"/>
+			<xsd:enumeration value="EnterPin"/>
+			<xsd:enumeration value="ReenterPinUnrecognized"/>
+			<xsd:enumeration value="LoggedOut"/>
+			<xsd:enumeration value="PinExpired"/>
+			<xsd:enumeration value="AttemptsExceeded"/>
+			<xsd:enumeration value="CallPrompt"/>
+			<xsd:enumeration value="InvalidKey"/>
+			<xsd:enumeration value="Goodbye"/>
+			<xsd:enumeration value="EnterNumber"/>
+			<xsd:enumeration value="SelectExtension"/>
+			<xsd:enumeration value="TurnOnMobility"/>
+			<xsd:enumeration value="EnterRemoteOn"/>
+			<xsd:enumeration value="OtherRemote"/>
+			<xsd:enumeration value="MobilityOnAll"/>
+			<xsd:enumeration value="MobilityFailedAll"/>
+			<xsd:enumeration value="MobilityOn"/>
+			<xsd:enumeration value="MobilityFailed"/>
+			<xsd:enumeration value="TurnOffMobility"/>
+			<xsd:enumeration value="EnterRemoteOff"/>
+			<xsd:enumeration value="OtherRemoteOff"/>
+			<xsd:enumeration value="MobilityOffAll"/>
+			<xsd:enumeration value="MobilityOffAllFailed"/>
+			<xsd:enumeration value="MobilityOff"/>
+			<xsd:enumeration value="MobilityOffFailed"/>
+			<xsd:enumeration value="One"/>
+			<xsd:enumeration value="Two"/>
+			<xsd:enumeration value="Three"/>
+			<xsd:enumeration value="Four"/>
+			<xsd:enumeration value="Five"/>
+			<xsd:enumeration value="Six"/>
+			<xsd:enumeration value="Seven"/>
+			<xsd:enumeration value="Eight"/>
+			<xsd:enumeration value="Nine"/>
+			<xsd:enumeration value="Zero"/>
+			<xsd:enumeration value="ReturnPrevious"/>
+			<xsd:enumeration value="ConfigError"/>
+			<xsd:enumeration value="NoExtensions"/>
+			<xsd:enumeration value="NoDestinations"/>
+			<xsd:enumeration value="InternalError"/>
+			<xsd:enumeration value="Unavailable"/>
+			<xsd:enumeration value="ContactAdmin"/>
+			<xsd:enumeration value="ThankYou"/>
+			<xsd:enumeration value="Goodbye2"/>
+			<xsd:enumeration value="ResourcesUnavailable"/>
+			<xsd:enumeration value="ExtensionInUse"/>
+			<xsd:enumeration value="ToggleOn"/>
+			<xsd:enumeration value="NotAuthorized"/>
 		</xsd:restriction>
             </xsd:simpleType>
             <xsd:simpleType>
@@ -52978,7 +53330,7 @@ Copyright (c) 2006, 2013 Cisco Systems, Inc.
 			<xsd:enumeration value="CallManager-ECDSA"/>
 			<xsd:enumeration value="tomcat-ECDSA"/>
 			<xsd:enumeration value="Phone-CTL-ASA-trust"/>
-			<xsd:enumeration value="GDS-trust"/>
+			<xsd:enumeration value="Phone-Edge-trust"/>
 		</xsd:restriction>
             </xsd:simpleType>
             <xsd:simpleType>
@@ -53866,6 +54218,7 @@ Copyright (c) 2006, 2013 Cisco Systems, Inc.
 			<xsd:enumeration value="SM-X-NIM-ADPTR"/>
 			<xsd:enumeration value="ENCS-1NIM-MBRD"/>
 			<xsd:enumeration value="VG-1NIM-MBRD"/>
+			<xsd:enumeration value="C-SM-NIM-ADPT"/>
 		</xsd:restriction>
             </xsd:simpleType>
             <xsd:simpleType>
@@ -54044,6 +54397,23 @@ Copyright (c) 2006, 2013 Cisco Systems, Inc.
 			<xsd:enumeration value="VG-2FXS/2FXO-SCCP"/>
 			<xsd:enumeration value="VG-4FXS/4FXO-SCCP"/>
 			<xsd:enumeration value="VG-6FXS/6FXO-SCCP"/>
+			<xsd:enumeration value="SM-X-72FXS-SIP"/>
+			<xsd:enumeration value="SM-X-56FXS-SIP"/>
+			<xsd:enumeration value="SM-X-16FXS-SIP"/>
+			<xsd:enumeration value="SM-X-24FXS-SIP"/>
+			<xsd:enumeration value="SM-X-8FXS-SIP"/>
+			<xsd:enumeration value="NIM-2FXS-SIP"/>
+			<xsd:enumeration value="NIM-4FXS-SIP"/>
+			<xsd:enumeration value="NIM-2FXS/4FXO-SIP"/>
+			<xsd:enumeration value="SM-V-144FXS"/>
+			<xsd:enumeration value="SM-V-132FXS/6FXO"/>
+			<xsd:enumeration value="SM-V-84FXS/6FXO"/>
+			<xsd:enumeration value="SM-V-144FXS-SCCP"/>
+			<xsd:enumeration value="SM-V-132FXS/6FXO-SCCP"/>
+			<xsd:enumeration value="SM-V-84FXS/6FXO-SCCP"/>
+			<xsd:enumeration value="SM-V-144FXS-SIP"/>
+			<xsd:enumeration value="SM-V-132FXS/6FXO-SIP"/>
+			<xsd:enumeration value="SM-V-84FXS/6FXO-SIP"/>
 		</xsd:restriction>
             </xsd:simpleType>
             <xsd:simpleType>
@@ -54349,7 +54719,18 @@ Copyright (c) 2006, 2013 Cisco Systems, Inc.
 			<xsd:enumeration value="Cisco Webex Room 55 Dual"/>
 			<xsd:enumeration value="Cisco Webex Room 70 Single G2"/>
 			<xsd:enumeration value="Cisco Webex Room 70 Dual G2"/>
+			<xsd:enumeration value="SIP Station"/>
 			<xsd:enumeration value="Cisco Webex Room Kit Mini"/>
+			<xsd:enumeration value="Cisco Webex VDI Svc Framework"/>
+			<xsd:enumeration value="Cisco Webex Board 55"/>
+			<xsd:enumeration value="Cisco Webex Board 70"/>
+			<xsd:enumeration value="Cisco Webex Board 85"/>
+			<xsd:enumeration value="Cisco Webex Desk Pro"/>
+			<xsd:enumeration value="Cisco Webex Room Panorama"/>
+			<xsd:enumeration value="Cisco Webex Room 70 Panorama"/>
+			<xsd:enumeration value="Cisco Webex Room Phone"/>
+			<xsd:enumeration value="Cisco 860"/>
+			<xsd:enumeration value="Cisco Webex Desk LE"/>
 		</xsd:restriction>
             </xsd:simpleType>
             <xsd:simpleType>
@@ -55111,7 +55492,23 @@ Copyright (c) 2006, 2013 Cisco Systems, Inc.
 			<xsd:enumeration value="Cisco Webex Room 55 Dual"/>
 			<xsd:enumeration value="Cisco Webex Room 70 Single G2"/>
 			<xsd:enumeration value="Cisco Webex Room 70 Dual G2"/>
+			<xsd:enumeration value="Cisco SIP FXS Port"/>
 			<xsd:enumeration value="Cisco Webex Room Kit Mini"/>
+			<xsd:enumeration value="Cisco C8300-1N1S-4T2X"/>
+			<xsd:enumeration value="Cisco C8300-2N2S-4T2X/6T"/>
+			<xsd:enumeration value="Cisco C8200/L-1N-4T"/>
+			<xsd:enumeration value="Cisco C8300-1N1S-6T"/>
+			<xsd:enumeration value="Cisco Webex VDI Svc Framework"/>
+			<xsd:enumeration value="Cisco Webex Board 55"/>
+			<xsd:enumeration value="Cisco Webex Board 70"/>
+			<xsd:enumeration value="Cisco Webex Board 85"/>
+			<xsd:enumeration value="Cisco Webex Desk Pro"/>
+			<xsd:enumeration value="Cisco Webex Room Panorama"/>
+			<xsd:enumeration value="Cisco Webex Room 70 Panorama"/>
+			<xsd:enumeration value="Cisco Webex Room Phone"/>
+			<xsd:enumeration value="Cisco 860"/>
+			<xsd:enumeration value="VG420"/>
+			<xsd:enumeration value="Cisco Webex Desk LE"/>
 		</xsd:restriction>
             </xsd:simpleType>
             <xsd:simpleType>
@@ -55197,6 +55594,8 @@ Copyright (c) 2006, 2013 Cisco Systems, Inc.
 			<xsd:enumeration value="Reset"/>
 			<xsd:enumeration value="Restart"/>
 			<xsd:enumeration value="Apply Configuration"/>
+			<xsd:enumeration value="Generate PRT"/>
+			<xsd:enumeration value="Extended Config Pull"/>
 		</xsd:restriction>
             </xsd:simpleType>
             <xsd:simpleType>
@@ -55227,6 +55626,22 @@ Copyright (c) 2006, 2013 Cisco Systems, Inc.
 			<xsd:enumeration value="Ring Once"/>
 			<xsd:enumeration value="Ring"/>
 			<xsd:enumeration value="Beep Only"/>
+		</xsd:restriction>
+            </xsd:simpleType>
+            <xsd:simpleType>
+                <xsd:restriction base="xsd:string"/>
+            </xsd:simpleType>
+        </xsd:union>
+    </xsd:simpleType>
+    <xsd:simpleType name="XRisStatus">
+        <xsd:union>
+            <xsd:simpleType>
+                <xsd:restriction base="xsd:string">
+			<xsd:enumeration value="Unknown"/>
+			<xsd:enumeration value="Registered"/>
+			<xsd:enumeration value="Unregistered"/>
+			<xsd:enumeration value="Rejected"/>
+			<xsd:enumeration value="Partial Registered"/>
 		</xsd:restriction>
             </xsd:simpleType>
             <xsd:simpleType>
@@ -55512,6 +55927,7 @@ Copyright (c) 2006, 2013 Cisco Systems, Inc.
 			<xsd:enumeration value="Cisco Certificate Enrollment Service"/>
 			<xsd:enumeration value="Platform Communication Web Service"/>
 			<xsd:enumeration value="Cisco Device Activation Service"/>
+			<xsd:enumeration value="Cisco Headset Service"/>
 		</xsd:restriction>
             </xsd:simpleType>
             <xsd:simpleType>
@@ -56493,7 +56909,6 @@ Copyright (c) 2006, 2013 Cisco Systems, Inc.
 			<xsd:enumeration value="Serviceability"/>
 			<xsd:enumeration value="Unknown"/>
 			<xsd:enumeration value="CallManager-ECDSA"/>
-			<xsd:enumeration value="GDS-trust"/>
 		</xsd:restriction>
             </xsd:simpleType>
             <xsd:simpleType>

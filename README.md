@@ -62,6 +62,8 @@ The concepts and techniques shown can be extended to enable automated management
 
 * `axl_list_Sip_Trunk.py` - Creates two SIP Trunks, then retrieves SIP Trunk names/details and prints a simple report (`<addSipTrunk>`, `<listSipTrunk>`).
 
+* `axl_listRegistrationDynamic.py` - Retrieves real-time registration info for devices and prints a simple report (`<listRegistrationDynamic>`).
+
 ## Getting started
 
 * Install Python 3
@@ -90,7 +92,7 @@ The concepts and techniques shown can be extended to enable automated management
 
 * Rename `.env.example` to `.env`, and edit it to specify your CUCM address and AXL user credentials.
 
-* The AXL v12.5 WSDL files are included in this project.  If you'd like to use a different version, replace with the AXL WSDL files for your CUCM version:
+* The AXL v14 WSDL files are included in this project.  If you'd like to use a different version, replace with the AXL WSDL files for your CUCM version:
 
     1. From the CUCM Administration UI, download the 'Cisco AXL Tookit' from **Applications** / **Plugins**
 
