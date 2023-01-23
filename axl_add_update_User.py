@@ -43,21 +43,26 @@ DEBUG = False
 WSDL_FILE = 'schema/AXLAPI.wsdl'
 
 # This class lets you view the incoming and outgoing http headers and XML
-class MyLoggingPlugin( Plugin ):
 
-    def egress( self, envelope, http_headers, operation, binding_options ):
+
+class MyLoggingPlugin(Plugin):
+
+    def egress(self, envelope, http_headers, operation, binding_options):
 
         # Format the request body as pretty printed XML
-        xml = etree.tostring( envelope, pretty_print = True, encoding = 'unicode')
+        xml = etree.tostring(envelope, pretty_print=True, encoding='unicode')
 
-        print( f'\nRequest\n-------\nHeaders:\n{ http_headers }\n\nBody:\n{ xml }' )
+        print(
+            f'\nRequest\n-------\nHeaders:\n{ http_headers }\n\nBody:\n{ xml }')
 
-    def ingress( self, envelope, http_headers, operation ):
+    def ingress(self, envelope, http_headers, operation):
 
         # Format the response body as pretty printed XML
-        xml = etree.tostring( envelope, pretty_print = True, encoding = 'unicode' )
+        xml = etree.tostring(envelope, pretty_print=True, encoding='unicode')
 
-        print( f'\nResponse\n-------\nHeaders:\n{ http_headers }\n\nBody:\n{ xml }' )
+        print(
+            f'\nResponse\n-------\nHeaders:\n{ http_headers }\n\nBody:\n{ xml }')
+
 
 # The first step is to create a SOAP client session
 session = Session()
@@ -65,7 +70,7 @@ session = Session()
 # We avoid certificate verification by default
 # And disable insecure request warnings to keep the output clear
 session.verify = False
-urllib3.disable_warnings( urllib3.exceptions.InsecureRequestWarning )
+urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
 # To enable SSL cert checking (recommended for production)
 # place the CUCM Tomcat cert .pem file in the root of the project
@@ -74,55 +79,56 @@ urllib3.disable_warnings( urllib3.exceptions.InsecureRequestWarning )
 # CERT = 'changeme.pem'
 # session.verify = CERT
 
-session.auth = HTTPBasicAuth( os.getenv( 'AXL_USERNAME' ), os.getenv( 'AXL_PASSWORD' ) )
+session.auth = HTTPBasicAuth(
+    os.getenv('AXL_USERNAME'), os.getenv('AXL_PASSWORD'))
 
-transport = Transport( session = session, timeout = 10 )
+transport = Transport(session=session, timeout=10)
 
 # strict=False is not always necessary, but it allows Zeep to parse imperfect XML
-settings = Settings( strict = False, xml_huge_tree = True )
+settings = Settings(strict=False, xml_huge_tree=True)
 
 # If debug output is requested, add the MyLoggingPlugin callback
-plugin = [ MyLoggingPlugin() ] if DEBUG else []
+plugin = [MyLoggingPlugin()] if DEBUG else []
 
 # Create the Zeep client with the specified settings
-client = Client( WSDL_FILE, settings = settings, transport = transport,
-        plugins = plugin )
+client = Client(WSDL_FILE, settings=settings, transport=transport,
+                plugins=plugin)
 
 # Create the Zeep service binding to AXL at the specified CUCM
-service = client.create_service( '{http://www.cisco.com/AXLAPIService/}AXLAPIBinding',
-                                f'https://{os.getenv( "CUCM_ADDRESS" )}:8443/axl/' )
+service = client.create_service('{http://www.cisco.com/AXLAPIService/}AXLAPIBinding',
+                                f'https://{os.getenv( "CUCM_ADDRESS" )}:8443/axl/')
 
 # Create a simple phone
-# Of note, this appears to be the minimum set of elements required 
+# Of note, this appears to be the minimum set of elements required
 # by the schema/Zeep
 phone = {
-        'name': 'CSFTESTPHONE',
-        'product': 'Cisco Unified Client Services Framework',
-        'model': 'Cisco Unified Client Services Framework',
-        'class': 'Phone',
-        'protocol': 'SIP',
-        'protocolSide': 'User',
-        'devicePoolName': 'Default',
-        'commonPhoneConfigName': 'Standard Common Phone Profile',
-        'locationName': 'Hub_None',
-        'useTrustedRelayPoint': 'Default',
-        'builtInBridgeStatus': 'Default',
-        'packetCaptureMode': 'None',
-        'certificateOperation': 'No Pending Operation',
-        'deviceMobilityMode': 'Default'
+    'name': 'CSFTESTPHONE',
+    'product': 'Cisco Unified Client Services Framework',
+    'model': 'Cisco Unified Client Services Framework',
+    'class': 'Phone',
+    'protocol': 'SIP',
+    'protocolSide': 'User',
+    'devicePoolName': 'Default',
+    'commonPhoneConfigName': 'Standard Common Phone Profile',
+    'locationName': 'Hub_None',
+    'useTrustedRelayPoint': 'Default',
+    'builtInBridgeStatus': 'Default',
+    'packetCaptureMode': 'None',
+    'certificateOperation': 'No Pending Operation',
+    'deviceMobilityMode': 'Default'
 }
 
 # Execute the addPhone request
 try:
-	resp = service.addPhone( phone )
+    resp = service.addPhone(phone)
 except Exception as err:
-    print( f'\nZeep error: addPhone: { err }' )
-    sys.exit( 1 )
+    print(f'\nZeep error: addPhone: { err }')
+    sys.exit(1)
 
-print( "\naddPhone response:\n" )
-print( resp )
+print("\naddPhone response:\n")
+print(resp)
 
-input( '\nPress Enter to continue...' )
+input('\nPress Enter to continue...')
 
 # Create an End User
 end_user = {
@@ -134,62 +140,77 @@ end_user = {
 
 # Execute the addUser request
 try:
-	resp = service.addUser( end_user )
+    resp = service.addUser(end_user)
 except Exception as err:
-    print( f'\nZeep error: addUser: { err }' )
-    sys.exit( 1 )
+    print(f'\nZeep error: addUser: { err }')
+    sys.exit(1)
 
-print( '\naddUser response:\n' )
-print( resp,'\n' )
+print('\naddUser response:\n')
+print(resp, '\n')
 
-input( 'Press Enter to continue...' )
+input('Press Enter to continue...')
 
 # Create an associated devices object
 devices = {
-        'device': []
-    }
-devices[ 'device' ].append( 'CSFTESTPHONE' )
+    'device': []
+}
+devices['device'].append('CSFTESTPHONE')
+
+# Add some access control groups
+groups = {
+    'userGroup': [
+        {
+            'name': 'Standard CTI Enabled',
+            'userRoles': {
+                'userRole': [
+                    'Standard CTI Enabled'
+                ]
+            }
+        },
+        {
+            'name': 'Standard CCM End Users',
+            'userRoles': {
+                'userRole': [
+                    'Standard CCM End Users', 'Standard CCMUSER Administration'
+                ]
+            }
+        }
+    ]
+}
 
 # Execute the updateUser request
 try:
-	resp = service.updateUser(
-        userid = 'testEndUser',
+    resp = service.updateUser(
+        userid='testEndUser',
         associatedDevices = devices,
-        homeCluster = True,
-        imAndPresenceEnable = True
-        )
+        associatedGroups = groups,
+        homeCluster=True,
+        imAndPresenceEnable=True
+    )
 except Exception as err:
-    print(f'\nZeep error: updateUser: { err }' )
-    sys.exit( 1 )
+    print(f'\nZeep error: updateUser: { err }')
+    sys.exit(1)
 
-print( '\nupdateUser response:\n' )
-print( resp,'\n' )
+print('\nupdateUser response:\n')
+print(resp, '\n')
 
-input( 'Press Enter to continue...' )
+input('Press Enter to continue...')
 
 # Cleanup the objects we just created
 try:
-    resp = service.removeUser( userid = 'testEndUser' )
+    resp = service.removeUser(userid='testEndUser')
 except Fault as err:
-    print( f'Zeep error: removeUser: { err }' )
-    sys.exit( 1 )
+    print(f'Zeep error: removeUser: { err }')
+    sys.exit(1)
 
-print( '\nremoveUser response:' )
-print( resp, '\n' )
+print('\nremoveUser response:')
+print(resp, '\n')
 
 try:
-    resp = service.removePhone( name = 'CSFTESTPHONE' )
+    resp = service.removePhone(name='CSFTESTPHONE')
 except Fault as err:
-    print( f'Zeep error: removePhone: { err }' )
-    sys.exit( 1 )
+    print(f'Zeep error: removePhone: { err }')
+    sys.exit(1)
 
-print( '\nremovePhone response:' )
-print( resp, '\n' )
-
-
-
-
-
-
-
-
+print('\nremovePhone response:')
+print(resp, '\n')

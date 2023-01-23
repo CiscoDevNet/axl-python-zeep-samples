@@ -113,22 +113,14 @@ except Exception as err:
     print( f'\nZeep error: initial listChange: { err }' )
     sys.exit( 1 )
 
-print( )
-print( 'Initial listChange response:' )
-print( )
-print( resp )
+print( '\nInitial listChange request: SUCCESS\n' )
 
 # Store the queueId for our change list and the highest change Id
 queueId = resp.queueInfo.queueId
 nextStartChangeId = resp.queueInfo.nextStartChangeId
 
-print( )
-input( 'Press Enter to continue...' )
-
-print( )
 print( 'Starting loop to monitor changes...' )
-print('(Press Ctrl+C to exit)')
-print( )
+print('(Press Ctrl+C to exit)\n')
 print( f'Action doGet? Type{16 * " "} UUID{32 * " "} Field{10 * " "} Value' )
 print( f'{6 * "-"} {6 * "-"} {20 * "-"} {36 * "-"} {15 * "-"} {15 * "-"}' )
 
