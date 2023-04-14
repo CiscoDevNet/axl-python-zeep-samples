@@ -118,7 +118,7 @@ print( resp,'\n' )
 
 input( 'Press Enter to continue...' )
 
-# Execute the addLine request
+# Execute the updateLine request
 try:
     resp = service.updateLine( pattern = '1234567890', callForwardAll = { 'forwardToVoiceMail': 'false' } )
 
