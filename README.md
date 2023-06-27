@@ -64,6 +64,8 @@ The concepts and techniques shown can be extended to enable automated management
 
 * `axl_listRegistrationDynamic.py` - Retrieves real-time registration info for devices and prints a simple report (`<listRegistrationDynamic>`).
 
+* `axl_add_Phone_busyLampField.py` - Creates a test CSF device via <addPhone>, including direct/DN busyLampFields. (`<addLine>`, `<addPhone>`).
+
 ## Getting started
 
 * Install Python 3
