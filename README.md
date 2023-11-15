@@ -66,6 +66,8 @@ The concepts and techniques shown can be extended to enable automated management
 
 * `axl_add_Phone_busyLampField.py` - Creates a test CSF device via <addPhone>, including direct/DN busyLampFields. (`<addLine>`, `<addPhone>`).
 
+* `axl_doChangeDNDStatus.py` - Creates an End User with password and PIN, then enables Do Not Disturb for the user (`<addUser>`, `<doChangeDNDStatus>`).
+
 ## Getting started
 
 * Install Python 3
