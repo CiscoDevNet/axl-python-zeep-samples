@@ -48,7 +48,7 @@ The concepts and techniques shown can be extended to enable automated management
 
 * `axl_doAuthenticateUser.py` - Creates an End User with password and PIN, authenticates the user using each, then deletes the user (`<addUser>`, `<doAuthenticateUser>`).
 
-* `axl_addGateway.py` - Creates a VG310 MGCP gateway with unit VG-2VWIC-MBRD and subunit 24FXS, then adds a new analog/POTS port/line to the subunit (`<addGateway>`, `<addGatewayEndpointAnalogAccess>`, `<addLine>`).
+* `axl_addGateway.py` - Creates a VG310 MGCP gateway with unit VG-2VWIC-MBRD and subunit 24FXS, then adds a new analog/POTS port/line to the subunit.  Once the gateway is created the gateway and endpoint data is retrieved to produce a simple report of the gateway/end-point/port configuration.  Finally all created objects are deleted (`<addGateway>`, `<addGatewayEndpointAnalogAccess>`, `<addLine>`, `<executeSQLQuery`).
 
 * `axl_executeSQLUpdate_Jabber_config.py` - demonstrates provisioning a Jabber config UC Service via <executeSQLUpdate> operations (`<executeSQLUpdate>`, `<executeSQLQuery>`).
 
