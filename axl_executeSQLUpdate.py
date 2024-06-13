@@ -153,16 +153,18 @@ uc_service_profile = {
     }
 }
 
-# Normally you would include specific profile type primary/secondary/tertiary
-# services as below.  However this is not working as of this writing due to CSCvq97982.
-# Subsequently we'll show how to associate these via executeSQLUpdate
-
-# uc_service_profile['serviceProfileInfos']['serviceProfileInfo'].append(
-#     {
-#         'profileName': 'Video Conference Scheduling Portal Profile',
-#         'primary': 'testConferenceSchedulingPortal1'
-#     }
-# )
+# Normally specific profile type primary/secondary/tertiary services are
+# specified as below.  However this is not working on some older CUCM
+# versions due to CSCvq97982.
+# Disable the below method and see below for how to accomplish this via 
+# <executeSQLUpdate> as a workaround.
+uc_service_profile['serviceProfileInfos']['serviceProfileInfo'].append(
+    {
+        'profileName': 'Video Conference Scheduling Portal Profile',
+        'primary': 'testConferenceSchedulingPortal1',
+        'secondary': 'testConferenceSchedulingPortal2'
+    }
+)
 
 # Execute the addServiceProfile request
 try:
@@ -178,28 +180,28 @@ ucServiceProfileId = resp['return'].strip('{}').lower()
 
 input( 'Press Enter to continue...' )
 
+# Enable the below to workaround CSCvq97982, if needed (see above)
 # Create an object containing the raw SQL update to run
-sql = '''UPDATE ucserviceprofiledetail SET fkucservice_1 = "{ucServiceId_1}", 
-    fkucservice_2 = "{ukServiceId_2}"
-    WHERE fkucserviceprofile = "{ucServiceProfileId}" AND
-    tkucservice = 41'''.format( 
-        ucServiceId_1 = ucServiceId_1,
-        ukServiceId_2 = ucServiceId_2,
-        ucServiceProfileId = ucServiceProfileId)
+# sql = '''UPDATE ucserviceprofiledetail SET fkucservice_1 = "{ucServiceId_1}", 
+#     fkucservice_2 = "{ukServiceId_2}"
+#     WHERE fkucserviceprofile = "{ucServiceProfileId}" AND
+#     tkucservice = 41'''.format( 
+#         ucServiceId_1 = ucServiceId_1,
+#         ukServiceId_2 = ucServiceId_2,
+#         ucServiceProfileId = ucServiceProfileId)
 
 # Execute the executeSQLQuery request
-try:
-    resp = service.executeSQLUpdate( sql )
-except Fault as err:
-    print('Zeep error: executeSQLUpdate: {err}'.format( err = err ) )
-else:
-    print( 'executeSQLUpdate response:' )
-    print( resp )
+# try:
+#     resp = service.executeSQLUpdate( sql )
+# except Fault as err:
+#     print('Zeep error: executeSQLUpdate: {err}'.format( err = err ) )
+# else:
+#     print( 'executeSQLUpdate response:' )
+#     print( resp )
 
-input( 'Press Enter to continue...' )
+# input( 'Press Enter to continue...' )
 
 # Cleanup the objects we just created
-
 try:
     resp = service.removeServiceProfile( name = 'testServiceProfile' )
 except Fault as err:
